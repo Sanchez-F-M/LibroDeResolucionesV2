@@ -1,5 +1,5 @@
-import './footer.css';
-
-export const footer = () => {
+function Footer() {
   return <h1>Footer</h1>;
-};
+}
+
+export default Footer;

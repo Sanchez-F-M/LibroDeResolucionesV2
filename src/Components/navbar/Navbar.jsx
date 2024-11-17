@@ -1,6 +1,6 @@
 import './Navbar.css';
 
-export const Navbar = () => {
+const Navbar = () => {
   let Usuario = 'SecretariaPrivadaDeJefaturaDePoliciaDeTucuman';
   let contraseña = 19953010;
   const Ingresar = () => {
@@ -24,3 +24,5 @@ export const Navbar = () => {
     </nav>
   );
 };
+
+export default Navbar;
