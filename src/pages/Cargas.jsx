@@ -1,6 +1,5 @@
-let carga = this.img.getAttribute;
 const Cargas = () => {
-  return <div> carga.get</div>;
+  return <div>Cargas</div>;
 };
 
 export default Cargas;
