@@ -1,12 +1,6 @@
 import './Navbar.css';
 import logo from '../../assets/logo3-removebg-preview (1).jpg';
-
 const Navbar = () => {
-  let Usuario = 'SecretariaPrivadaDeJefaturaDePoliciaDeTucuman';
-  let contraseña = 19953010;
-  const Ingresar = () => {
-    console.log('Ingresar' + Usuario + ':' + contraseña);
-  };
   return (
     <div>
       <img src={logo} alt="Escudo Policía de Tucumán" />
@@ -24,7 +18,6 @@ const Navbar = () => {
             <a href="http://"></a>Contact
           </li>
         </ul>
-        <button onClick={Ingresar}> Ingresar</button>
       </nav>
     </div>
   );
