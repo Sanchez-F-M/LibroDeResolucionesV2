@@ -24,3 +24,11 @@ h2 {
   margin-left: 350px;
   font-size: 200%;
 }
+
+.container-navbar-dark {
+  display: flex;
+  /* justify-content: space-between; */
+  background: #215e9a;
+  align-items: center;
+  height: 150px;
+}
