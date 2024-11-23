@@ -1,0 +1,26 @@
+.container-navbar {
+  display: flex;
+  /* justify-content: space-between; */
+  background: #34495e;
+  align-items: center;
+  height: 150px;
+}
+.titulos {
+  color: white;
+  margin-left: 20px;
+  justify-items: space-between;
+}
+img {
+  width: 110px;
+}
+h1 {
+  color: white;
+  margin-left: 20px;
+  font-size: 200%;
+}
+h2 {
+  justify-items: center;
+  color: white;
+  margin-left: 350px;
+  font-size: 200%;
+}
