@@ -4,6 +4,7 @@
   background: #34495e;
   align-items: center;
   height: 150px;
+  font-family: Arial, Helvetica, sans-serif;
 }
 .titulos {
   color: white;
@@ -31,4 +32,5 @@ h2 {
   background: #215e9a;
   align-items: center;
   height: 150px;
+  /* font-family: Arial, Helvetica, sans-serif; */
 }

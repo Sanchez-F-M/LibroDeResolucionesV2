@@ -5,7 +5,7 @@ import './LoginCard.css';
 const LoginCard = u => {
   console.log(u);
   return (
-    <div>
+    <div className="login">
       <h3>Usuario</h3>
       <TextField
         id="outlined-basic"

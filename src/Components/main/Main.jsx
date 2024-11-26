@@ -9,7 +9,7 @@ function Main() {
   };
 
   return (
-    <div>
+    <div className="alert">
       <main>
         <h1>Main</h1>
         <p>Este es el componente Main de la app.</p>
