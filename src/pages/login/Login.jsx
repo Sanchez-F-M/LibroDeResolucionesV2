@@ -2,7 +2,19 @@ import LoginCard3 from '../../Components/common/loginCard/LoginUsuario';
 import LoginCard2 from '../../Components/common/loginCard/LoginContraseña';
 import LoginCard1 from '../../Components/common/loginCard/LoginBoton';
 import Button from '@mui/material/Button';
+import { useState } from 'react';
 const Login = ({ y }) => {
+  const usuario = 'SecretariaPrivPdT';
+  const contraseña = 20242011;
+  const [nombreUsuario, SetUsuario] = useState(usuario);
+  const usuarioCorrecto = () => {
+    if (nombreUsuario === usuario) {
+      alert('Usuario Correcto');
+      y(true);
+    } else {
+      alert('Usuario Incorrecto');
+    }
+  };
   return (
     <div className="LoginC">
       <h3>Login</h3>
