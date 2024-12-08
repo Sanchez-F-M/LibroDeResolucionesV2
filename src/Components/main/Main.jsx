@@ -12,16 +12,13 @@ function Main() {
     <div className="alert">
       <main>
         <h1>Main</h1>
-        <p>Este es el componente Main de la app.</p>
-        <Button
-          variant="contained"
-          onClick={() => alert('Usuario o contraseña Incorrectos')}
-        >
-          Prueba de Alert
+        {/* <p>Este es el componente Main de la app.</p> */}
+        <Button variant="contained" onClick={() => alert('565461544')}>
+          contactar con sistemas{' '}
         </Button>
-        <Button variant="contained" onClick={Ingresar}>
+        <Button variant="" onClick={Ingresar}>
           {' '}
-          Ingresar
+          {/* Ingresar */}
         </Button>
       </main>
     </div>

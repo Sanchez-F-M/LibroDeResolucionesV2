@@ -4,10 +4,7 @@ import Counter from './Components/common/Counter/Counter';
 import Main from './Components/main/Main';
 import { useState } from 'react';
 import HomeContainer from './pages/Home/HomeContainer';
-
-// import LoginCard from './Components/common/loginCard/LoginBoton';
-// import LoginCard1 from './Components/common/loginCard/LoginUsuario';
-// import LoginCard2 from './Components/common/loginCard/LoginContraseña';
+import Footer from './Components/layouts/footer/Footer';
 
 function App() {
   const [botonIngresar, setBotonIngresar] = useState(false);
@@ -27,14 +24,17 @@ function App() {
   return (
     <div>
       <Navbar />
-      {botonIngresar ? <Login /> : null}
+      {/* {botonIngresar ? <Login /> : null}
       <button onClick={handleClick}>
         {botonIngresar ? 'Salir' : 'Ingresar'}
-      </button>
-      <Counter />
+      </button> */}
+
+      {/* <Counter /> */}
       <Main />
       <HomeContainer />
       <themeConfig />
+      {/* <ItemDetailContainer /> */}
+      <Footer />
     </div>
   );
 }
