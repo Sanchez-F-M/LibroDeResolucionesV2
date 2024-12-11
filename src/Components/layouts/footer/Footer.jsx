@@ -17,10 +17,13 @@ const Footer = () => {
         backgroundColor: 'primary.main',
         color: 'white',
         py: 3,
-        mt: 5,
+        mt: 20,
       }}
     >
-      <Container maxWidth="lg" sx={{ textAlign: 'center' }}>
+      <Container
+        maxWidth="lg"
+        sx={{ fontFamily: 'sans-serif', textAlign: 'center' }}
+      >
         {/* Título principal */}
         <Typography variant="h4" gutterBottom>
           Secretaría Privada de Jefatura de Policía de Tucumán
@@ -29,7 +32,7 @@ const Footer = () => {
         {/* Botón "Volver al inicio" */}
         <Button
           variant="contained"
-          color="secondary"
+          color="info"
           onClick={handleBackToTop}
           sx={{ mt: 2 }}
         >

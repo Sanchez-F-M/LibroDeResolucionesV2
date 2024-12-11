@@ -29,13 +29,21 @@ const Login = () => {
   };
 
   return (
-    <Container maxWidth="xs" sx={{ mt: 25 }}>
-      <Paper elevation={20} sx={{ padding: 4 }}>
+    <Container maxWidth="xs" sx={{ mt: 30 }}>
+      <Paper elevation={20} sx={{ padding: 6 }}>
         <Typography variant="h4" align="center" gutterBottom>
           Iniciar Sesión
         </Typography>
         <form onSubmit={handleLogin}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              height: '350px',
+              width: '300px',
+              gap: 6,
+            }}
+          >
             {/* Campo de Usuario */}
             <TextField
               label="Usuario"
