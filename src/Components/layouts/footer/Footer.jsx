@@ -1,28 +1,42 @@
 import { useState } from 'react';
-import Logo from '../../../assets/logo3-removebg-preview (1).png';
+// import Logo from '../../../assets/logo3-removebg-preview (1).png';
 import './footer.css';
 
-const Footer = () => {
-  const [darkMode, setDarkMode] = useState(true);
-  return (
-    <div className={darkMode ? 'container-footer-dark' : 'container-footer'}>
-      <div className="titulos">
-        {/* <img src={Logo} alt="Escudo Policia de Tucumán" /> */}
-      </div>
-      <h3>Policía de Tucumán</h3>
-      <h2>Secretaria Privada Policía de Tucumán</h2>
-      <button
-        variant="contained"
-        className="toggle-btn"
-        onClick={() => setDarkMode(!darkMode)}
-      >
-        Volver al Inicio
-      </button>
+import React from 'react';
+import { Box, Typography, Button, Container } from '@mui/material';
 
-      {/* al lado izq el logo y el titulo  */}
-      {/* al centro el cuando de ingreso a la app   */}
-      {/* a la derecha el icono de registro*/}
-    </div>
+const Footer = () => {
+  const handleBackToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  return (
+    <Box
+      component="footer"
+      sx={{
+        backgroundColor: 'primary.main',
+        color: 'white',
+        py: 3,
+        mt: 5,
+      }}
+    >
+      <Container maxWidth="lg" sx={{ textAlign: 'center' }}>
+        {/* Título principal */}
+        <Typography variant="h4" gutterBottom>
+          Secretaría Privada de Jefatura de Policía de Tucumán
+        </Typography>
+
+        {/* Botón "Volver al inicio" */}
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={handleBackToTop}
+          sx={{ mt: 2 }}
+        >
+          Volver al inicio
+        </Button>
+      </Container>
+    </Box>
   );
 };
 

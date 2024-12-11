@@ -1,118 +1,82 @@
 import React, { useState } from 'react';
 import {
-  Card,
-  CardContent,
-  CardActions,
   TextField,
   Button,
-  Typography,
   Box,
+  Typography,
   Container,
+  Paper,
 } from '@mui/material';
-import { styled } from '@mui/material/styles';
 
-// Estilos personalizados
-const StyledCard = styled(Card)(({ theme }) => ({
-  marginTop: theme.spacing(8),
-  padding: theme.spacing(3),
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-}));
+const Login = () => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
-const LoginForm = () => {
-  const [formData, setFormData] = useState({
-    username: '',
-    password: '',
-  });
-
-  const handleSubmit = e => {
+  const handleLogin = e => {
     e.preventDefault();
-    console.log('Datos del formulario:', formData);
-  };
 
-  const handleChange = e => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    if (!username || !password) {
+      setError('Por favor, complete todos los campos.');
+      return;
+    }
+
+    // Aquí puedes manejar la lógica de autenticación.
+    console.log('Usuario:', username);
+    console.log('Contraseña:', password);
+    setError(''); // Limpia errores
+    alert('Inicio de sesión exitoso (simulado)');
   };
 
   return (
-    <Container component="main" maxWidth="xs">
-      <StyledCard elevation={3}>
-        <CardContent sx={{ width: '100%' }}>
-          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
-            <Typography
-              variant="subtitle1"
-              gutterBottom
-              sx={{
-                color: 'text.secondary',
-                mb: 2,
-                fontWeight: 500,
-              }}
-            >
-              INGRESE USUARIO
-            </Typography>
+    <Container maxWidth="xs" sx={{ mt: 25 }}>
+      <Paper elevation={20} sx={{ padding: 4 }}>
+        <Typography variant="h4" align="center" gutterBottom>
+          Iniciar Sesión
+        </Typography>
+        <form onSubmit={handleLogin}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+            {/* Campo de Usuario */}
             <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="username"
-              name="username"
               label="Usuario"
               variant="outlined"
-              value={formData.username}
-              onChange={handleChange}
-              autoFocus
+              value={username}
+              onChange={e => setUsername(e.target.value)}
+              fullWidth
             />
 
-            <Typography
-              variant="subtitle1"
-              gutterBottom
-              sx={{
-                color: 'text.secondary',
-                mt: 2,
-                mb: 2,
-                fontWeight: 500,
-              }}
-            >
-              INGRESE CONTRASEÑA
-            </Typography>
+            {/* Campo de Contraseña */}
             <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="password"
-              name="password"
               label="Contraseña"
               type="password"
               variant="outlined"
-              value={formData.password}
-              onChange={handleChange}
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              fullWidth
             />
-          </Box>
-        </CardContent>
 
-        <CardActions sx={{ width: '100%', mt: 2 }}>
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            size="large"
-            onClick={handleSubmit}
-            sx={{
-              mt: 2,
-              mb: 2,
-              textTransform: 'uppercase',
-            }}
-          >
-            Ingresar
-          </Button>
-        </CardActions>
-      </StyledCard>
+            {/* Mensaje de error */}
+            {error && (
+              <Typography color="error" align="center">
+                {error}
+              </Typography>
+            )}
+
+            {/* Botón de Iniciar Sesión */}
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              fullWidth
+              sx={{ mt: 2 }}
+            >
+              Iniciar Sesión
+            </Button>
+          </Box>
+        </form>
+      </Paper>
     </Container>
   );
 };
 
-export default LoginForm;
+export default Login;
