@@ -1,5 +1,3 @@
-import { useState } from 'react';
-// import Logo from '../../../assets/logo3-removebg-preview (1).png';
 import './footer.css';
 
 import React from 'react';
@@ -14,9 +12,11 @@ const Footer = () => {
     <Box
       component="footer"
       sx={{
+        display: 'flex',
+        flexDirection: 'column',
         backgroundColor: 'primary.main',
         color: 'white',
-        py: 3,
+        py: 5,
         mt: 20,
       }}
     >
