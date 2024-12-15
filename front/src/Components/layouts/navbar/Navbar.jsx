@@ -13,12 +13,12 @@ const Navbar = () => {
 
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
-    document.body.style.backgroundColor = darkMode ? '#ffffff' : '#121212';
-    document.body.style.color = darkMode ? '#000000' : '#ffffff';
+    document.body.style.backgroundColor = darkMode ? '#ffffff' : '#34495e';
+    document.body.style.color = darkMode ? '#000000' : '#34495e';
   };
 
   return (
-    <AppBar position="relative" color={darkMode ? 'default' : 'primary'}>
+    <AppBar position="relative" color={darkMode ? '#34495e' : 'primary'}>
       <Toolbar>
         <Box
           sx={{

@@ -16,27 +16,25 @@ const Footer = () => {
         flexDirection: 'column',
         backgroundColor: 'primary.main',
         color: 'white',
-        py: 5,
-        mt: 20,
+        py: 2,
+        mt: 10,
       }}
     >
       <Container
-        maxWidth="lg"
+        maxWidth="xl"
         sx={{ fontFamily: 'sans-serif', textAlign: 'center' }}
       >
-        {/* Título principal */}
         <Typography variant="h4" gutterBottom>
           Secretaría Privada de Jefatura de Policía de Tucumán
         </Typography>
 
-        {/* Botón "Volver al inicio" */}
         <Button
           variant="contained"
-          color="info"
+          color="inherit"
           onClick={handleBackToTop}
-          sx={{ mt: 2 }}
+          sx={{ mt: 1, color: 'Highlight' }}
         >
-          Volver al inicio
+          Volver al Inicio
         </Button>
       </Container>
     </Box>
