@@ -1,5 +1,3 @@
-import { useState } from 'react';
-// import Logo from '../../../assets/logo3-removebg-preview (1).png';
 import './footer.css';
 
 import React from 'react';
@@ -14,29 +12,29 @@ const Footer = () => {
     <Box
       component="footer"
       sx={{
+        display: 'flex',
+        flexDirection: 'column',
         backgroundColor: 'primary.main',
         color: 'white',
-        py: 3,
-        mt: 20,
+        py: 2,
+        mt: 10,
       }}
     >
       <Container
-        maxWidth="lg"
+        maxWidth="xl"
         sx={{ fontFamily: 'sans-serif', textAlign: 'center' }}
       >
-        {/* Título principal */}
         <Typography variant="h4" gutterBottom>
           Secretaría Privada de Jefatura de Policía de Tucumán
         </Typography>
 
-        {/* Botón "Volver al inicio" */}
         <Button
           variant="contained"
-          color="info"
+          color="inherit"
           onClick={handleBackToTop}
-          sx={{ mt: 2 }}
+          sx={{ mt: 1, color: 'Highlight' }}
         >
-          Volver al inicio
+          Volver al Inicio
         </Button>
       </Container>
     </Box>
