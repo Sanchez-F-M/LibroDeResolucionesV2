@@ -7,6 +7,7 @@ import {
   Container,
   Paper,
 } from '@mui/material';
+import { Link, Links } from 'react-router-dom';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -44,7 +45,6 @@ const Login = () => {
               gap: 8,
             }}
           >
-            {/* Campo de Usuario */}
             <TextField
               label="Usuario"
               variant="outlined"
@@ -52,8 +52,6 @@ const Login = () => {
               onChange={e => setUsername(e.target.value)}
               fullWidth
             />
-
-            {/* Campo de Contraseña */}
             <TextField
               label="Contraseña"
               type="password"
@@ -63,23 +61,23 @@ const Login = () => {
               fullWidth
             />
 
-            {/* Mensaje de error */}
             {error && (
               <Typography color="error" align="center">
                 {error}
               </Typography>
             )}
 
-            {/* Botón de Iniciar Sesión */}
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              fullWidth
-              sx={{ mt: 2 }}
-            >
-              Iniciar Sesión
-            </Button>
+            <Link to="/home">
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                fullWidth
+                sx={{ mt: 2 }}
+              >
+                Iniciar Sesión
+              </Button>
+            </Link>
           </Box>
         </form>
       </Paper>

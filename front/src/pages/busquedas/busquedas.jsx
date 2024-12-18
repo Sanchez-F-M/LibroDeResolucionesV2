@@ -10,37 +10,43 @@ import {
   InputAdornment,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
 
 const Busquedas = () => {
   const [imageUrl, setImageUrl] = useState('');
   const [previewUrl, setPreviewUrl] = useState('');
 
   const handleSearch = () => {
-    setPreviewUrl(imageUrl); // Actualiza la URL de la imagen a previsualizar
+    setPreviewUrl(imageUrl);
   };
 
   return (
     <Grid
       container
-      spacing={2}
+      position="sticky"
+      spacing={4}
+      height="550px"
       justifyContent="center"
       style={{ marginTop: '20px' }}
     >
-      {/* Search Bar and Preview Section */}
       <Grid item xs={12} sm={8} md={6}>
         <Card>
           <CardContent>
             <Typography
-              variant="h5"
+              variant="h4"
               component="div"
-              style={{ marginBottom: '20px' }}
+              style={{ marginBottom: '30px' }}
             >
               Buscar Archivo
             </Typography>
-            <Grid container spacing={2} alignItems="center">
+            <Grid container spacing={1} alignItems="center">
               <Grid item xs={8}>
                 <TextField
-                  label="Nro. de Resolución/Exp."
+                  label="Resolución//Asunto//Referencia"
                   variant="outlined"
                   fullWidth
                   value={imageUrl}
@@ -64,6 +70,41 @@ const Busquedas = () => {
                   Buscar
                 </Button>
               </Grid>
+              <div>
+                <FormControl sx={{ padding: '16px', gap: '10px' }}>
+                  <FormLabel id="demo-row-radio-buttons-group-label">
+                    Buscado por:
+                  </FormLabel>
+                  <RadioGroup
+                    row
+                    aria-labelledby="demo-row-radio-buttons-group-label"
+                    name="row-radio-buttons-group"
+                    sx={{ gap: '30px' }}
+                  >
+                    <FormControlLabel
+                      value="Resolución"
+                      control={<Radio />}
+                      label="Nro resolución"
+                    />
+                    <FormControlLabel
+                      value="Asunto"
+                      control={<Radio />}
+                      label="Asunto"
+                    />
+                    <FormControlLabel
+                      value="Apellido o Nombre"
+                      control={<Radio />}
+                      label="Referencia"
+                    />
+                    <FormControlLabel
+                      value="disabled"
+                      disabled
+                      control={<Radio />}
+                      label="other"
+                    />
+                  </RadioGroup>
+                </FormControl>
+              </div>
             </Grid>
           </CardContent>
           {previewUrl && (
@@ -78,7 +119,7 @@ const Busquedas = () => {
               <CardContent>
                 <Button
                   variant="contained"
-                  color="secondary"
+                  color="primary"
                   fullWidth
                   href={previewUrl}
                   download

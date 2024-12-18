@@ -8,22 +8,25 @@ import {
   CardMedia,
   Grid,
 } from '@mui/material';
+import { Link, Links } from 'react-router-dom';
+import lupa from '../../assets/lupa2.png';
+import flecha from '../../assets/cargas.png';
 
 const HomeContainer = () => {
   return (
     <Grid
       container
-      spacing={2}
+      spacing={6}
       justifyContent="center"
-      style={{ marginTop: '20px' }}
+      style={{ marginTop: '20px', gap: '50px' }}
     >
       {/* Card 1: Buscar Archivos */}
       <Grid item xs={12} sm={6} md={4}>
         <Card>
           <CardMedia
             component="img"
-            height="140"
-            image="https://via.placeholder.com/300x140" // Reemplaza con la URL de tu imagen
+            height="540"
+            image={lupa} // Reemplaza con la URL de tu imagen
             alt="Buscar Archivos"
           />
           <CardContent>
@@ -31,21 +34,22 @@ const HomeContainer = () => {
               Buscar Archivos
             </Typography>
           </CardContent>
-          <CardActions>
-            <Button variant="contained" color="primary" fullWidth>
-              Buscar Archivos
-            </Button>
-          </CardActions>
+          <Link to="/buscador">
+            <CardActions>
+              <Button variant="contained" color="primary" fullWidth>
+                Buscar Archivos
+              </Button>
+            </CardActions>
+          </Link>
         </Card>
       </Grid>
 
-      {/* Card 2: Cargar Archivos */}
       <Grid item xs={12} sm={6} md={4}>
         <Card>
           <CardMedia
             component="img"
-            height="140"
-            image="https://via.placeholder.com/300x140" // Reemplaza con la URL de tu imagen
+            height="540"
+            image={flecha} // Reemplaza con la URL de tu imagen
             alt="Cargar Archivos"
           />
           <CardContent>
@@ -53,11 +57,13 @@ const HomeContainer = () => {
               Cargar Archivos
             </Typography>
           </CardContent>
-          <CardActions>
-            <Button variant="contained" color="secondary" fullWidth>
-              Cargar Archivos
-            </Button>
-          </CardActions>
+          <Link to="/cargas">
+            <CardActions>
+              <Button variant="contained" color="primary" fullWidth>
+                Cargar Archivos
+              </Button>
+            </CardActions>
+          </Link>
         </Card>
       </Grid>
     </Grid>
