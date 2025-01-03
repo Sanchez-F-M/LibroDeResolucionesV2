@@ -1,0 +1,173 @@
+{
+	"info": {
+		"_postman_id": "167be840-2e13-4049-958f-1e9ee25b5aeb",
+		"name": "LibrodeResolucion",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "27538948"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "getAuth",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3525/user"
+					},
+					"response": []
+				},
+				{
+					"name": "createUser",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"Nombre\": \"Ramon\",\n    \"Contrasena\": \"matias1234\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/user/register"
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateAuth",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": "http://localhost:3525/auth"
+					},
+					"response": []
+				},
+				{
+					"name": "deleteAuth",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "http://localhost:3525/auth/1"
+					},
+					"response": []
+				},
+				{
+					"name": "getbyIdAuth",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3525/auth/2"
+					},
+					"response": []
+				},
+				{
+					"name": "loginUser",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"Nombre\": \"Ramon\",\n    \"Contrasena\": \"matias1234\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/user/login"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Book",
+			"item": [
+				{
+					"name": "getBook",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3525/book"
+					},
+					"response": []
+				},
+				{
+					"name": "createBook",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"NumdeResolucion\": 3,\n  \"Asunto\": \"Resolución sobre crimen ambiente\",\n  \"Referencia\": \"Matias Sanchez\",\n  \"ImagePaths\": [\"imagen1.jpg\", \"imagen2.jpg\", \"imagen3.jpg\"]\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/book"
+					},
+					"response": []
+				},
+				{
+					"name": "updateBook",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": "http://localhost:3525/book"
+					},
+					"response": []
+				},
+				{
+					"name": "deleteBook",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "http://localhost:3525/book/"
+					},
+					"response": []
+				},
+				{
+					"name": "getbyIdBook",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer",
+								"description": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJOb21icmUiOiJSYW1vbiIsImlhdCI6MTczNTg0ODY2MCwiZXhwIjoxNzM1OTM1MDYwfQ.BUcEHFQ9nfPlpXsj7Bfy5int-h8cQlpd7bxxIJWLH08",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": "http://localhost:3000/book/3"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Search",
+			"item": [
+				{
+					"name": "Search",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
