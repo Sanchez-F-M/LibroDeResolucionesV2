@@ -135,4 +135,4 @@ const Busquedas = () => {
   );
 };
 
-export default Busquedas;
+export default busquedas;

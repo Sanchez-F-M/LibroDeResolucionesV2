@@ -22,16 +22,17 @@ const Login = () => {
       return;
     }
 
+    // Aquí puedes manejar la lógica de autenticación.
     console.log('Usuario:', username);
     console.log('Contraseña:', password);
-    setError('');
+    setError(''); // Limpia errores
     alert('Inicio de sesión exitoso (simulado)');
   };
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 10 }}>
-      <Paper elevation={20} sx={{ padding: 10 }}>
-        <Typography variant="h3" align="center" gutterBottom>
+    <Container maxWidth="xs" sx={{ mt: 30 }}>
+      <Paper elevation={20} sx={{ padding: 6 }}>
+        <Typography variant="h4" align="center" gutterBottom>
           Iniciar Sesión
         </Typography>
         <form onSubmit={handleLogin}>
@@ -39,10 +40,9 @@ const Login = () => {
             sx={{
               display: 'flex',
               flexDirection: 'column',
-
               height: '350px',
-              width: '400px',
-              gap: 8,
+              width: '300px',
+              gap: 6,
             }}
           >
             <TextField

@@ -1,3 +1,5 @@
+import { useState } from 'react';
+// import Logo from '../../../assets/logo3-removebg-preview (1).png';
 import './footer.css';
 import Navbar from '../navbar/Navbar';
 import React from 'react';
@@ -24,20 +26,21 @@ const Footer = () => {
       }}
     >
       <Container
-        maxWidth="xl"
+        maxWidth="lg"
         sx={{ fontFamily: 'sans-serif', textAlign: 'center' }}
       >
         <Typography variant="h6" gutterBottom>
           Secretaría Privada de Jefatura de Policía de Tucumán
         </Typography>
 
+        {/* Botón "Volver al inicio" */}
         <Button
           variant="contained"
-          color="inherit"
+          color="info"
           onClick={handleBackToTop}
-          sx={{ mt: 1, color: 'Highlight' }}
+          sx={{ mt: 2 }}
         >
-          Volver al Inicio
+          Volver al inicio
         </Button>
       </Container>
     </Box>

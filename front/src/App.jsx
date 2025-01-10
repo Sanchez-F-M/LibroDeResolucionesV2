@@ -4,13 +4,10 @@ import Navbar from './Components/layouts/navbar/Navbar';
 import Login from './pages/login/Login';
 import Footer from './Components/layouts/footer/Footer';
 import Main from './pages/Home/HomeContainer';
-import HomeContainer from './pages/Home/HomeContainer';
-import Busquedas from './pages/busquedas/busquedas';
-import Cargas from './pages/Cargas/Cargas';
 
 const App = () => {
   return (
-    <BrowserRouter>
+    <div>
       <Navbar />
       <Routes>
         <Route path={'/'} element={<Login />} />
@@ -20,7 +17,7 @@ const App = () => {
         {/* <Route path={'*'} element={} /> */}
       </Routes>
       <Footer />
-    </BrowserRouter>
+    </div>
   );
 };
 
