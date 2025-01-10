@@ -7,6 +7,7 @@ import Main from './pages/Home/HomeContainer';
 
 const App = () => {
   return (
+    <BrowserRouter>
     <div>
       <Navbar />
       <Routes>
@@ -18,6 +19,7 @@ const App = () => {
       </Routes>
       <Footer />
     </div>
+    </BrowserRouter>
   );
 };
 
