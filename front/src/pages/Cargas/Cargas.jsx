@@ -179,7 +179,7 @@ const Cargas = () => {
               onClick={handleUpload}
               style={{ marginTop: '50px' }}
             >
-              Cargar Archivos ({files.length})
+              Guardar Resolución ({files.length})
             </Button>
           </CardContent>
         </Card>

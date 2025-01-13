@@ -19,9 +19,14 @@ import FormLabel from '@mui/material/FormLabel';
 const busquedas = () => {
   const [imageUrl, setImageUrl] = useState('');
   const [previewUrl, setPreviewUrl] = useState('');
+  const [showInputs, setShowInputs] = useState(false);
 
   const handleSearch = () => {
     setPreviewUrl(imageUrl);
+  };
+
+  const handleModify = () => {
+    setShowInputs(true);
   };
 
   return (
@@ -127,6 +132,40 @@ const busquedas = () => {
                   Descargar
                 </Button>
               </CardContent>
+              <CardContent>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  fullWidth
+                  onClick={handleModify}
+                >
+                  Modificar
+                </Button>
+              </CardContent>
+              {showInputs && (
+                <CardContent>
+                  <TextField
+                    label="Input 1"
+                    variant="outlined"
+                    fullWidth
+                    style={{ marginBottom: '10px' }}
+                  />
+                  <TextField
+                    label="Input 2"
+                    variant="outlined"
+                    fullWidth
+                    style={{ marginBottom: '10px' }}
+                  />
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    onClick={handleModify}
+                  >
+                    Guardar
+                  </Button>
+                </CardContent>
+              )}
             </>
           )}
         </Card>

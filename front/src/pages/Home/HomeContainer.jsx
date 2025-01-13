@@ -18,26 +18,26 @@ const HomeContainer = () => {
       container
       spacing={6}
       justifyContent="center"
-      style={{ marginTop: '20px', gap: '50px' }}
+      style={{ marginTop: '200px', gap: '50px' }}
     >
       {/* Card 1: Buscar Archivos */}
       <Grid item xs={12} sm={6} md={4}>
         <Card>
           <CardMedia
             component="img"
-            height="540"
+            height="140"
             image={lupa} // Reemplaza con la URL de tu imagen
-            alt="Buscar Archivos"
+            alt="Buscar Resoluciones"
           />
           <CardContent>
             <Typography variant="h5" component="div">
-              Buscar Archivos
+              {/* Buscar Archivos */}
             </Typography>
           </CardContent>
           <Link to="/buscador">
             <CardActions>
               <Button variant="contained" color="primary" fullWidth>
-                Buscar Archivos
+                Buscar Resoluciones
               </Button>
             </CardActions>
           </Link>
@@ -48,19 +48,19 @@ const HomeContainer = () => {
         <Card>
           <CardMedia
             component="img"
-            height="540"
+            height="140"
             image={flecha} // Reemplaza con la URL de tu imagen
             alt="Cargar Archivos"
           />
           <CardContent>
             <Typography variant="h5" component="div">
-              Cargar Archivos
+              {/* Cargar Resoluciones */}
             </Typography>
           </CardContent>
           <Link to="/cargas">
             <CardActions>
               <Button variant="contained" color="primary" fullWidth>
-                Cargar Archivos
+                Cargar Resoluciones
               </Button>
             </CardActions>
           </Link>
