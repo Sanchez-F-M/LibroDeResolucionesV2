@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import {
+  Container,
+  Paper,
+  Typography,
   TextField,
   Button,
   Box,
-  Typography,
-  Container,
-  Paper,
 } from '@mui/material';
-import { Link, Links } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -19,6 +19,23 @@ const Login = () => {
 
     if (!username || !password) {
       setError('Por favor, complete todos los campos.');
+      return;
+    }
+
+    const usernameRegex = /^[a-zA-Z0-9._-]{3,}$/;
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+
+    if (!usernameRegex.test(username)) {
+      setError(
+        'El nombre de usuario debe tener al menos 3 caracteres y solo puede contener letras, números, puntos, guiones y guiones bajos.'
+      );
+      return;
+    }
+
+    if (!passwordRegex.test(password)) {
+      setError(
+        'La contraseña debe tener al menos 8 caracteres, incluyendo al menos una letra y un número.'
+      );
       return;
     }
 
@@ -41,16 +58,16 @@ const Login = () => {
               display: 'flex',
               flexDirection: 'column',
               height: '350px',
-              width: '300px',
-              gap: 6,
+              justifyContent: 'space-between',
             }}
           >
             <TextField
-              label="Usuario"
+              label="Nombre de usuario"
               variant="outlined"
               value={username}
               onChange={e => setUsername(e.target.value)}
-              fullWidth
+              error={!!error}
+              helperText={error}
             />
             <TextField
               label="Contraseña"
@@ -58,26 +75,12 @@ const Login = () => {
               variant="outlined"
               value={password}
               onChange={e => setPassword(e.target.value)}
-              fullWidth
+              error={!!error}
+              helperText={error}
             />
-
-            {error && (
-              <Typography color="error" align="center">
-                {error}
-              </Typography>
-            )}
-
-            <Link to="/home">
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                fullWidth
-                sx={{ mt: 2 }}
-              >
-                Iniciar Sesión
-              </Button>
-            </Link>
+            <Button type="submit" variant="contained" color="primary">
+              Iniciar Sesión
+            </Button>
           </Box>
         </form>
       </Paper>
