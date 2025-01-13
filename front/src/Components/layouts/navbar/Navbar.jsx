@@ -19,7 +19,7 @@ const Navbar = () => {
   };
 
   return (
-    <AppBar color={darkMode ? 'default' : 'primary'}>
+    <AppBar color={darkMode ? 'default' : 'secondary'}>
       <Toolbar className="navbar-container ">
         {/* Logo y subtítulo a la izquierda */}
         <Box
