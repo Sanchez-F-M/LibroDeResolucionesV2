@@ -15,6 +15,7 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
+import { Link, Links } from 'react-router-dom';
 
 const busquedas = () => {
   const [imageUrl, setImageUrl] = useState('');
@@ -132,16 +133,18 @@ const busquedas = () => {
                   Descargar
                 </Button>
               </CardContent>
-              <CardContent>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  fullWidth
-                  onClick={handleModify}
-                >
-                  Modificar
-                </Button>
-              </CardContent>
+              <Link to="/modificar">
+                <CardContent>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    onClick={handleModify}
+                  >
+                    Modificar
+                  </Button>{' '}
+                </CardContent>
+              </Link>
               {showInputs && (
                 <CardContent>
                   <TextField

@@ -78,9 +78,16 @@ const Login = () => {
               error={!!error}
               helperText={error}
             />
-            <Button type="submit" variant="contained" color="primary">
-              Iniciar Sesión
-            </Button>
+            <Link to="/home">
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                fullWidth
+              >
+                Iniciar Sesión
+              </Button>
+            </Link>
           </Box>
         </form>
       </Paper>
