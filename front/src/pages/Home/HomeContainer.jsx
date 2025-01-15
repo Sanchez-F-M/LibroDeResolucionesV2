@@ -21,11 +21,11 @@ const HomeContainer = () => {
       style={{ marginTop: '200px', gap: '50px' }}
     >
       {/* Card 1: Buscar Archivos */}
-      <Grid item xs={12} sm={6} md={4}>
+      <Grid item xs={12} sm={6} md={4} style={{ textAlign: 'center' }}>
         <Card>
           <CardMedia
             component="img"
-            height="140"
+            height="440"
             image={lupa} // Reemplaza con la URL de tu imagen
             alt="Buscar Resoluciones"
           />
@@ -48,7 +48,7 @@ const HomeContainer = () => {
         <Card>
           <CardMedia
             component="img"
-            height="140"
+            height="440"
             image={flecha} // Reemplaza con la URL de tu imagen
             alt="Cargar Archivos"
           />
