@@ -6,6 +6,7 @@ import Footer from './Components/layouts/footer/Footer';
 import HomeContainer from './pages/Home/HomeContainer';
 import Cargas from './pages/Cargas/Cargas';
 import Busquedas from './pages/busquedas/busquedas';
+import ModificarResolucion from './pages/Modificar/ModificarResolucion';
 
 const App = () => {
   const [darkMode, setDarkMode] = useState(false);
@@ -29,6 +30,7 @@ const App = () => {
           <Route path={'/home'} element={<HomeContainer />} />
           <Route path={'/buscador'} element={<Busquedas />} />
           <Route path={'/cargas'} element={<Cargas />} />
+          <Route path={'/modificar'} element={<ModificarResolucion />} />
           {/* <Route path={'*'} element={} /> */}
         </Routes>
         <Footer darkMode={darkMode} />

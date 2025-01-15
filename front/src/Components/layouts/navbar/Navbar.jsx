@@ -19,7 +19,14 @@ const Navbar = () => {
   };
 
   return (
-    <AppBar color={darkMode ? 'default' : '#34495e'}>
+    <AppBar
+      position="fixed"
+      sx={{
+        backgroundColor: darkMode ? '#1976d2' : '#34495e',
+        width: '100%',
+        zIndex: 1000,
+      }}
+    >
       <Toolbar className="navbar-container ">
         <Box
           sx={{
@@ -27,7 +34,7 @@ const Navbar = () => {
 
             alignItems: 'center',
             flexGrow: 0,
-            height: '140px',
+            height: '130px',
           }}
         >
           <Link to="/home">
