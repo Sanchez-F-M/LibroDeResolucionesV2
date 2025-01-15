@@ -16,7 +16,13 @@ const App = () => {
 
   return (
     <BrowserRouter>
-      <div>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          minHeight: '100vh',
+        }}
+      >
         <Navbar darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
         <Routes>
           <Route path={'/'} element={<Login />} />

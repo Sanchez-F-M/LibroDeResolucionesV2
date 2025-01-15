@@ -6,6 +6,8 @@ import {
   TextField,
   Button,
   Box,
+  AppBar,
+  Toolbar,
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 
@@ -48,7 +50,19 @@ const Login = () => {
 
   return (
     <Container maxWidth="xs" sx={{ mt: 27 }}>
-      <Paper elevation={21} sx={{ padding: 6 }}>
+      <AppBar
+        position="fixed"
+        sx={{
+          backgroundColor: '#1976d2',
+          width: '100%',
+          zIndex: 1000,
+        }}
+      >
+        <Toolbar>
+          <Typography variant="h6">Navbar</Typography>
+        </Toolbar>
+      </AppBar>
+      <Paper elevation={21} sx={{ padding: 6, mt: 8 }}>
         <Typography variant="h4" align="center" gutterBottom>
           Iniciar Sesión
         </Typography>
