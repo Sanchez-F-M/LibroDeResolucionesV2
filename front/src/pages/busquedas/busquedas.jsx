@@ -36,7 +36,7 @@ const busquedas = () => {
       spacing={4}
       height="550px"
       justifyContent="center"
-      style={{ marginTop: '20px' }}
+      style={{ marginTop: '150px' }}
     >
       <Grid item xs={12} sm={8} md={6}>
         <Card>
@@ -44,7 +44,7 @@ const busquedas = () => {
             <Typography
               variant="h4"
               component="div"
-              style={{ marginBottom: '30px' }}
+              style={{ marginBottom: '80px' }}
             >
               Buscar Archivo
             </Typography>
