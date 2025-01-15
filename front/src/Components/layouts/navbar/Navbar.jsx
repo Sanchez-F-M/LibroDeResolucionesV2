@@ -14,17 +14,17 @@ const Navbar = () => {
 
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
-    document.body.style.backgroundColor = darkMode ? '#ffffff' : '#121212';
-    document.body.style.color = darkMode ? '#000000' : '#ffffff';
+    document.body.style.backgroundColor = darkMode ? '#34495e' : '#ffffff';
+    document.body.style.color = darkMode ? '#ffffff' : '#000000';
   };
 
   return (
-    <AppBar color={darkMode ? 'default' : 'secondary'}>
+    <AppBar color={darkMode ? 'default' : '#34495e'}>
       <Toolbar className="navbar-container ">
-        {/* Logo y subtítulo a la izquierda */}
         <Box
           sx={{
             display: 'flex',
+
             alignItems: 'center',
             flexGrow: 0,
             height: '140px',
@@ -49,7 +49,6 @@ const Navbar = () => {
           </Typography>
         </Box>
 
-        {/* Título centrado */}
         <Box
           sx={{
             flexGrow: 30,
@@ -61,7 +60,6 @@ const Navbar = () => {
           <Typography variant="h2">Libro de Resoluciones</Typography>
         </Box>
 
-        {/* Botón de cambio de modo a la derecha */}
         <Box>
           <Button variant="contained" color="primary" onClick={toggleDarkMode}>
             Cambio de modo
