@@ -45,9 +45,9 @@ const busquedas = () => {
             <Typography
               variant="h4"
               component="div"
-              style={{ marginBottom: '80px' }}
+              style={{ marginBottom: '40px' }}
             >
-              Buscar Archivo
+              Buscar Resolución
             </Typography>
             <Grid container spacing={1} alignItems="center">
               <Grid item xs={8}>

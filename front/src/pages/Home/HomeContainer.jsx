@@ -8,9 +8,11 @@ import {
   CardMedia,
   Grid,
 } from '@mui/material';
-import { Link, Links } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import lupa from '../../assets/lupa2.png';
 import flecha from '../../assets/cargas.png';
+import SearchIcon from '@mui/icons-material/Search';
+import UploadFileIcon from '@mui/icons-material/UploadFile';
 
 const HomeContainer = () => {
   return (
@@ -36,7 +38,13 @@ const HomeContainer = () => {
           </CardContent>
           <Link to="/buscador">
             <CardActions>
-              <Button variant="contained" color="primary" fullWidth>
+              <Button
+                variant="contained"
+                color="primary"
+                fullWidth
+                startIcon={<SearchIcon sx={{ fontSize: '3rem' }} />}
+                sx={{ fontSize: '1.2rem', padding: '12px 0' }}
+              >
                 Buscar Resoluciones
               </Button>
             </CardActions>
@@ -59,7 +67,13 @@ const HomeContainer = () => {
           </CardContent>
           <Link to="/cargas">
             <CardActions>
-              <Button variant="contained" color="primary" fullWidth>
+              <Button
+                variant="contained"
+                color="primary"
+                fullWidth
+                startIcon={<UploadFileIcon sx={{ fontSize: '3rem' }} />}
+                sx={{ fontSize: '1.2rem', padding: '12px 0' }}
+              >
                 Cargar Resoluciones
               </Button>
             </CardActions>
