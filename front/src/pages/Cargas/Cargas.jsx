@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -22,6 +22,20 @@ const Cargas = () => {
   const [asunto, setAsunto] = useState('');
   const [referencia, setReferencia] = useState('');
   const [previews, setPreviews] = useState([]);
+  const [resolutionNumber, setResolutionNumber] = useState(1);
+  const [dia, setDia] = useState('');
+  const [mes, setMes] = useState('');
+  const [año, setAño] = useState('');
+
+  useEffect(() => {
+    // Simular la obtención del último número de resolución desde el servidor
+    const fetchLastResolutionNumber = async () => {
+      const lastNumber = -1; // Ejemplo: último número de resolución obtenido del servidor
+      setResolutionNumber(lastNumber + 1);
+    };
+
+    fetchLastResolutionNumber();
+  }, []);
 
   const handleFileChange = event => {
     const selectedFiles = Array.from(event.target.files);
@@ -91,11 +105,25 @@ const Cargas = () => {
     >
       <Grid item xs={12} sm={8} md={6}>
         <Card>
-          <CardContent>
-            <Typography variant="h4" component="div" className="mb-5">
+          <CardContent sx={{ padding: 12 }}>
+            <Typography
+              variant="h4"
+              component="div"
+              className="mb-5"
+              align="left"
+            >
               Cargar Archivos
             </Typography>
-            <Container sx={{ padding: 5 }}>
+            <Typography
+              variant="h5"
+              component="div"
+              className="mb-5"
+              align="center"
+              marginTop={{ xs: 2, sm: 7 }}
+            >
+              Número de Resolución a cargar: {resolutionNumber}
+            </Typography>
+            <Container sx={{ padding: 7 }}>
               <TextField
                 label="Número de Resolución"
                 variant="outlined"
@@ -123,11 +151,44 @@ const Cargas = () => {
                 style={{ marginTop: '20px' }}
                 className="mb-5"
               />
+              <Grid item xs={12} sm={4}>
+                <TextField
+                  fullWidth
+                  label="Día"
+                  type="number"
+                  value={dia}
+                  onChange={e => setDia(e.target.value)}
+                  inputProps={{ min: 1, max: 31 }}
+                  style={{ marginTop: '20px' }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <TextField
+                  fullWidth
+                  label="Mes"
+                  type="number"
+                  value={mes}
+                  onChange={e => setMes(e.target.value)}
+                  inputProps={{ min: 1, max: 12 }}
+                  style={{ marginTop: '20px' }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <TextField
+                  fullWidth
+                  label="Año"
+                  type="number"
+                  value={año}
+                  onChange={e => setAño(e.target.value)}
+                  inputProps={{ min: 2000, max: 2100 }}
+                  style={{ marginTop: '20px' }}
+                />
+              </Grid>
             </Container>
 
             <Typography
               variant="h5"
-              style={{ marginTop: '20px' }}
+              style={{ marginTop: '30px', marginBottom: '40px' }}
               className="p-3"
             >
               Seleccionar Archivos
