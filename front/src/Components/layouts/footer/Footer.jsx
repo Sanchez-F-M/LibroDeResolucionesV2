@@ -19,7 +19,7 @@ const Footer = ({ darkMode }) => {
       }}
     >
       <Typography variant="h5">
-        © Secretaria privada de Jefatura de Policía de Tucumán{' '}
+        © Secretaria Privada - Jefatura de Policía{' '}
       </Typography>
       <Button
         variant="contained"
