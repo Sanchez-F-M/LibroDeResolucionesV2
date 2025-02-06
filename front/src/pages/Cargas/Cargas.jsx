@@ -15,6 +15,8 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 const Cargas = () => {
   const [files, setFiles] = useState([]);
@@ -23,9 +25,7 @@ const Cargas = () => {
   const [referencia, setReferencia] = useState('');
   const [previews, setPreviews] = useState([]);
   const [resolutionNumber, setResolutionNumber] = useState(1);
-  const [dia, setDia] = useState('');
-  const [mes, setMes] = useState('');
-  const [año, setAño] = useState('');
+  const [fecha, setFecha] = useState(null);
 
   useEffect(() => {
     // Simular la obtención del último número de resolución desde el servidor
@@ -64,17 +64,41 @@ const Cargas = () => {
     });
   };
 
-  const handleUpload = () => {
-    if (files.length === 0 || !fileId || !asunto || !referencia) {
+  const handleUpload = async () => {
+    if (files.length === 0 || !fileId || !asunto || !referencia || !fecha) {
       alert(
         'Por favor complete todos los campos y seleccione al menos un archivo.'
       );
       return;
     }
-    // Lógica para cargar los archivos al servidor
-    alert(
-      `${files.length} archivo(s) con ID: ${fileId}, Asunto: ${asunto}, Referencia: ${referencia} cargados exitosamente.`
-    );
+
+    const formData = new FormData();
+    formData.append('files', files);
+    formData.append('fileId', fileId);
+    formData.append('asunto', asunto);
+    formData.append('referencia', referencia);
+    formData.append('resolutionNumber', resolutionNumber);
+    formData.append('fecha', fecha.toISOString());
+
+    try {
+      const response = await fetch('/api/cargar-resolucion', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (response.ok) {
+        // Limpiar el formulario
+        setFiles([]);
+        setFileId('');
+        setAsunto('');
+        setReferencia('');
+        setFecha(null);
+        setPreviews([]);
+        alert('Resolución cargada exitosamente.');
+      }
+    } catch (error) {
+      console.error('Error al cargar la resolución:', error);
+    }
   };
 
   const renderPreview = (preview, index) => {
@@ -151,44 +175,21 @@ const Cargas = () => {
                 style={{ marginTop: '20px' }}
                 className="mb-5"
               />
-              <Grid item xs={12} sm={4}>
-                <TextField
-                  fullWidth
-                  label="Día"
-                  type="number"
-                  value={dia}
-                  onChange={e => setDia(e.target.value)}
-                  inputProps={{ min: 1, max: 31 }}
-                  style={{ marginTop: '20px' }}
-                />
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <TextField
-                  fullWidth
-                  label="Mes"
-                  type="number"
-                  value={mes}
-                  onChange={e => setMes(e.target.value)}
-                  inputProps={{ min: 1, max: 12 }}
-                  style={{ marginTop: '20px' }}
-                />
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <TextField
-                  fullWidth
-                  label="Año"
-                  type="number"
-                  value={año}
-                  onChange={e => setAño(e.target.value)}
-                  inputProps={{ min: 2000, max: 2100 }}
-                  style={{ marginTop: '20px' }}
-                />
-              </Grid>
+              <Typography variant="h6" style={{ marginTop: '20px' }}>
+                Fecha
+              </Typography>
+              <DatePicker
+                selected={fecha}
+                onChange={date => setFecha(date)}
+                dateFormat="dd/MM/yyyy"
+                className="form-control"
+                style={{ marginTop: '20px', width: '100%', height: '400px' }}
+              />
             </Container>
 
             <Typography
               variant="h5"
-              style={{ marginTop: '30px', marginBottom: '40px' }}
+              style={{ marginTop: '300px', marginBottom: '40px' }}
               className="p-3"
             >
               Seleccionar Archivos
