@@ -5,7 +5,9 @@ import {
   Typography,
   TextField,
   Button,
-  Box,
+  Grid,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 
@@ -13,6 +15,9 @@ const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const handleLogin = e => {
     e.preventDefault();
@@ -39,58 +44,75 @@ const Login = () => {
       return;
     }
 
-    // Aquí puedes manejar la lógica de autenticación.
     console.log('Usuario:', username);
     console.log('Contraseña:', password);
-    setError(''); // Limpia errores
+    setError('');
     alert('Inicio de sesión exitoso (simulado)');
   };
 
   return (
-    <Container maxWidth="xs" sx={{ mt: 27 }}>
-      <Paper elevation={21} sx={{ padding: 6 }}>
-        <Typography variant="h4" align="center" gutterBottom>
-          Iniciar Sesión
-        </Typography>
-        <form onSubmit={handleLogin}>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              height: '350px',
-              justifyContent: 'space-between',
-            }}
-          >
-            <TextField
-              label="Nombre de usuario"
-              variant="outlined"
-              value={username}
-              onChange={e => setUsername(e.target.value)}
-              error={!!error}
-              helperText={error}
-            />
-            <TextField
-              label="Contraseña"
-              type="password"
-              variant="outlined"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              error={!!error}
-              helperText={error}
-            />
-            <Link to="/home">
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                fullWidth
-              >
-                Iniciar Sesión
-              </Button>
-            </Link>
-          </Box>
-        </form>
-      </Paper>
+    <Container
+      maxWidth={isMobile ? 'sm' : 'md'}
+      sx={{ mt: isMobile ? 12 : 18, padding: isMobile ? 6 : 10 }}
+    >
+      <Grid container justifyContent="center">
+        <Grid item xs={12} sm={10} md={8}>
+          <Paper elevation={12} sx={{ padding: isMobile ? 3 : 6 }}>
+            <Typography
+              variant={isMobile ? 'h5' : 'h3'}
+              align="center"
+              gutterBottom
+            >
+              Iniciar Sesión
+            </Typography>
+            <form onSubmit={handleLogin}>
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Nombre de usuario"
+                    variant="outlined"
+                    value={username}
+                    onChange={e => setUsername(e.target.value)}
+                    error={!!error}
+                    helperText={error}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Contraseña"
+                    type="password"
+                    variant="outlined"
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    error={!!error}
+                    helperText={error}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    size={isMobile ? 'medium' : 'large'}
+                  >
+                    Iniciar Sesión
+                  </Button>
+                </Grid>
+                <Grid item xs={12} textAlign="center">
+                  <Link to="/home" style={{ textDecoration: 'none' }}>
+                    <Typography variant="body2" color="primary">
+                      ¿Olvidaste tu contraseña?
+                    </Typography>
+                  </Link>
+                </Grid>
+              </Grid>
+            </form>
+          </Paper>
+        </Grid>
+      </Grid>
     </Container>
   );
 };

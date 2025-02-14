@@ -1,16 +1,21 @@
 import React, { useState } from 'react';
-
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
-import Logo from '../../../assets/logo3-removebg-preview (1).png';
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  IconButton,
+  Grid,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
+import { Brightness4, Brightness7 } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
+import Logo from '../../../assets/logo3-removebg-preview (1).png';
 
 const Navbar = () => {
   const [darkMode, setDarkMode] = useState(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
@@ -25,53 +30,50 @@ const Navbar = () => {
         backgroundColor: darkMode ? '#1976d2' : '#34495e',
         width: '100%',
         zIndex: 1000,
+        padding: isMobile ? 1 : 2,
       }}
     >
-      <Toolbar className="navbar-container ">
-        <Box
-          sx={{
-            display: 'flex',
-
-            alignItems: 'center',
-            flexGrow: 0,
-            height: '130px',
-          }}
+      <Toolbar>
+        <Grid
+          container
+          alignItems="center"
+          justifyContent="space-between"
+          columns={{ xs: 4, sm: 8, md: 12 }}
         >
-          <Link to="/home">
-            {' '}
-            <img
-              src={Logo}
-              alt="Logo"
-              style={{ width: 110, height: 125, marginRight: 8 }}
-            />
-          </Link>
-          <Typography
-            className="subtitulo"
-            variant="subtitle1"
-            sx={{
-              fontFamily: 'Arial, Helvetica, sans-serif',
-            }}
+          {/* Logo (oculto en mobile) */}
+          {!isMobile && (
+            <Grid item sm={3} md={2} display="flex" alignItems="center">
+              <Link to="/home">
+                <img
+                  src={Logo}
+                  alt="Logo"
+                  style={{ width: 110, height: 125, marginRight: 8 }}
+                />
+              </Link>
+            </Grid>
+          )}
+
+          {/* Título principal (ajustable para mobile y desktop) */}
+          <Grid item xs={4} sm={4} md={6} textAlign="center">
+            <Typography variant={isMobile ? 'h4' : 'h2'}>
+              Libro de Resoluciones
+            </Typography>
+          </Grid>
+
+          {/* Botón ilustrado de cambio de modo */}
+          <Grid
+            item
+            xs={5}
+            sm={3}
+            md={2}
+            display="flex"
+            justifyContent="flex-end"
           >
-            Policía de Tucumán
-          </Typography>
-        </Box>
-
-        <Box
-          sx={{
-            flexGrow: 30,
-            textAlign: 'center',
-            marginRight: '55px',
-            fontFamily: 'Arial, Helvetica, sans-serif;',
-          }}
-        >
-          <Typography variant="h2">Libro de Resoluciones</Typography>
-        </Box>
-
-        <Box>
-          <Button variant="contained" color="primary" onClick={toggleDarkMode}>
-            Cambio de modo
-          </Button>
-        </Box>
+            <IconButton onClick={toggleDarkMode} color="inherit">
+              {darkMode ? <Brightness7 /> : <Brightness4 />}
+            </IconButton>
+          </Grid>
+        </Grid>
       </Toolbar>
     </AppBar>
   );
