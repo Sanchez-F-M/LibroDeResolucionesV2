@@ -1,17 +1,23 @@
 import React, { useState } from 'react';
 import {
-  TextField,
-  Button,
-  Box,
-  Typography,
   Container,
   Paper,
+  Typography,
+  TextField,
+  Button,
+  Grid,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
+import { Link } from 'react-router-dom';
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const handleLogin = e => {
     e.preventDefault();
@@ -21,68 +27,92 @@ const Login = () => {
       return;
     }
 
-    // Aquí puedes manejar la lógica de autenticación.
+    const usernameRegex = /^[a-zA-Z0-9._-]{3,}$/;
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+
+    if (!usernameRegex.test(username)) {
+      setError(
+        'El nombre de usuario debe tener al menos 3 caracteres y solo puede contener letras, números, puntos, guiones y guiones bajos.'
+      );
+      return;
+    }
+
+    if (!passwordRegex.test(password)) {
+      setError(
+        'La contraseña debe tener al menos 8 caracteres, incluyendo al menos una letra y un número.'
+      );
+      return;
+    }
+
     console.log('Usuario:', username);
     console.log('Contraseña:', password);
-    setError(''); // Limpia errores
+    setError('');
     alert('Inicio de sesión exitoso (simulado)');
   };
 
   return (
-    <Container maxWidth="xs" sx={{ mt: 30 }}>
-      <Paper elevation={20} sx={{ padding: 6 }}>
-        <Typography variant="h4" align="center" gutterBottom>
-          Iniciar Sesión
-        </Typography>
-        <form onSubmit={handleLogin}>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              height: '350px',
-              width: '300px',
-              gap: 6,
-            }}
-          >
-            {/* Campo de Usuario */}
-            <TextField
-              label="Usuario"
-              variant="outlined"
-              value={username}
-              onChange={e => setUsername(e.target.value)}
-              fullWidth
-            />
-
-            {/* Campo de Contraseña */}
-            <TextField
-              label="Contraseña"
-              type="password"
-              variant="outlined"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              fullWidth
-            />
-
-            {/* Mensaje de error */}
-            {error && (
-              <Typography color="error" align="center">
-                {error}
-              </Typography>
-            )}
-
-            {/* Botón de Iniciar Sesión */}
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              fullWidth
-              sx={{ mt: 2 }}
+    <Container
+      maxWidth={isMobile ? 'sm' : 'md'}
+      sx={{ mt: isMobile ? 12 : 18, padding: isMobile ? 6 : 10 }}
+    >
+      <Grid container justifyContent="center">
+        <Grid item xs={12} sm={10} md={8}>
+          <Paper elevation={12} sx={{ padding: isMobile ? 3 : 6 }}>
+            <Typography
+              variant={isMobile ? 'h5' : 'h3'}
+              align="center"
+              gutterBottom
             >
               Iniciar Sesión
-            </Button>
-          </Box>
-        </form>
-      </Paper>
+            </Typography>
+            <form onSubmit={handleLogin}>
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Nombre de usuario"
+                    variant="outlined"
+                    value={username}
+                    onChange={e => setUsername(e.target.value)}
+                    error={!!error}
+                    helperText={error}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Contraseña"
+                    type="password"
+                    variant="outlined"
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    error={!!error}
+                    helperText={error}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    size={isMobile ? 'medium' : 'large'}
+                  >
+                    Iniciar Sesión
+                  </Button>
+                </Grid>
+                <Grid item xs={12} textAlign="center">
+                  <Link to="/home" style={{ textDecoration: 'none' }}>
+                    <Typography variant="body2" color="primary">
+                      ¿Olvidaste tu contraseña?
+                    </Typography>
+                  </Link>
+                </Grid>
+              </Grid>
+            </form>
+          </Paper>
+        </Grid>
+      </Grid>
     </Container>
   );
 };
