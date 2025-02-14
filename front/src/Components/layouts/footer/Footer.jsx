@@ -2,13 +2,17 @@ import React from 'react';
 import { Box, Typography, Button } from '@mui/material';
 
 const Footer = ({ darkMode }) => {
+  // Función que se ejecuta al hacer clic en el botón
+  const handleClick = () => {
+    alert('Llamar a este numero de contacto 3813960936.');
+  };
+
   return (
     <Box
       sx={{
         backgroundColor: darkMode ? '#fff' : '#34495e',
         color: '#fff',
-        padding: '10px 10px 10px 10px',
-
+        padding: '10px',
         textAlign: 'center',
         position: 'relative',
         width: '100%',
@@ -19,7 +23,7 @@ const Footer = ({ darkMode }) => {
       }}
     >
       <Typography variant="h5">
-        © Secretaria Privada - Jefatura de Policía{' '}
+        © Secretaria Privada - Jefatura de Policía
       </Typography>
       <Button
         variant="contained"
@@ -31,8 +35,9 @@ const Footer = ({ darkMode }) => {
             backgroundColor: darkMode ? '#1565c0' : '#2c3e50',
           },
         }}
+        onClick={handleClick} // Asignamos la función al evento onClick
       >
-        Botón de Acción
+        Contactar con soporte
       </Button>
     </Box>
   );

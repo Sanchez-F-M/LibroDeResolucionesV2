@@ -12,6 +12,8 @@ import {
   IconButton,
   Box,
   Container,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -27,10 +29,12 @@ const Cargas = () => {
   const [resolutionNumber, setResolutionNumber] = useState(1);
   const [fecha, setFecha] = useState(null);
 
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
   useEffect(() => {
-    // Simular la obtención del último número de resolución desde el servidor
     const fetchLastResolutionNumber = async () => {
-      const lastNumber = -1; // Ejemplo: último número de resolución obtenido del servidor
+      const lastNumber = -1;
       setResolutionNumber(lastNumber + 1);
     };
 
@@ -41,7 +45,6 @@ const Cargas = () => {
     const selectedFiles = Array.from(event.target.files);
     setFiles(prevFiles => [...prevFiles, ...selectedFiles]);
 
-    // Crear previsualizaciones para los nuevos archivos
     selectedFiles.forEach(file => {
       const fileUrl = URL.createObjectURL(file);
       setPreviews(prevPreviews => [
@@ -58,104 +61,41 @@ const Cargas = () => {
   const handleDeleteFile = index => {
     setFiles(prevFiles => prevFiles.filter((_, i) => i !== index));
     setPreviews(prevPreviews => {
-      // Liberar URL de objeto para evitar pérdidas de memoria
       URL.revokeObjectURL(prevPreviews[index].url);
       return prevPreviews.filter((_, i) => i !== index);
     });
-  };
-
-  const handleUpload = async () => {
-    if (files.length === 0 || !fileId || !asunto || !referencia || !fecha) {
-      alert(
-        'Por favor complete todos los campos y seleccione al menos un archivo.'
-      );
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append('files', files);
-    formData.append('fileId', fileId);
-    formData.append('asunto', asunto);
-    formData.append('referencia', referencia);
-    formData.append('resolutionNumber', resolutionNumber);
-    formData.append('fecha', fecha.toISOString());
-
-    try {
-      const response = await fetch('/api/cargar-resolucion', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (response.ok) {
-        // Limpiar el formulario
-        setFiles([]);
-        setFileId('');
-        setAsunto('');
-        setReferencia('');
-        setFecha(null);
-        setPreviews([]);
-        alert('Resolución cargada exitosamente.');
-      }
-    } catch (error) {
-      console.error('Error al cargar la resolución:', error);
-    }
-  };
-
-  const renderPreview = (preview, index) => {
-    if (preview.type.startsWith('image/')) {
-      return (
-        <CardMedia
-          component="img"
-          height="400"
-          image={preview.url}
-          alt={`Previsualización ${index + 1}`}
-        />
-      );
-    } else {
-      return (
-        <Box className="flex items-center justify-center h-48 bg-gray-100 ">
-          <Typography variant="body1">{preview.name}</Typography>
-        </Box>
-      );
-    }
   };
 
   return (
     <Grid
       container
       justifyContent="center"
-      style={{ marginTop: '50px' }}
-      className="mt-5"
+      sx={{
+        marginTop: isMobile ? '80px' : '150px',
+        padding: isMobile ? '10px' : '0',
+      }}
     >
-      <Grid item xs={12} sm={8} md={6}>
+      <Grid item xs={12} sm={10} md={8}>
         <Card>
-          <CardContent sx={{ padding: 12 }}>
-            <Typography
-              variant="h4"
-              component="div"
-              className="mb-5"
-              align="left"
-            >
+          <CardContent sx={{ padding: isMobile ? 4 : 12 }}>
+            <Typography variant={isMobile ? 'h5' : 'h4'} align="left">
               Cargar Archivos
             </Typography>
             <Typography
-              variant="h5"
-              component="div"
-              className="mb-5"
+              variant={isMobile ? 'h6' : 'h5'}
               align="center"
-              marginTop={{ xs: 2, sm: 7 }}
+              sx={{ marginTop: isMobile ? 2 : 7 }}
             >
               Número de Resolución a cargar: {resolutionNumber}
             </Typography>
-            <Container sx={{ padding: 7 }}>
+            <Container sx={{ padding: isMobile ? 2 : 7 }}>
               <TextField
                 label="Número de Resolución"
                 variant="outlined"
                 fullWidth
                 value={fileId}
                 onChange={e => setFileId(e.target.value)}
-                style={{ marginTop: '20px' }}
-                className="mb-5"
+                sx={{ marginTop: 2 }}
               />
               <TextField
                 label="Asunto"
@@ -163,8 +103,7 @@ const Cargas = () => {
                 fullWidth
                 value={asunto}
                 onChange={e => setAsunto(e.target.value)}
-                style={{ marginTop: '20px' }}
-                className="mb-5"
+                sx={{ marginTop: 2 }}
               />
               <TextField
                 label="Referencia"
@@ -172,10 +111,9 @@ const Cargas = () => {
                 fullWidth
                 value={referencia}
                 onChange={e => setReferencia(e.target.value)}
-                style={{ marginTop: '20px' }}
-                className="mb-5"
+                sx={{ marginTop: 2 }}
               />
-              <Typography variant="h6" style={{ marginTop: '20px' }}>
+              <Typography variant="h6" sx={{ marginTop: 2 }}>
                 Fecha
               </Typography>
               <DatePicker
@@ -183,42 +121,43 @@ const Cargas = () => {
                 onChange={date => setFecha(date)}
                 dateFormat="dd/MM/yyyy"
                 className="form-control"
-                style={{ marginTop: '20px', width: '100%', height: '400px' }}
+                style={{ width: '100%' }}
               />
             </Container>
-
             <Typography
-              variant="h5"
-              style={{ marginTop: '300px', marginBottom: '40px' }}
-              className="p-3"
+              variant="h6"
+              sx={{ marginTop: isMobile ? 5 : 10, marginBottom: 2 }}
             >
               Seleccionar Archivos
             </Typography>
-
-            <Fab
-              color="primary"
-              aria-label="add"
-              component="label"
-              className="mb-5"
-            >
+            <Fab color="primary" aria-label="add" component="label">
               <AddIcon />
               <Input
                 type="file"
                 multiple
                 onChange={handleFileChange}
-                style={{ marginTop: '20px', display: 'none' }}
-                className="hidden"
+                style={{ display: 'none' }}
               />
             </Fab>
-
-            {/* Grid de previsualizaciones */}
-            <Grid container spacing={2} className="mb-5">
+            <Grid container spacing={2} sx={{ marginTop: 2 }}>
               {previews.map((preview, index) => (
                 <Grid item xs={12} sm={6} key={index}>
                   <Card>
-                    {renderPreview(preview, index)}
-                    <Box className="p-2 flex justify-between items-center">
-                      <Typography variant="body2" noWrap className="flex-1">
+                    <CardMedia
+                      component="img"
+                      height={isMobile ? '200' : '400'}
+                      image={preview.url}
+                      alt={`Previsualización ${index + 1}`}
+                    />
+                    <Box
+                      sx={{
+                        padding: 2,
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <Typography variant="body2" noWrap>
                         {preview.name}
                       </Typography>
                       <IconButton
@@ -233,13 +172,11 @@ const Cargas = () => {
                 </Grid>
               ))}
             </Grid>
-
             <Button
               variant="contained"
               color="primary"
               fullWidth
-              onClick={handleUpload}
-              style={{ marginTop: '50px' }}
+              sx={{ marginTop: 5 }}
             >
               Guardar Resolución ({files.length})
             </Button>
