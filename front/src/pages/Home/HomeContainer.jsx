@@ -7,6 +7,8 @@ import {
   Button,
   CardMedia,
   Grid,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 import lupa from '../../assets/lupa2.png';
@@ -15,25 +17,32 @@ import SearchIcon from '@mui/icons-material/Search';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 
 const HomeContainer = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
   return (
     <Grid
       container
-      spacing={6}
+      spacing={isMobile ? 3 : 6}
       justifyContent="center"
-      style={{ marginTop: '200px', gap: '50px' }}
+      sx={{
+        marginTop: isMobile ? '100px' : '200px',
+        gap: isMobile ? '30px' : '50px',
+        padding: isMobile ? '10px' : '0',
+      }}
     >
       {/* Card 1: Buscar Archivos */}
-      <Grid item xs={12} sm={6} md={4} style={{ textAlign: 'center' }}>
+      <Grid item xs={12} sm={6} md={4} sx={{ textAlign: 'center' }}>
         <Card>
           <CardMedia
             component="img"
-            height="440"
-            image={lupa} // Reemplaza con la URL de tu imagen
+            height={isMobile ? '300' : '440'}
+            image={lupa}
             alt="Buscar Resoluciones"
           />
           <CardContent>
-            <Typography variant="h5" component="div">
-              {/* Buscar Archivos */}
+            <Typography variant={isMobile ? 'h6' : 'h5'}>
+              Buscar Archivos
             </Typography>
           </CardContent>
           <Link to="/buscador">
@@ -42,8 +51,13 @@ const HomeContainer = () => {
                 variant="contained"
                 color="primary"
                 fullWidth
-                startIcon={<SearchIcon sx={{ fontSize: '3rem' }} />}
-                sx={{ fontSize: '1.2rem', padding: '12px 0' }}
+                startIcon={
+                  <SearchIcon sx={{ fontSize: isMobile ? '2rem' : '3rem' }} />
+                }
+                sx={{
+                  fontSize: isMobile ? '1rem' : '1.2rem',
+                  padding: isMobile ? '8px 0' : '12px 0',
+                }}
               >
                 Buscar Resoluciones
               </Button>
@@ -52,17 +66,18 @@ const HomeContainer = () => {
         </Card>
       </Grid>
 
+      {/* Card 2: Cargar Archivos */}
       <Grid item xs={12} sm={6} md={4}>
         <Card>
           <CardMedia
             component="img"
-            height="440"
-            image={flecha} // Reemplaza con la URL de tu imagen
+            height={isMobile ? '300' : '440'}
+            image={flecha}
             alt="Cargar Archivos"
           />
           <CardContent>
-            <Typography variant="h5" component="div">
-              {/* Cargar Resoluciones */}
+            <Typography variant={isMobile ? 'h6' : 'h5'}>
+              Cargar Resoluciones
             </Typography>
           </CardContent>
           <Link to="/cargas">
@@ -71,8 +86,15 @@ const HomeContainer = () => {
                 variant="contained"
                 color="primary"
                 fullWidth
-                startIcon={<UploadFileIcon sx={{ fontSize: '3rem' }} />}
-                sx={{ fontSize: '1.2rem', padding: '12px 0' }}
+                startIcon={
+                  <UploadFileIcon
+                    sx={{ fontSize: isMobile ? '2rem' : '3rem' }}
+                  />
+                }
+                sx={{
+                  fontSize: isMobile ? '1rem' : '1.2rem',
+                  padding: isMobile ? '8px 0' : '12px 0',
+                }}
               >
                 Cargar Resoluciones
               </Button>
