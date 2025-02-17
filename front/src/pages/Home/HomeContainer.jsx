@@ -41,9 +41,7 @@ const HomeContainer = () => {
             alt="Buscar Resoluciones"
           />
           <CardContent>
-            <Typography variant={isMobile ? 'h6' : 'h5'}>
-              Buscar Archivos
-            </Typography>
+            <Typography variant={isMobile ? 'h6' : 'h5'}></Typography>
           </CardContent>
           <Link to="/buscador">
             <CardActions>
@@ -76,9 +74,7 @@ const HomeContainer = () => {
             alt="Cargar Archivos"
           />
           <CardContent>
-            <Typography variant={isMobile ? 'h6' : 'h5'}>
-              Cargar Resoluciones
-            </Typography>
+            <Typography variant={isMobile ? 'h6' : 'h5'}></Typography>
           </CardContent>
           <Link to="/cargas">
             <CardActions>
