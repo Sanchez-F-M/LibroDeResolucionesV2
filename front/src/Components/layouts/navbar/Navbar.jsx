@@ -29,6 +29,7 @@ const Navbar = () => {
       sx={{
         backgroundColor: darkMode ? '#1976d2' : '#34495e',
         width: '100%',
+        height: isMobile ? 90 : 95,
         zIndex: 1000,
         padding: isMobile ? 1 : 2,
       }}
@@ -38,32 +39,34 @@ const Navbar = () => {
           container
           alignItems="center"
           justifyContent="space-between"
-          columns={{ xs: 4, sm: 8, md: 12 }}
+          columns={{ xs: 12, sm: 12, md: 12 }}
         >
-          {/* Logo (oculto en mobile) */}
-          {!isMobile && (
-            <Grid item sm={3} md={2} display="flex" alignItems="center">
-              <Link to="/home">
-                <img
-                  src={Logo}
-                  alt="Logo"
-                  style={{ width: 110, height: 125, marginRight: 8 }}
-                />
-              </Link>
-            </Grid>
-          )}
+          {/* Logo (se muestra en desktop y se reduce en móvil) */}
+          <Grid item xs={3} sm={3} md={2} display="flex" alignItems="center">
+            <Link to="/home">
+              <img
+                src={Logo}
+                alt="Logo"
+                style={{
+                  width: isMobile ? 50 : 80,
+                  height: isMobile ? 52 : 85,
+                  marginRight: 8,
+                }}
+              />
+            </Link>
+          </Grid>
 
-          {/* Título principal (ajustable para mobile y desktop) */}
-          <Grid item xs={4} sm={4} md={6} textAlign="center">
-            <Typography variant={isMobile ? 'h4' : 'h2'}>
+          {/* Título principal (centrado y con tamaño ajustado) */}
+          <Grid item xs={6} sm={4} md={6} textAlign="center">
+            <Typography variant={isMobile ? 'h5' : 'h3'}>
               Libro de Resoluciones
             </Typography>
           </Grid>
 
-          {/* Botón ilustrado de cambio de modo */}
+          {/* Botón de cambio de modo (alineado a la derecha) */}
           <Grid
             item
-            xs={5}
+            xs={3}
             sm={3}
             md={2}
             display="flex"

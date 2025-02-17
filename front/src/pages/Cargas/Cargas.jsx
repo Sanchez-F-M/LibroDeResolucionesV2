@@ -19,6 +19,7 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import zIndex from '@mui/material/styles/zIndex';
 
 const Cargas = () => {
   const [files, setFiles] = useState([]);
@@ -71,14 +72,14 @@ const Cargas = () => {
       container
       justifyContent="center"
       sx={{
-        marginTop: isMobile ? '80px' : '150px',
-        padding: isMobile ? '10px' : '0',
+        marginTop: isMobile ? '80px' : '120px',
+        padding: isMobile ? '10px' : '100',
       }}
     >
       <Grid item xs={12} sm={10} md={8}>
         <Card>
-          <CardContent sx={{ padding: isMobile ? 4 : 12 }}>
-            <Typography variant={isMobile ? 'h5' : 'h4'} align="left">
+          <CardContent sx={{ padding: isMobile ? 4 : 2 }}>
+            <Typography variant={isMobile ? 'h5' : 'h3'} align="center">
               Cargar Archivos
             </Typography>
             <Typography
@@ -95,7 +96,7 @@ const Cargas = () => {
                 fullWidth
                 value={fileId}
                 onChange={e => setFileId(e.target.value)}
-                sx={{ marginTop: 2 }}
+                sx={{ marginTop: 2, marginBottom: 2 }}
               />
               <TextField
                 label="Asunto"
@@ -103,7 +104,7 @@ const Cargas = () => {
                 fullWidth
                 value={asunto}
                 onChange={e => setAsunto(e.target.value)}
-                sx={{ marginTop: 2 }}
+                sx={{ marginTop: 2, marginBottom: 2 }}
               />
               <TextField
                 label="Referencia"
@@ -111,9 +112,9 @@ const Cargas = () => {
                 fullWidth
                 value={referencia}
                 onChange={e => setReferencia(e.target.value)}
-                sx={{ marginTop: 2 }}
+                sx={{ marginTop: 2, marginBottom: 2 }}
               />
-              <Typography variant="h6" sx={{ marginTop: 2 }}>
+              <Typography variant="h6" sx={{ marginTop: 2, marginBottom: 2 }}>
                 Fecha
               </Typography>
               <DatePicker
@@ -121,12 +122,17 @@ const Cargas = () => {
                 onChange={date => setFecha(date)}
                 dateFormat="dd/MM/yyyy"
                 className="form-control"
-                style={{ width: '100%' }}
+                style={{ width: '100%', zIndex: 1000 }}
               />
             </Container>
             <Typography
-              variant="h6"
-              sx={{ marginTop: isMobile ? 5 : 10, marginBottom: 2 }}
+              variant="h5"
+              sx={{
+                marginTop: isMobile ? 27 : 2,
+
+                marginBottom: 5,
+                textAlign: 'center',
+              }}
             >
               Seleccionar Archivos
             </Typography>
@@ -136,7 +142,7 @@ const Cargas = () => {
                 type="file"
                 multiple
                 onChange={handleFileChange}
-                style={{ display: 'none' }}
+                style={{ display: 'none', zIndex: 0 }}
               />
             </Fab>
             <Grid container spacing={2} sx={{ marginTop: 2 }}>
