@@ -33,7 +33,16 @@ const ModificarResolucion = ({ numeroResolucion }) => {
   };
 
   return (
-    <Container maxWidth="md" sx={{ marginTop: '200px' }}>
+    <Container
+      maxWidth="md"
+      sx={{
+        marginTop: '200px',
+        marginBottom: '95px',
+        padding: '0',
+        gap: '50px',
+        textAlign: 'center',
+      }}
+    >
       <Card>
         <CardContent>
           <Typography variant="h4" gutterBottom align="center">

@@ -38,24 +38,24 @@ const Busquedas = () => {
   return (
     <Grid
       container
-      spacing={isMobile ? 2 : 4}
+      spacing={isMobile ? 5 : 4}
       justifyContent="center"
       sx={{
         marginTop: isMobile ? '100px' : '150px',
-        padding: isMobile ? '10px' : '0',
+        padding: isMobile ? '0px' : '0',
       }}
     >
       <Grid item xs={12} sm={10} md={6}>
         <Card>
           <CardContent>
             <Typography
-              variant={isMobile ? 'h5' : 'h4'}
+              variant={isMobile ? 'h4' : 'h4'}
               component="div"
-              sx={{ marginBottom: '20px' }}
+              sx={{ marginBottom: '50px' }}
             >
               Buscar Resolución
             </Typography>
-            <Grid container spacing={1} alignItems="center">
+            <Grid container spacing={5} alignItems="center">
               <Grid item xs={12} sm={8}>
                 <TextField
                   label="Resolución//Asunto//Referencia"
@@ -78,6 +78,7 @@ const Busquedas = () => {
                   color="primary"
                   fullWidth
                   onClick={handleSearch}
+                  marginBottom="20px"
                 >
                   Buscar
                 </Button>
@@ -85,7 +86,7 @@ const Busquedas = () => {
             </Grid>
             <FormControl sx={{ padding: '16px', width: '100%' }}>
               <FormLabel>Buscado por:</FormLabel>
-              <RadioGroup row sx={{ gap: '10px' }}>
+              <RadioGroup row sx={{ gap: '80.5px' }}>
                 <FormControlLabel
                   value="Resolución"
                   control={<Radio />}
