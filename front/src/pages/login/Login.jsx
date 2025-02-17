@@ -53,13 +53,13 @@ const Login = () => {
   return (
     <Container
       maxWidth={isMobile ? 'sm' : 'md'}
-      sx={{ mt: isMobile ? 12 : 18, padding: isMobile ? 6 : 10 }}
+      sx={{ mt: isMobile ? 23 : 18, padding: isMobile ? 4 : 2, mb: 15.6 }}
     >
       <Grid container justifyContent="center">
         <Grid item xs={12} sm={10} md={8}>
-          <Paper elevation={12} sx={{ padding: isMobile ? 3 : 6 }}>
+          <Paper elevation={12} sx={{ padding: isMobile ? 6 : 6 }}>
             <Typography
-              variant={isMobile ? 'h5' : 'h3'}
+              variant={isMobile ? 'h4' : 'h3'}
               align="center"
               gutterBottom
             >
@@ -96,7 +96,7 @@ const Login = () => {
                     variant="contained"
                     color="primary"
                     fullWidth
-                    size={isMobile ? 'medium' : 'large'}
+                    size={isMobile ? 'large' : 'large'}
                   >
                     Iniciar Sesión
                   </Button>
