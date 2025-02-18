@@ -36,7 +36,7 @@ const ModificarResolucion = ({ numeroResolucion }) => {
     <Container
       maxWidth="md"
       sx={{
-        marginTop: '200px',
+        marginTop: '300px',
         marginBottom: '95px',
         padding: '0',
         gap: '50px',
@@ -45,7 +45,12 @@ const ModificarResolucion = ({ numeroResolucion }) => {
     >
       <Card>
         <CardContent>
-          <Typography variant="h4" gutterBottom align="center">
+          <Typography
+            variant="h6"
+            gutterBottom
+            align="left"
+            sx={{ padding: 2 }}
+          >
             Resolución N°: {numeroResolucion}
           </Typography>
           <Grid
@@ -57,7 +62,7 @@ const ModificarResolucion = ({ numeroResolucion }) => {
             <Grid item>
               <TextField
                 fullWidth
-                label="Modificación de Asunto"
+                label="Modificar Asunto"
                 name="input1"
                 value={formData.input1}
                 onChange={handleChange}
@@ -67,7 +72,7 @@ const ModificarResolucion = ({ numeroResolucion }) => {
             <Grid item>
               <TextField
                 fullWidth
-                label="Modificación de Referencia"
+                label="Modificar Referencia"
                 name="input2"
                 value={formData.input2}
                 onChange={handleChange}
