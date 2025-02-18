@@ -57,7 +57,7 @@ const Login = () => {
     >
       <Grid container justifyContent="center">
         <Grid item xs={12} sm={10} md={8}>
-          <Paper elevation={12} sx={{ padding: isMobile ? 6 : 6 }}>
+          <Paper elevation={12} sx={{ padding: isMobile ? 6 : 10.2 }}>
             <Typography
               variant={isMobile ? 'h4' : 'h3'}
               align="center"
