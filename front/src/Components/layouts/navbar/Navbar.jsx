@@ -58,7 +58,7 @@ const Navbar = () => {
 
           {/* Título principal (centrado y con tamaño ajustado) */}
           <Grid item xs={6} sm={4} md={6} textAlign="center">
-            <Typography variant={isMobile ? 'h5' : 'h3'}>
+            <Typography variant={isMobile ? 'h6' : 'h3'}>
               Libro de Resoluciones
             </Typography>
           </Grid>

@@ -23,10 +23,14 @@ const Footer = ({ darkMode }) => {
         boxShadow: '0px -10px 12px -4px rgba(0,0,0,0.3)',
       }}
     >
-      <Typography variant="h6" align="center">
-        © Secretaria Privada - Jefatura de Policía
+      <Typography variant="h6" align="center" sx={{ marginBottom: '20px' }}>
+        Secretaria Privada - Jefatura de Policía
       </Typography>
-      <Button
+      <Typography variant="h8" align="center">
+        Dirección: Calle Italia 2601, San Miguel de Tucumán, Tucumán
+      </Typography>
+
+      {/* <Button
         variant="contained"
         sx={{
           mt: 0,
@@ -41,7 +45,7 @@ const Footer = ({ darkMode }) => {
         onClick={handleClick} // Asignamos la función al evento onClick
       >
         Contactar con soporte
-      </Button>
+      </Button> */}
     </Box>
   );
 };
