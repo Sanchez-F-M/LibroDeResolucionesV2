@@ -4,36 +4,49 @@ import { Box, Typography, Button } from '@mui/material';
 const Footer = ({ darkMode }) => {
   // Función que se ejecuta al hacer clic en el botón
   const handleClick = () => {
-    alert('Llamar a este numero de contacto 3813960936.');
+    alert('Llamar a este número de contacto: 3813960936.');
   };
 
   return (
     <Box
       sx={{
         backgroundColor: darkMode ? '#fff' : '#34495e',
-        color: '#fff',
-        padding: '10px',
+        color: darkMode ? '#34495e' : '#fff',
+        padding: { xs: '20px 10px', sm: '10px' },
         textAlign: 'center',
-        position: 'relative',
         width: '100%',
-        height: '86x',
+        minHeight: { xs: 'auto', sm: '140px' },
+        position: 'relative',
         bottom: 0,
-        marginTop: '20px',
         transition: 'background-color 0.3s ease',
         boxShadow: '0px -10px 12px -4px rgba(0,0,0,0.3)',
       }}
     >
-      <Typography variant="h6" align="center" sx={{ marginBottom: '20px' }}>
+      <Typography
+        variant="h4"
+        align="center"
+        sx={{
+          marginBottom: { xs: '10px', sm: '20px' },
+          fontSize: { xs: '1.5rem', sm: '2rem' },
+        }}
+      >
         Secretaria Privada - Jefatura de Policía
       </Typography>
-      <Typography variant="h8" align="center">
+      <Typography
+        variant="h5"
+        align="center"
+        sx={{
+          fontSize: { xs: '1rem', sm: '1.25rem' },
+        }}
+      >
         Dirección: Calle Italia 2601, San Miguel de Tucumán, Tucumán
       </Typography>
 
-      {/* <Button
+      {/*
+      <Button
         variant="contained"
         sx={{
-          mt: 0,
+          mt: { xs: 2, sm: 0 },
           color: '#fff',
           height: '30px',
           fontFamily: 'Arial, Helvetica, sans-serif',
@@ -42,10 +55,11 @@ const Footer = ({ darkMode }) => {
             backgroundColor: darkMode ? '#1565c0' : '#2c3e50',
           },
         }}
-        onClick={handleClick} // Asignamos la función al evento onClick
+        onClick={handleClick}
       >
         Contactar con soporte
-      </Button> */}
+      </Button>
+      */}
     </Box>
   );
 };
