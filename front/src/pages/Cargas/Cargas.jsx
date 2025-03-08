@@ -17,6 +17,7 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import api from '../../api/api';
 
 const Cargas = () => {
   const [files, setFiles] = useState([]);
@@ -37,14 +38,14 @@ const Cargas = () => {
     fetchLastResolutionNumber();
   }, []);
 
-  const handleFileChange = event => {
+  const handleFileChange = (event) => {
     const selectedFiles = Array.from(event.target.files);
-    setFiles(prevFiles => [...prevFiles, ...selectedFiles]);
+    setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
 
     // Crear previsualizaciones para los nuevos archivos
-    selectedFiles.forEach(file => {
+    selectedFiles.forEach((file) => {
       const fileUrl = URL.createObjectURL(file);
-      setPreviews(prevPreviews => [
+      setPreviews((prevPreviews) => [
         ...prevPreviews,
         {
           url: fileUrl,
@@ -55,9 +56,9 @@ const Cargas = () => {
     });
   };
 
-  const handleDeleteFile = index => {
-    setFiles(prevFiles => prevFiles.filter((_, i) => i !== index));
-    setPreviews(prevPreviews => {
+  const handleDeleteFile = (index) => {
+    setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+    setPreviews((prevPreviews) => {
       // Liberar URL de objeto para evitar pérdidas de memoria
       URL.revokeObjectURL(prevPreviews[index].url);
       return prevPreviews.filter((_, i) => i !== index);
@@ -66,14 +67,13 @@ const Cargas = () => {
 
   const handleUpload = async () => {
     if (files.length === 0 || !fileId || !asunto || !referencia || !fecha) {
-      alert(
-        'Por favor complete todos los campos y seleccione al menos un archivo.'
-      );
+      alert('Por favor complete todos los campos y seleccione al menos un archivo.');
       return;
     }
 
     const formData = new FormData();
-    formData.append('files', files);
+    // Agregar cada archivo individualmente
+    files.forEach((file) => formData.append('files', file));
     formData.append('fileId', fileId);
     formData.append('asunto', asunto);
     formData.append('referencia', referencia);
@@ -81,12 +81,12 @@ const Cargas = () => {
     formData.append('fecha', fecha.toISOString());
 
     try {
-      const response = await fetch('/api/cargar-resolucion', {
-        method: 'POST',
-        body: formData,
+      // Realizamos la petición POST usando Axios
+      const response = await api.post('/cargar-resolucion', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
 
-      if (response.ok) {
+      if (response.status === 200) {
         // Limpiar el formulario
         setFiles([]);
         setFileId('');
@@ -113,7 +113,7 @@ const Cargas = () => {
       );
     } else {
       return (
-        <Box className="flex items-center justify-center h-48 bg-gray-100 ">
+        <Box className="flex items-center justify-center h-48 bg-gray-100">
           <Typography variant="body1">{preview.name}</Typography>
         </Box>
       );
@@ -153,7 +153,7 @@ const Cargas = () => {
                 variant="outlined"
                 fullWidth
                 value={fileId}
-                onChange={e => setFileId(e.target.value)}
+                onChange={(e) => setFileId(e.target.value)}
                 style={{ marginTop: '20px' }}
                 className="mb-5"
               />
@@ -162,7 +162,7 @@ const Cargas = () => {
                 variant="outlined"
                 fullWidth
                 value={asunto}
-                onChange={e => setAsunto(e.target.value)}
+                onChange={(e) => setAsunto(e.target.value)}
                 style={{ marginTop: '20px' }}
                 className="mb-5"
               />
@@ -171,7 +171,7 @@ const Cargas = () => {
                 variant="outlined"
                 fullWidth
                 value={referencia}
-                onChange={e => setReferencia(e.target.value)}
+                onChange={(e) => setReferencia(e.target.value)}
                 style={{ marginTop: '20px' }}
                 className="mb-5"
               />
@@ -180,7 +180,7 @@ const Cargas = () => {
               </Typography>
               <DatePicker
                 selected={fecha}
-                onChange={date => setFecha(date)}
+                onChange={(date) => setFecha(date)}
                 dateFormat="dd/MM/yyyy"
                 className="form-control"
                 style={{ marginTop: '20px', width: '100%', height: '400px' }}
@@ -239,7 +239,7 @@ const Cargas = () => {
               color="primary"
               fullWidth
               onClick={handleUpload}
-              style={{ marginTop: '50px' }}
+              style={{ marginTop: '80px', marginBottom: '40px' }}
             >
               Guardar Resolución ({files.length})
             </Button>

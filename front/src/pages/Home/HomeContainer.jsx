@@ -12,7 +12,7 @@ const HomeContainer = () => {
     <Stack
       spacing={3}
       sx={{
-        marginTop: '300px',
+        marginTop: '340px',
         marginBottom: '100px',
         padding: isMobile ? '10px' : '30px 400px',
         width: '100%',
@@ -40,7 +40,7 @@ const HomeContainer = () => {
       </Link>
       <Link
         to="/cargas"
-        style={{ width: '100%', marginTop: '150px', marginBottom: '200x' }}
+        style={{ width: '100%', marginTop: '150px', marginBottom: '210px' }}
       >
         <Button
           variant="contained"
