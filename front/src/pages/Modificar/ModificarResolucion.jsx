@@ -1,8 +1,7 @@
-// Ejemplo de modificación en ModificarResolucion.jsx
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, Typography, TextField, Button, Grid, Container } from '@mui/material';
-import api from '../../api/api'; // Ajusta la ruta de importación
+import api from '../../api/api'; // Importamos la instancia de Axios
 
 const ModificarResolucion = () => {
   const { id } = useParams();
@@ -13,18 +12,23 @@ const ModificarResolucion = () => {
   });
 
   useEffect(() => {
-    // Opcional: cargar datos actuales de la resolución para mostrarlos
+    // Cargar datos actuales de la resolución para mostrarlos
     const fetchData = async () => {
-      const response = await api.get(`/book/${id}`);
-      const resolution = response.data[0];
-      setFormData({ Asunto: resolution.Asunto, Referencia: resolution.Referencia });
+      try {
+        const response = await api.get(`/book/${id}`);
+        const resolution = response.data[0];
+        setFormData({ Asunto: resolution.Asunto, Referencia: resolution.Referencia });
+      } catch (error) {
+        console.error('Error al cargar la resolución:', error);
+        alert('Error al obtener los datos de la resolución');
+      }
     };
     fetchData();
   }, [id]);
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async () => {
@@ -37,6 +41,7 @@ const ModificarResolucion = () => {
       alert('Resolución actualizada exitosamente');
       navigate('/buscador');
     } catch (err) {
+      console.error('Error al actualizar la resolución:', err);
       alert('Error al actualizar la resolución');
     }
   };

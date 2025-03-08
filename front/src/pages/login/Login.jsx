@@ -1,4 +1,3 @@
-// Login.jsx
 import React, { useState } from 'react';
 import {
   Container,
@@ -31,25 +30,27 @@ const Login = () => {
     }
 
     try {
+      // Se envían las credenciales al endpoint /user/login usando la instancia de Axios
       const response = await api.post('/user/login', {
         Nombre: username,
-        Contrasena: password
+        Contrasena: password,
       });
-      // Guardamos el token en localStorage
+      // Guardamos el token en localStorage para que el interceptor en api.js lo incluya en las siguientes peticiones
       localStorage.setItem('token', response.data.token);
       setError('');
-      // Redirigir a la página principal o a la ruta protegida
+      // Redirigimos al usuario a la ruta protegida
       navigate('/home');
     } catch (err) {
+      console.error('Error de autenticación:', err);
       setError(err.response?.data.error || 'Error en el inicio de sesión');
     }
   };
 
   return (
-    <Container maxWidth={isMobile ? 'sm' : 'lg'} sx={{ mt: isMobile ? 23 : 10, padding: isMobile ? 4 : 15.5, mb: 0 }}>
+    <Container maxWidth={isMobile ? 'sm' : 'lg'} sx={{ mt: isMobile ? 23 : 10, p: isMobile ? 4 : 15.5, mb: 6 }}>
       <Grid container justifyContent="center">
         <Grid item xs={12} sm={10} md={8}>
-          <Paper elevation={12} sx={{ padding: isMobile ? 6 : 15.9 }}>
+          <Paper elevation={12} sx={{ p: isMobile ? 6 : 15.9 }}>
             <Typography variant={isMobile ? 'h4' : 'h2'} align="center" gutterBottom>
               Iniciar Sesión
             </Typography>
@@ -61,7 +62,7 @@ const Login = () => {
                     label="Nombre de usuario"
                     variant="outlined"
                     value={username}
-                    onChange={e => setUsername(e.target.value)}
+                    onChange={(e) => setUsername(e.target.value)}
                     error={!!error}
                     helperText={error}
                   />
@@ -73,7 +74,7 @@ const Login = () => {
                     type="password"
                     variant="outlined"
                     value={password}
-                    onChange={e => setPassword(e.target.value)}
+                    onChange={(e) => setPassword(e.target.value)}
                     error={!!error}
                     helperText={error}
                   />
@@ -93,5 +94,3 @@ const Login = () => {
 };
 
 export default Login;
-
-// Con esta modificación, el componente envía las credenciales al back end, obtiene el token y lo guarda en localStorage. Las siguientes peticiones usarán el token gracias al interceptor definido en api.js. Ahora, el usuario podrá iniciar sesión y acceder a las rutas protegidas de la aplicación.
