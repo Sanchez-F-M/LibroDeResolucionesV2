@@ -12,9 +12,9 @@ const HomeContainer = () => {
     <Stack
       spacing={3}
       sx={{
-        marginTop: '300px',
+        marginTop: '340px',
         marginBottom: '100px',
-        padding: isMobile ? '10px' : '10px 400px',
+        padding: isMobile ? '10px' : '30px 400px',
         width: '100%',
         alignItems: 'center',
       }}
@@ -27,11 +27,11 @@ const HomeContainer = () => {
           color="primary"
           fullWidth
           startIcon={
-            <SearchIcon sx={{ fontSize: isMobile ? '2rem' : '3rem' }} />
+            <SearchIcon sx={{ fontSize: isMobile ? '2rem' : '4rem' }} />
           }
           sx={{
-            fontSize: isMobile ? '1rem' : '1.2rem',
-            padding: isMobile ? '8px 0' : '12px 0',
+            fontSize: isMobile ? '1rem' : '1.5rem',
+            padding: isMobile ? '8px 0' : '20px 0',
           }}
         >
           {' '}
@@ -40,18 +40,18 @@ const HomeContainer = () => {
       </Link>
       <Link
         to="/cargas"
-        style={{ width: '100%', marginTop: '100px', marginBottom: '132px' }}
+        style={{ width: '100%', marginTop: '150px', marginBottom: '210px' }}
       >
         <Button
           variant="contained"
           color="primary"
           fullWidth
           startIcon={
-            <UploadFileIcon sx={{ fontSize: isMobile ? '2rem' : '3rem' }} />
+            <UploadFileIcon sx={{ fontSize: isMobile ? '2rem' : '5rem' }} />
           }
           sx={{
-            fontSize: isMobile ? '1rem' : '1.2rem',
-            padding: isMobile ? '8px 0' : '12px 0',
+            fontSize: isMobile ? '1rem' : '1.5rem',
+            padding: isMobile ? '8px 0' : '20px 0',
           }}
         >
           Cargar Resoluciones

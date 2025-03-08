@@ -1,70 +1,65 @@
-import React, { useState } from 'react';
-import {
-  Card,
-  CardContent,
-  Typography,
-  Button,
-  TextField,
-  Grid,
-  Container,
-} from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { Card, CardContent, Typography, TextField, Button, Grid, Container } from '@mui/material';
+import api from '../../api/api'; // Importamos la instancia de Axios
 
-const ModificarResolucion = ({ numeroResolucion }) => {
+const ModificarResolucion = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    input1: '',
-    input2: '',
+    Asunto: '',
+    Referencia: ''
   });
 
-  const handleChange = e => {
+  useEffect(() => {
+    // Cargar datos actuales de la resolución para mostrarlos
+    const fetchData = async () => {
+      try {
+        const response = await api.get(`/book/${id}`);
+        const resolution = response.data[0];
+        setFormData({ Asunto: resolution.Asunto, Referencia: resolution.Referencia });
+      } catch (error) {
+        console.error('Error al cargar la resolución:', error);
+        alert('Error al obtener los datos de la resolución');
+      }
+    };
+    fetchData();
+  }, [id]);
+
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prevState => ({
-      ...prevState,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = () => {
-    // Aquí iría la lógica para guardar los cambios
-    console.log('Datos modificados:', formData);
-    navigate('/buscador');
+  const handleSubmit = async () => {
+    try {
+      await api.put(`/book/${id}`, {
+        Asunto: formData.Asunto,
+        Referencia: formData.Referencia,
+        ImagePaths: [] // Si necesitas actualizar imágenes, envía sus rutas
+      });
+      alert('Resolución actualizada exitosamente');
+      navigate('/buscador');
+    } catch (err) {
+      console.error('Error al actualizar la resolución:', err);
+      alert('Error al actualizar la resolución');
+    }
   };
 
   return (
-    <Container
-      maxWidth="md"
-      sx={{
-        marginTop: '300px',
-        marginBottom: '95px',
-        padding: '0',
-        gap: '50px',
-        textAlign: 'center',
-      }}
-    >
+    <Container maxWidth="md" sx={{ marginTop: '300px', marginBottom: '95px', textAlign: 'center' }}>
       <Card>
         <CardContent>
-          <Typography
-            variant="h6"
-            gutterBottom
-            align="left"
-            sx={{ padding: 2 }}
-          >
-            Resolución N°: {numeroResolucion}
+          <Typography variant="h6" align="left" sx={{ padding: 2 }}>
+            Resolución N°: {id}
           </Typography>
-          <Grid
-            container
-            spacing={3}
-            direction="column"
-            sx={{ padding: 2, gap: 2 }}
-          >
+          <Grid container spacing={3} direction="column" sx={{ padding: 2 }}>
             <Grid item>
               <TextField
                 fullWidth
                 label="Modificar Asunto"
-                name="input1"
-                value={formData.input1}
+                name="Asunto"
+                value={formData.Asunto}
                 onChange={handleChange}
                 variant="outlined"
               />
@@ -73,29 +68,16 @@ const ModificarResolucion = ({ numeroResolucion }) => {
               <TextField
                 fullWidth
                 label="Modificar Referencia"
-                name="input2"
-                value={formData.input2}
+                name="Referencia"
+                value={formData.Referencia}
                 onChange={handleChange}
                 variant="outlined"
               />
             </Grid>
-
             <Grid item>
-              <Button
-                variant="contained"
-                color="primary"
-                fullWidth
-                onClick={handleSubmit}
-              >
+              <Button variant="contained" color="primary" fullWidth onClick={handleSubmit}>
                 Guardar Cambios
               </Button>
-            </Grid>
-            <Grid item>
-              <Link to="/buscador">
-                <Button variant="contained" color="primary" fullWidth>
-                  Volver al Buscador
-                </Button>
-              </Link>
             </Grid>
           </Grid>
         </CardContent>
