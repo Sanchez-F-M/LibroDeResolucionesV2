@@ -33,7 +33,7 @@ export const updateBook = async (req, res) => {
   const { Asunto, Referencia, ImagePaths } = req.body
 
   if (!id) {
-    return res.status(400).json({ error: 'ID de resolución requerido' })
+    return res.status(400).json({ error: ' ID de resolución requerido' })
   }
   if (!Asunto || !Referencia || !Array.isArray(ImagePaths)) {
     return res.status(400).json({ error: 'Datos incompletos o inválidos' })
