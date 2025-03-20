@@ -1,42 +1,29 @@
 import db from '../../db/connection.js'
 
 export const getByIdBook = async (req, res) => {
+  const { id } = req.params
+
   try {
-    const { id } = req.params
+    const [resolutions] = await db.query('SELECT * FROM resolution WHERE NumdeResolucion = ?', [id])
 
-    db.query(
-      'SELECT * FROM resolution WHERE NumdeResolucion = ?',
-      [id],
-      (err, resolutions) => {
-        if (err) {
-          return res.status(400).json({ error: err.message })
-        }
+    if (resolutions.length === 0) {
+      return res.status(404).json({ error: 'Resolución no encontrada' })
+    }
 
-        db.query(
-          'SELECT * FROM images WHERE NumdeResolucion = ?',
-          [id],
-          (err, images) => {
-            if (err) {
-              return res.status(400).json({ error: err.message })
-            }
+    const [images] = await db.query('SELECT * FROM images WHERE NumdeResolucion = ?', [id])
 
-            const result = resolutions.map(resolution => ({
-              numderesoluciones: resolution.NumdeResolucion,
-              asunto: resolution.Asunto,
-              referencia: resolution.Referencia,
-              images: images
-                .filter(
-                  image => image.NumdeResolucion === resolution.NumdeResolucion
-                )
-                .map(image => image.ImagePath)
-            }))
+    const result = resolutions.map(resolution => ({
+      numderesoluciones: resolution.NumdeResolucion,
+      asunto: resolution.Asunto,
+      referencia: resolution.Referencia,
+      images: images
+        .filter(image => image.NumdeResolucion === resolution.NumdeResolucion)
+        .map(image => image.ImagePath)
+    }))
 
-            res.status(200).json(result)
-          }
-        )
-      }
-    )
+    res.status(200).json(result)
   } catch (error) {
+    console.error('❌ Error en getByIdBook:', error)
     res.status(500).json({ error: 'Error interno del servidor' })
   }
 }
@@ -52,55 +39,35 @@ export const updateBook = async (req, res) => {
     return res.status(400).json({ error: 'Datos incompletos o inválidos' })
   }
 
-  db.beginTransaction(err => {
-    if (err) {
-      return res.status(500).json({ error: 'Error al iniciar la transacción' })
-    }
+  let connection
+
+  try {
+    connection = await db.getConnection()
+    await connection.beginTransaction()
 
     const resolutionQuery =
       'UPDATE resolution SET Asunto = ?, Referencia = ? WHERE NumdeResolucion = ?'
-    db.query(resolutionQuery, [Asunto, Referencia, id], err => {
-      if (err) {
-        return db.rollback(() => {
-          res.status(500).json({ error: 'Error al actualizar la resolución' })
-        })
-      }
+    await connection.query(resolutionQuery, [Asunto, Referencia, id])
 
-      const imagesData = ImagePaths.map(path => [id, path])
-      const imagesQuery =
-        'INSERT INTO images (NumdeResolucion, ImagePath) VALUES ?'
+    await connection.query('DELETE FROM images WHERE NumdeResolucion = ?', [id])
 
-      db.query('DELETE FROM images WHERE NumdeResolucion = ?', [id], err => {
-        if (err) {
-          return db.rollback(() => {
-            res.status(500).json({ error: 'Error al eliminar las imágenes' })
-          })
-        }
+    const imagesData = ImagePaths.map(path => [id, path])
+    const imagesQuery =
+      'INSERT INTO images (NumdeResolucion, ImagePath) VALUES ?'
+    await connection.query(imagesQuery, [imagesData])
 
-        db.query(imagesQuery, [imagesData], err => {
-          if (err) {
-            return db.rollback(() => {
-              res.status(500).json({ error: 'Error al insertar las imágenes' })
-            })
-          }
+    await connection.commit()
 
-          db.commit(err => {
-            if (err) {
-              return db.rollback(() => {
-                res
-                  .status(500)
-                  .json({ error: 'Error al confirmar la transacción' })
-              })
-            }
-
-            res.status(200).json({
-              message: 'Resolución y sus imágenes actualizadas exitosamente'
-            })
-          })
-        })
-      })
+    res.status(200).json({
+      message: 'Resolución y sus imágenes actualizadas exitosamente'
     })
-  })
+  } catch (error) {
+    if (connection) await connection.rollback()
+    console.error('❌ Error en updateBook:', error)
+    res.status(500).json({ error: 'Error en la base de datos: ' + error.message })
+  } finally {
+    if (connection) connection.release()
+  }
 }
 
 export const deleteBook = async (req, res) => {
@@ -157,30 +124,24 @@ export const createBook = async (req, res) => {
   let connection
 
   try {
-    // Obtener una conexión del pool
     connection = await db.getConnection()
 
-    // Iniciar la transacción
     await connection.beginTransaction()
 
-    // Insertar la resolución
     const resolutionQuery = 'INSERT INTO resolution (NumdeResolucion, Asunto, Referencia) VALUES (?, ?, ?)'
     await connection.query(resolutionQuery, [NumdeResolucion, Asunto, Referencia])
 
-    // Insertar imágenes asociadas
     const imagesData = ImagePaths.map(path => [NumdeResolucion, path])
     const imagesQuery = 'INSERT INTO images (NumdeResolucion, ImagePath) VALUES ?'
     await connection.query(imagesQuery, [imagesData])
 
-    // Confirmar la transacción
     await connection.commit()
 
     res.status(201).json({ message: 'Resolución y sus imágenes creadas exitosamente' })
   } catch (error) {
-    // Si ocurre un error, revertir la transacción
     if (connection) await connection.rollback()
     res.status(500).json({ error: 'Error en la base de datos: ' + error.message })
   } finally {
-    if (connection) connection.release() // Liberar la conexión de vuelta al pool
+    if (connection) connection.release()
   }
 }
