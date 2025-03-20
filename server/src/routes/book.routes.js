@@ -1,20 +1,20 @@
-import express from 'express';
+import express from 'express'
 import {
   createBook,
   getByIdBook,
   updateBook,
-  deleteBook,
-} from '../controllers/book.controller.js';
-import { verifyToken } from '../../config/verifyToken.js';
+  deleteBook
+} from '../controllers/book.controller.js'
+import { verifyToken } from '../../config/verifyToken.js'
 
-const bookRouter = express.Router();
+const bookRouter = express.Router()
 
-bookRouter.get('/book/:id', verifyToken, getByIdBook);
+bookRouter.get('/:id', getByIdBook)
 
-bookRouter.post('/book', verifyToken, createBook);
+bookRouter.post('/', createBook)
 
-bookRouter.put('/book/:id', verifyToken, updateBook);
+bookRouter.put('/:id', verifyToken, updateBook)
 
-bookRouter.delete('/book/:id', deleteBook);
+bookRouter.delete('/:id', deleteBook)
 
-export default bookRouter;
+export default bookRouter

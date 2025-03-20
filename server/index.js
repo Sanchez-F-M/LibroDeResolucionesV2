@@ -13,10 +13,10 @@ app.use(bodyParser.json())
 
 const PORT = 3000
 
-app.use('/', routes)
+app.use('/api', routes)
 
 app.listen(PORT, () => {
   console.log(`Server running in http://localhost:${PORT}`)
   console.log('Defined routes:')
-  console.log(`[GET] http://localhost:${PORT}/`)
+  console.log(`[GET] http://localhost:${PORT}`)
 })

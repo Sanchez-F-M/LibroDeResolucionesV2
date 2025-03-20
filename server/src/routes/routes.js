@@ -5,8 +5,12 @@ import searchRouter from './search.routes.js'
 
 const router = express.Router()
 
-router.use(userRouter)
-router.use(bookRouter)
-router.use(searchRouter)
+router.use('/user', userRouter)
+router.use('/books', bookRouter)
+router.use('/search', searchRouter)
+
+router.get('/', (req, res) => {
+  res.send('API is running....')
+})
 
 export default router
