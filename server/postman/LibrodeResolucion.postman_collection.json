@@ -14,7 +14,7 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": "http://localhost:3525/user"
+						"url": "http://localhost:3000/api/user"
 					},
 					"response": []
 				},
@@ -25,14 +25,14 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"Nombre\": \"Ramon\",\n    \"Contrasena\": \"matias1234\"\n}",
+							"raw": "{\n    \"Nombre\": \"Juan\",\n    \"Contrasena\": \"matias1234\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
 								}
 							}
 						},
-						"url": "http://localhost:3000/user/register"
+						"url": "http://localhost:3000/api/user/register"
 					},
 					"response": []
 				},
@@ -98,18 +98,24 @@
 				{
 					"name": "createBook",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": ""
+							}
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"NumdeResolucion\": 3,\n  \"Asunto\": \"Resolución sobre crimen ambiente\",\n  \"Referencia\": \"Matias Sanchez\",\n  \"ImagePaths\": [\"imagen1.jpg\", \"imagen2.jpg\", \"imagen3.jpg\"]\n}\n",
+							"raw": "{\n  \"NumdeResolucion\": 4,\n  \"Asunto\": \"Resolución sobre crimen ambiente\",\n  \"Referencia\": \"Matias Sanchez\",\n  \"ImagePaths\": [\"imagen1.jpg\", \"imagen2.jpg\", \"imagen3.jpg\"]\n}\n",
 							"options": {
 								"raw": {
 									"language": "json"
 								}
 							}
 						},
-						"url": "http://localhost:3000/book"
+						"url": "http://localhost:3525/book"
 					},
 					"response": []
 				},
@@ -137,7 +143,7 @@
 						"auth": {
 							"type": "bearer",
 							"bearer": {
-								"token": "{{token}}"
+								"token": ""
 							}
 						},
 						"method": "GET",
@@ -150,7 +156,7 @@
 								"disabled": true
 							}
 						],
-						"url": "http://localhost:3000/book/3"
+						"url": "http://localhost:3000/api/books/4"
 					},
 					"response": []
 				}
@@ -162,8 +168,18 @@
 				{
 					"name": "Search",
 					"request": {
-						"method": "GET",
-						"header": []
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"criterion\": \"Asunto\",\n  \"value\": \"Resolución\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/search"
 					},
 					"response": []
 				}
