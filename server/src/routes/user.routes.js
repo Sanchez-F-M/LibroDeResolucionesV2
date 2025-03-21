@@ -9,6 +9,5 @@ userRouter.post('/login', loginUser)
 // Opcionales
 userRouter.get('/profile', getAllUsers)
 userRouter.get('/:id', getUserById)
-userRouter.delete('/:id', deleteUser)
 
 export default userRouter
