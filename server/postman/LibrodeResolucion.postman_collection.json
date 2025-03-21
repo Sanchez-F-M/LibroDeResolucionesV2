@@ -14,7 +14,7 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": "http://localhost:3000/api/user"
+						"url": "http://localhost:3000/api/user/profile"
 					},
 					"response": []
 				},
@@ -25,7 +25,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"Nombre\": \"Juan\",\n    \"Contrasena\": \"matias1234\"\n}",
+							"raw": "{\n    \"Nombre\": \"jUAN PRAZ\",\n    \"Contrasena\": \"matias1234\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -70,14 +70,14 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"Nombre\": \"Ramon\",\n    \"Contrasena\": \"matias1234\"\n}",
+							"raw": "{\n    \"Nombre\": \"jUAN PRAZ\",\n    \"Contrasena\": \"matias1234\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
 								}
 							}
 						},
-						"url": "http://localhost:3000/user/login"
+						"url": "http://localhost:3000/api/user/login"
 					},
 					"response": []
 				}
@@ -91,7 +91,7 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": "http://localhost:3525/book"
+						"url": "http://localhost:3000/api/book"
 					},
 					"response": []
 				},
@@ -108,23 +108,38 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"NumdeResolucion\": 4,\n  \"Asunto\": \"Resolución sobre crimen ambiente\",\n  \"Referencia\": \"Matias Sanchez\",\n  \"ImagePaths\": [\"imagen1.jpg\", \"imagen2.jpg\", \"imagen3.jpg\"]\n}\n",
+							"raw": "{\n  \"NumdeResolucion\": 7,\n  \"Asunto\": \"Resolución sobre crimen ambiente\",\n  \"Referencia\": \"Flavio Sanchez\",\n  \"ImagePaths\": [\"imagen1.jpg\", \"imagen2.jpg\", \"imagen3.jpg\"]\n}\n",
 							"options": {
 								"raw": {
 									"language": "json"
 								}
 							}
 						},
-						"url": "http://localhost:3525/book"
+						"url": "http://localhost:3000/api/books"
 					},
 					"response": []
 				},
 				{
 					"name": "updateBook",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJOb21icmUiOiJqVUFOIFBSQVoiLCJpYXQiOjE3NDI1MTEzNDMsImV4cCI6MTc0MjU5Nzc0M30.12S1liQzT9yvzU-lBTxRj25tq8vdpHgEWLcxs7O9Ikg"
+							}
+						},
 						"method": "PUT",
 						"header": [],
-						"url": "http://localhost:3525/book"
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"Asunto\": \"Resolución sobre crimen agravado\",\n    \"Referencia\": \"Juan Sanchez\",\n    \"ImagePaths\": [\n        \"imagen1.jpg\",\n        \"imagen2.jpg\",\n        \"imagen3.jpg\"\n    ]\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/api/books/4"
 					},
 					"response": []
 				},
@@ -172,14 +187,14 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"criterion\": \"Asunto\",\n  \"value\": \"Resolución\"\n}",
+							"raw": "{\n  \"criterion\": \"Referencia\",\n  \"value\": \"j\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
 								}
 							}
 						},
-						"url": "http://localhost:3000/search"
+						"url": "http://localhost:3000/api/search"
 					},
 					"response": []
 				}
