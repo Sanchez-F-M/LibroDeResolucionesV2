@@ -9,8 +9,4 @@ router.use('/user', userRouter)
 router.use('/books', bookRouter)
 router.use('/search', searchRouter)
 
-router.get('/', (req, res) => {
-  res.send('API is running....')
-})
-
 export default router

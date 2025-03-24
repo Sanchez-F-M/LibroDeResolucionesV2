@@ -13,7 +13,6 @@ export const createUser = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(Contrasena, 10)
 
-    // Usamos `await db.query()` en lugar de `db.query(..., callback)`
     await db.query(
       `INSERT INTO users (ID, Nombre, Contrasena) VALUES (NULL, ?, ?)`,
       [Nombre, hashedPassword]
@@ -37,7 +36,6 @@ export const loginUser = async (req, res) => {
       return res.status(400).json({ error: 'Nombre y Contrasena son requeridos' })
     }
 
-    // Buscamos el usuario
     const [rows] = await db.query('SELECT * FROM users WHERE Nombre = ?', [Nombre])
 
     if (rows.length === 0) {
@@ -78,6 +76,36 @@ export const getAllUsers = async (req, res) => {
     res.status(200).json(rows)
   } catch (err) {
     console.error('❌ Error en getAllUsers:', err)
+    res.status(500).json({ error: 'Error interno del servidor' })
+  }
+}
+
+export const getUserById = async (req, res) => {
+  try {
+    const { id } = req.params
+
+    const [rows] = await db.query('SELECT * FROM users WHERE ID = ?', [id])
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'Usuario no encontrado' })
+    }
+
+    res.status(200).json(rows[0])
+  } catch (err) {
+    console.error('❌ Error en getUserById:', err)
+    res.status(500).json({ error: 'Error interno del servidor' })
+  }
+}
+
+export const deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params
+
+    await db.query('DELETE FROM users WHERE ID = ?', [id])
+
+    res.status(200).json({ message: 'Usuario eliminado correctamente' })
+  } catch (err) {
+    console.error('❌ Error en deleteUser:', err)
     res.status(500).json({ error: 'Error interno del servidor' })
   }
 }
