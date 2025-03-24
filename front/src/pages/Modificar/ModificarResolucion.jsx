@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, Typography, TextField, Button, Grid, Container } from '@mui/material';
-import api from '../../api/api'; // Importamos la instancia de Axios
+import api from '../../api/api';
 
 const ModificarResolucion = () => {
   const { id } = useParams();
@@ -47,13 +47,29 @@ const ModificarResolucion = () => {
   };
 
   return (
-    <Container maxWidth="md" sx={{ marginTop: '300px', marginBottom: '95px', textAlign: 'center' }}>
+    <Container 
+      maxWidth="xl" 
+      sx={{ 
+        mt: { xs: 4, md: '100px' }, 
+        mb: { xs: 4, md: '95px' }, 
+        textAlign: 'center' 
+      }}
+    >
       <Card>
         <CardContent>
-          <Typography variant="h6" align="left" sx={{ padding: 2 }}>
+          <Typography 
+            variant="h4" 
+            align="left" 
+            sx={{ p: { xs: 2, md: 10 }, mt: { xs: 6, md: 10 } }}
+          >
             Resolución N°: {id}
           </Typography>
-          <Grid container spacing={3} direction="column" sx={{ padding: 2 }}>
+          <Grid 
+            container 
+            spacing={3} 
+            direction="column" 
+            sx={{ p: { xs: 2, md: 5 } }}
+          >
             <Grid item>
               <TextField
                 fullWidth
@@ -75,7 +91,13 @@ const ModificarResolucion = () => {
               />
             </Grid>
             <Grid item>
-              <Button variant="contained" color="primary" fullWidth onClick={handleSubmit}>
+              <Button 
+                variant="contained" 
+                color="primary" 
+                fullWidth 
+                sx={{ mt: { xs: 2, md: 5 }, mb: { xs: 2, md: 16.2 } }} 
+                onClick={handleSubmit}
+              >
                 Guardar Cambios
               </Button>
             </Grid>

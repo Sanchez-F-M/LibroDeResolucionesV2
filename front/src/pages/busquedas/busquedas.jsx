@@ -23,9 +23,10 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  Box,
   CardMedia,
+  useMediaQuery,
 } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import api from '../../api/api';
 import { useNavigate } from 'react-router-dom';
 
@@ -36,10 +37,12 @@ const Busquedas = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedResolution, setSelectedResolution] = useState(null);
   const navigate = useNavigate();
+  
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const handleSearch = async () => {
     try {
-      // Realiza la petición POST al endpoint /search del back end
       const response = await api.post('/search', {
         criterion,
         value: searchValue,
@@ -51,11 +54,9 @@ const Busquedas = () => {
     }
   };
 
-  // Cuando se hace click en una fila, se consulta la información completa de la resolución
   const handleRowClick = async (id) => {
     try {
       const response = await api.get(`/book/${id}`);
-      // Se asume que la respuesta es un arreglo con la resolución en la primera posición
       const resolution = response.data[0];
       setSelectedResolution(resolution);
       setOpenDialog(true);
@@ -65,21 +66,22 @@ const Busquedas = () => {
     }
   };
 
-  // Cierra el modal
   const handleCloseDialog = () => {
     setOpenDialog(false);
     setSelectedResolution(null);
   };
 
   return (
-    <Container maxWidth="xl" sx={{ mt: 25, mb: 35.8 }}>
+    <Container maxWidth="xl" sx={{ mt: { xs: 10, md: 25 }, mb: { xs: 5, md: 35.8 } }}>
       <Card>
         <CardContent>
-          <Typography variant="h3">Buscar Resolución</Typography>
+          <Typography variant="h3" sx={{ fontSize: { xs: '1.8rem', md: '2.125rem' } }}>
+            Buscar Resolución
+          </Typography>
 
-          {/* Input y botón de búsqueda */}
+          {/* Campo de búsqueda y botón */}
           <Grid container spacing={5} alignItems="center" sx={{ my: 6 }}>
-            <Grid item xs={9}>
+            <Grid item xs={12} sm={9}>
               <TextField
                 fullWidth
                 value={searchValue}
@@ -87,24 +89,19 @@ const Busquedas = () => {
                 label="Ingrese el criterio de búsqueda"
               />
             </Grid>
-            <Grid container spacing={1} item xs={3}>
+            <Grid item xs={12} sm={3}>
               <Button variant="contained" color="primary" fullWidth onClick={handleSearch}>
                 Buscar
               </Button>
             </Grid>
           </Grid>
 
-          {/* Selección del criterio de búsqueda */}
-          <Grid
-            container
-            spacing={2}
-            alignItems="center"
-            sx={{ my: 10, mx: 2, textAlign: 'left', fontSize: '1.2rem' }}
-          >
+          {/* Criterios de búsqueda */}
+          <Grid container spacing={2} alignItems="center" sx={{ my: 10, mx: 2, textAlign: 'left', fontSize: '1.2rem' }}>
             <Grid item xs={12}>
               <FormControl component="fieldset">
                 <FormLabel component="legend">Criterio de búsqueda</FormLabel>
-                <RadioGroup row value={criterion} onChange={(e) => setCriterion(e.target.value)}>
+                <RadioGroup row={!isMobile} value={criterion} onChange={(e) => setCriterion(e.target.value)}>
                   <FormControlLabel value="Asunto" control={<Radio />} label="Asunto" />
                   <FormControlLabel value="Referencia" control={<Radio />} label="Referencia" />
                   <FormControlLabel value="NumdeResolucion" control={<Radio />} label="Nro Resolución" />
@@ -113,7 +110,7 @@ const Busquedas = () => {
             </Grid>
           </Grid>
 
-          {/* Resultados de la búsqueda en formato de tabla */}
+          {/* Resultados de la búsqueda */}
           {results.length > 0 && (
             <TableContainer component={Paper}>
               <Table>
@@ -153,7 +150,7 @@ const Busquedas = () => {
         </CardContent>
       </Card>
 
-      {/* Modal para mostrar detalles y las imágenes vinculadas */}
+      {/* Modal de detalles */}
       <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="md" fullWidth>
         <DialogTitle>Detalles de la Resolución</DialogTitle>
         <DialogContent dividers>
@@ -168,7 +165,6 @@ const Busquedas = () => {
               <Typography variant="subtitle1">
                 <strong>Referencia:</strong> {selectedResolution.Referencia}
               </Typography>
-              {/* Se asume que la propiedad "images" es un arreglo de URLs o keys */}
               {selectedResolution.images && selectedResolution.images.length > 0 && (
                 <>
                   <Typography variant="h6" sx={{ mt: 2 }}>

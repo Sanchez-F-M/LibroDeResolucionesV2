@@ -11,12 +11,12 @@ app.use(cors())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
-const PORT = 3000
+const PORT = process.env.PORT || 3000
 
-app.use('/', routes)
+app.use('/api', routes)
 
 app.listen(PORT, () => {
   console.log(`Server running in http://localhost:${PORT}`)
   console.log('Defined routes:')
-  console.log(`[GET] http://localhost:${PORT}/`)
+  console.log(`[GET] http://localhost:${PORT}`)
 })
