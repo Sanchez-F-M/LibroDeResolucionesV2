@@ -79,7 +79,7 @@ const Cargas = () => {
     formData.append('fecha', fecha.toISOString());
 
     try {
-      const response = await api.post('/cargar-resolucion', formData, {
+      const response = await api.post('/api/books', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 

@@ -31,7 +31,7 @@ const Login = () => {
 
     try {
       // Se envían las credenciales al endpoint /user/login usando la instancia de Axios
-      const response = await api.post('/user/login', {
+      const response = await api.post('api/user/login', {
         Nombre: username,
         Contrasena: password,
       });
