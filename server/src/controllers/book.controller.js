@@ -16,6 +16,7 @@ export const getByIdBook = async (req, res) => {
       numderesoluciones: resolution.NumdeResolucion,
       asunto: resolution.Asunto,
       referencia: resolution.Referencia,
+      fetcha_creacion: resolution.fecha_creacion,
       images: images
         .filter(image => image.NumdeResolucion === resolution.NumdeResolucion)
         .map(image => image.ImagePath)
@@ -121,15 +122,16 @@ export const createBook = async (req, res) => {
     return res.status(400).json({ error: 'Datos incompletos o inválidos' })
   }
 
+  const fechaCreacion = new Date()
   let connection
 
   try {
     connection = await db.getConnection()
-
     await connection.beginTransaction()
 
-    const resolutionQuery = 'INSERT INTO resolution (NumdeResolucion, Asunto, Referencia) VALUES (?, ?, ?)'
-    await connection.query(resolutionQuery, [NumdeResolucion, Asunto, Referencia])
+    const resolutionQuery =
+      'INSERT INTO resolution (NumdeResolucion, Asunto, Referencia, fecha_creacion) VALUES (?, ?, ?, ?)'
+    await connection.query(resolutionQuery, [NumdeResolucion, Asunto, Referencia, fechaCreacion])
 
     const imagesData = ImagePaths.map(path => [NumdeResolucion, path])
     const imagesQuery = 'INSERT INTO images (NumdeResolucion, ImagePath) VALUES ?'
@@ -137,10 +139,13 @@ export const createBook = async (req, res) => {
 
     await connection.commit()
 
-    res.status(201).json({ message: 'Resolución y sus imágenes creadas exitosamente' })
+    res.status(201).json({
+      message: 'Resolución y sus imágenes creadas exitosamente'
+    })
   } catch (error) {
     if (connection) await connection.rollback()
-    res.status(500).json({ error: 'Error en la base de datos: ' + error.message })
+    console.error('Error en la creación:', error)
+    res.status(500).json({ error: 'Error al guardar la resolución: ' + error.message })
   } finally {
     if (connection) connection.release()
   }
