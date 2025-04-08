@@ -116,35 +116,35 @@ export const deleteBook = async (req, res) => {
 }
 
 export const createBook = async (req, res) => {
-  const { NumdeResolucion, Asunto, Referencia, ImagePaths } = req.body
+  const { NumdeResolucion, Asunto, Referencia, FechaCreacion } = req.body
+  const ImagePath = req.files
 
-  if (!NumdeResolucion || !Asunto || !Referencia || !Array.isArray(ImagePaths)) {
-    return res.status(400).json({ error: 'Datos incompletos o inválidos' })
+  if (!NumdeResolucion || !Asunto || !Referencia || !FechaCreacion || !ImagePath || ImagePath.length === 0) {
+    return res.status(400).json({ error: 'Faltan datos o archivos' })
   }
 
-  const fechaCreacion = new Date()
+  const fechaCreacion = new Date(FechaCreacion)
   let connection
 
   try {
     connection = await db.getConnection()
     await connection.beginTransaction()
 
-    const resolutionQuery =
-      'INSERT INTO resolution (NumdeResolucion, Asunto, Referencia, fecha_creacion) VALUES (?, ?, ?, ?)'
-    await connection.query(resolutionQuery, [NumdeResolucion, Asunto, Referencia, fechaCreacion])
+    const insertResolution =
+      'INSERT INTO resolution (NumdeResolucion, Asunto, Referencia, FechaCreacion) VALUES (?, ?, ?, ?)'
+    await connection.query(insertResolution, [NumdeResolucion, Asunto, Referencia, fechaCreacion])
 
-    const imagesData = ImagePaths.map(path => [NumdeResolucion, path])
-    const imagesQuery = 'INSERT INTO images (NumdeResolucion, ImagePath) VALUES ?'
-    await connection.query(imagesQuery, [imagesData])
+    const imagePaths = ImagePath.map(file => [NumdeResolucion, `uploads/${file.filename}`])
+    const insertImages =
+      'INSERT INTO images (NumdeResolucion, ImagePath) VALUES ?'
+    await connection.query(insertImages, [imagePaths])
 
     await connection.commit()
 
-    res.status(201).json({
-      message: 'Resolución y sus imágenes creadas exitosamente'
-    })
+    res.status(201).json({ message: 'Resolución creada exitosamente' })
   } catch (error) {
     if (connection) await connection.rollback()
-    console.error('Error en la creación:', error)
+    console.error('Error en createBook:', error)
     res.status(500).json({ error: 'Error al guardar la resolución: ' + error.message })
   } finally {
     if (connection) connection.release()

@@ -15,12 +15,12 @@ const db = mysql.createPool({
 
 async function testConnection () {
   try {
-    const connection = await db.getConnection() // Obtener conexión del pool
+    const connection = await db.getConnection()
     console.log('✅ Conexión a la base de datos exitosa')
-    connection.release() // Liberar conexión
+    connection.release()
   } catch (err) {
     console.error('❌ Error al conectar a la base de datos:', err.message)
-    process.exit(1) // Detiene la ejecución si la conexión falla
+    process.exit(1)
   }
 }
 
