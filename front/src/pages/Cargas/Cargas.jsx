@@ -71,19 +71,20 @@ const Cargas = () => {
     }
 
     const formData = new FormData();
+
     files.forEach((file) => formData.append('files', file));
-    formData.append('fileId', fileId);
-    formData.append('asunto', asunto);
-    formData.append('referencia', referencia);
-    formData.append('resolutionNumber', resolutionNumber);
-    formData.append('fecha', fecha.toISOString());
+
+    formData.append('NumdeResolucion', fileId);
+    formData.append('Asunto', asunto);
+    formData.append('Referencia', referencia);
+    formData.append('FechaCreacion', fecha.toISOString());
 
     try {
       const response = await api.post('/api/books', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 
-      if (response.status === 200) {
+      if (response.status === 200 || response.status === 201) {
         setFiles([]);
         setFileId('');
         setAsunto('');
