@@ -43,7 +43,7 @@ const Busquedas = () => {
 
   const handleSearch = async () => {
     try {
-      const response = await api.post('/search', {
+      const response = await api.post('/api/search', {
         criterion,
         value: searchValue,
       });
@@ -56,7 +56,7 @@ const Busquedas = () => {
 
   const handleRowClick = async (id) => {
     try {
-      const response = await api.get(`/book/${id}`);
+      const response = await api.get(`/api/books/${id}`);
       const resolution = response.data[0];
       setSelectedResolution(resolution);
       setOpenDialog(true);
@@ -115,7 +115,7 @@ const Busquedas = () => {
             <TableContainer component={Paper}>
               <Table>
                 <TableHead>
-                  <TableRow>
+                  <TableRow >
                     <TableCell>N° Resolución</TableCell>
                     <TableCell>Asunto</TableCell>
                     <TableCell>Referencia</TableCell>
@@ -130,9 +130,9 @@ const Busquedas = () => {
                       sx={{ cursor: 'pointer' }}
                       onClick={() => handleRowClick(resolution.NumdeResolucion)}
                     >
-                      <TableCell>{resolution.NumdeResolucion}</TableCell>
-                      <TableCell>{resolution.Asunto}</TableCell>
-                      <TableCell>{resolution.Referencia}</TableCell>
+                      <TableCell onClick={() => navigate(`/mostrar/${resolution.NumdeResolucion}`)}>{resolution.NumdeResolucion}</TableCell>
+                      <TableCell onClick={() => navigate(`/mostrar/${resolution.NumdeResolucion}`)}>{resolution.Asunto}</TableCell>
+                      <TableCell onClick={() => navigate(`/mostrar/${resolution.NumdeResolucion}`)}>{resolution.Referencia}</TableCell>
                       <TableCell align="center" onClick={(e) => e.stopPropagation()}>
                         <Button
                           variant="contained"

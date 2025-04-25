@@ -15,7 +15,7 @@ const ModificarResolucion = () => {
     // Cargar datos actuales de la resolución para mostrarlos
     const fetchData = async () => {
       try {
-        const response = await api.get(`/book/${id}`);
+        const response = await api.get(`/api/books/${id}`);
         const resolution = response.data[0];
         setFormData({ Asunto: resolution.Asunto, Referencia: resolution.Referencia });
       } catch (error) {
