@@ -7,6 +7,7 @@ import HomeContainer from './pages/Home/HomeContainer';
 import Cargas from './pages/Cargas/Cargas';
 import Busquedas from './pages/busquedas/busquedas';
 import ModificarResolucion from './pages/Modificar/ModificarResolucion';
+import MostrarResolucion from './pages/MostrarLibro/MostrarLibro';
 
 const App = () => {
   const [darkMode, setDarkMode] = useState(false);
@@ -31,6 +32,7 @@ const App = () => {
           <Route path={'/buscador'} element={<Busquedas />} />
           <Route path={'/cargas'} element={<Cargas />} />
           <Route path="/modificar/:id" element={<ModificarResolucion />} />
+          <Route path={'/mostrar/:id'} element={<MostrarResolucion />} />
           {/* <Route path={'*'} element={} /> */}
         </Routes>
         <Footer darkMode={darkMode} />
