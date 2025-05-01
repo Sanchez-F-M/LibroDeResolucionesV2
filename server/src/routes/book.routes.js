@@ -23,7 +23,7 @@ const bookRouter = express.Router()
 
 bookRouter.get('/:id', getByIdBook)
 
-bookRouter.post('/', upload.array('files'), express.static('uploads'), createBook)
+bookRouter.post('/', upload.array('files'), createBook)
 
 bookRouter.put('/:id', verifyToken, updateBook)
 

@@ -61,6 +61,8 @@ const Busquedas = () => {
   // Maneja el clic en la fila para abrir el modal
   const handleRowClick = async (id) => {
     try {
+      console.log('ID de la resolución:', id);
+      
       const response = await api.get(`/api/books/${id}`);
       // Asumiendo que la API devuelve un array con un solo objeto
       const resolution = response.data && response.data.length > 0 ? response.data[0] : null; 
@@ -82,7 +84,9 @@ const Busquedas = () => {
     if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
       return imagePath;
     }
-    return `http://localhost:3000/images/${imagePath}`;
+  
+    // Evita duplicar la ruta /uploads/
+    return `http://localhost:3000/${imagePath}`;
   };
 
   // Función para cerrar el modal

@@ -42,7 +42,7 @@ const MostrarLibro = () => {
 
     // Construimos la URL completa usando la ruta base del backend
     // Cambia '/static/uploads/' por la ruta correcta si es diferente
-    return `http://localhost:3000/static/uploads/${imagePath}`;
+    return `http://localhost:3000/${imagePath}`;
   };
 
   if (loading) {

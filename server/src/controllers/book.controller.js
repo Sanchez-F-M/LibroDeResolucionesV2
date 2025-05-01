@@ -13,7 +13,7 @@ export const getByIdBook = async (req, res) => {
     const [images] = await db.query('SELECT * FROM images WHERE NumdeResolucion = ?', [id])
 
     const result = resolutions.map(resolution => ({
-      numderesoluciones: resolution.NumdeResolucion,
+      NumdeResolucion: resolution.NumdeResolucion,
       asunto: resolution.Asunto,
       referencia: resolution.Referencia,
       fetcha_creacion: resolution.fecha_creacion,
