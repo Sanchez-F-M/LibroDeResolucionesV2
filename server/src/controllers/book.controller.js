@@ -150,3 +150,14 @@ export const createBook = async (req, res) => {
     if (connection) connection.release()
   }
 }
+
+export const getLastResolutionNumber = async (req, res) => {
+  try {
+    const [result] = await db.query('SELECT MAX(NumdeResolucion) as lastNumber FROM resolution')
+    const lastNumber = result[0].lastNumber || 0 // Si no hay resoluciones, devuelve 0
+    res.status(200).json({ lastNumber: lastNumber + 1 }) // Devuelve el siguiente número
+  } catch (error) {
+    console.error('❌ Error en getLastResolutionNumber:', error)
+    res.status(500).json({ error: 'Error al obtener el último número de resolución' })
+  }
+}

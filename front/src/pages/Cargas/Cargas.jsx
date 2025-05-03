@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Card,
   CardContent,
@@ -10,11 +11,13 @@ import {
   Input,
   Fab,
   IconButton,
-  Box,
+  
   Container,
 } from '@mui/material';
+import Box from '@mui/material/Box';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import api from '../../api/api';
@@ -25,17 +28,23 @@ const Cargas = () => {
   const [asunto, setAsunto] = useState('');
   const [referencia, setReferencia] = useState('');
   const [previews, setPreviews] = useState([]);
-  const [resolutionNumber, setResolutionNumber] = useState(1);
+  const [nextResolutionNumber, setNextResolutionNumber] = useState(null);
   const [fecha, setFecha] = useState(null);
 
   useEffect(() => {
-    // Simular la obtención del último número de resolución desde el servidor
-    const fetchLastResolutionNumber = async () => {
-      const lastNumber = -1; // Ejemplo: último número de resolución obtenido del servidor
-      setResolutionNumber(lastNumber + 1);
+    // Obtener el próximo número de resolución del servidor
+    const fetchNextResolutionNumber = async () => {
+      try {
+        const response = await api.get('/api/books/last-number');
+        const nextNumber = response.data.lastNumber;
+        setNextResolutionNumber(nextNumber);
+        setFileId(nextNumber.toString()); // Establecer automáticamente el número en el campo
+      } catch (error) {
+        console.error('Error al obtener el próximo número de resolución:', error);
+      }
     };
 
-    fetchLastResolutionNumber();
+    fetchNextResolutionNumber();
   }, []);
 
   const handleFileChange = (event) => {
@@ -126,10 +135,11 @@ const Cargas = () => {
   };
 
   return (
-    <Grid container justifyContent="center" sx={{ mt: { xs: 3, sm: 5, md: 7 } }}>
+    <Grid container  justifyContent="center" sx={{ mt: { xs: 3, sm: 5, md: 7 } }}>
       <Grid item xs={12} sm={10} md={8}>
         <Card>
-          <CardContent sx={{ p: { xs: 2, sm: 4, md: 6 } }}>
+          <CardContent sx={{ p: { xs: 2, sm: 4, md: 9 } }}>
+          
             <Typography variant="h4" align="left" sx={{ mb: 5, mt: 10 }}>
               Cargar Archivos
             </Typography>
@@ -138,7 +148,7 @@ const Cargas = () => {
               align="center"
               sx={{ mb: 3, mt: { xs: 1, sm: 3 } }}
             >
-              Número de Resolución a cargar: {resolutionNumber}
+              Número de Resolución a cargar: {nextResolutionNumber || 'Cargando...'}
             </Typography>
             <Container sx={{ p: { xs: 1, sm: 3 } }}>
               <TextField
@@ -238,6 +248,25 @@ const Cargas = () => {
             >
               Guardar Resolución ({files.length})
             </Button>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+              <Button
+                component={Link}
+                to="/home"
+                color="info"
+                variant="outlined"
+                startIcon={<ArrowBackIcon />}
+                sx={{ 
+                  mr: 5,
+                  '&:hover': {
+                    backgroundColor: 'primary.light',
+                    color: 'primary.dark',
+                    borderColor: 'primary.main'
+                  }
+                }}
+              >
+                Volver al Inicio
+              </Button>
+            </Box>
           </CardContent>
         </Card>
       </Grid>
