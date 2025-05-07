@@ -24,7 +24,6 @@ import api from '../../api/api';
 
 const Cargas = () => {
   const [files, setFiles] = useState([]);
-  const [fileId, setFileId] = useState('');
   const [asunto, setAsunto] = useState('');
   const [referencia, setReferencia] = useState('');
   const [previews, setPreviews] = useState([]);
@@ -32,15 +31,23 @@ const Cargas = () => {
   const [fecha, setFecha] = useState(null);
 
   useEffect(() => {
-    // Obtener el próximo número de resolución del servidor
     const fetchNextResolutionNumber = async () => {
       try {
         const response = await api.get('/api/books/last-number');
+        console.log('Respuesta del servidor:', response.data);
+        
         const nextNumber = response.data.lastNumber;
-        setNextResolutionNumber(nextNumber);
-        setFileId(nextNumber.toString()); // Establecer automáticamente el número en el campo
+        console.log('Próximo número:', nextNumber); 
+        
+        if (nextNumber) {
+          setNextResolutionNumber(nextNumber);
+        } else {
+          console.error('No se recibió un número válido del servidor');
+          setNextResolutionNumber(1); 
+        }
       } catch (error) {
         console.error('Error al obtener el próximo número de resolución:', error);
+        setNextResolutionNumber(1); 
       }
     };
 
@@ -51,7 +58,6 @@ const Cargas = () => {
     const selectedFiles = Array.from(event.target.files);
     setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
 
-    // Crear previsualizaciones para los nuevos archivos
     selectedFiles.forEach((file) => {
       const fileUrl = URL.createObjectURL(file);
       setPreviews((prevPreviews) => [
@@ -74,7 +80,7 @@ const Cargas = () => {
   };
 
   const handleUpload = async () => {
-    if (files.length === 0 || !fileId || !asunto || !referencia || !fecha) {
+    if (files.length === 0 || !nextResolutionNumber || !asunto || !referencia || !fecha) {
       alert('Por favor complete todos los campos y seleccione al menos un archivo.');
       return;
     }
@@ -83,7 +89,7 @@ const Cargas = () => {
 
     files.forEach((file) => formData.append('files', file));
 
-    formData.append('NumdeResolucion', fileId);
+    formData.append('NumdeResolucion', nextResolutionNumber);
     formData.append('Asunto', asunto);
     formData.append('Referencia', referencia);
     formData.append('FechaCreacion', fecha.toISOString());
@@ -95,7 +101,6 @@ const Cargas = () => {
 
       if (response.status === 200 || response.status === 201) {
         setFiles([]);
-        setFileId('');
         setAsunto('');
         setReferencia('');
         setFecha(null);
@@ -141,24 +146,16 @@ const Cargas = () => {
           <CardContent sx={{ p: { xs: 2, sm: 4, md: 9 } }}>
           
             <Typography variant="h4" align="left" sx={{ mb: 5, mt: 10 }}>
-              Cargar Archivos
+              
             </Typography>
             <Typography
-              variant="h5"
+              variant="h3"
               align="center"
-              sx={{ mb: 3, mt: { xs: 1, sm: 3 } }}
+              sx={{ mb: 3, mt: { xs: 1, sm: 3 }, color: 'primary.main', fontWeight: 'bold' }}
             >
-              Número de Resolución a cargar: {nextResolutionNumber || 'Cargando...'}
+              Resolución N° {nextResolutionNumber || '...'}
             </Typography>
             <Container sx={{ p: { xs: 1, sm: 3 } }}>
-              <TextField
-                label="Número de Resolución"
-                variant="outlined"
-                fullWidth
-                value={fileId}
-                onChange={(e) => setFileId(e.target.value)}
-                sx={{ mt: 2, mb: 2 }}
-              />
               <TextField
                 label="Asunto"
                 variant="outlined"
@@ -209,7 +206,6 @@ const Cargas = () => {
               </Fab>
             </Box>
 
-            {/* Grid de previsualizaciones */}
             <Grid container spacing={2} sx={{ mb: 3 }}>
               {previews.map((preview, index) => (
                 <Grid item xs={12} sm={6} key={index}>

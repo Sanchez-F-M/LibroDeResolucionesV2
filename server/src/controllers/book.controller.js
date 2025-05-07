@@ -4,7 +4,7 @@ export const getByIdBook = async (req, res) => {
   const { id } = req.params
 
   try {
-    const [resolutions] = await db.query('SELECT * FROM resolution WHERE NumdeResolucion = ?', [id])
+    const [resolutions] = await db.query('SELECT NumdeResolucion, Asunto, Referencia, FechaCreacion as fetcha_creacion FROM resolution WHERE NumdeResolucion = ?', [id])
 
     if (resolutions.length === 0) {
       return res.status(404).json({ error: 'Resolución no encontrada' })
@@ -16,7 +16,7 @@ export const getByIdBook = async (req, res) => {
       NumdeResolucion: resolution.NumdeResolucion,
       asunto: resolution.Asunto,
       referencia: resolution.Referencia,
-      fetcha_creacion: resolution.fecha_creacion,
+      fetcha_creacion: resolution.fetcha_creacion,
       images: images
         .filter(image => image.NumdeResolucion === resolution.NumdeResolucion)
         .map(image => image.ImagePath)

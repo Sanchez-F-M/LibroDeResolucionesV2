@@ -110,15 +110,14 @@ const Busquedas = () => {
 
 
   return (
-    <Container maxWidth="xl" sx={{ mt: { xs: 13, md: 35 }, mb: { xs: 7, md: 32 } }}> {/* Ajuste de márgenes */}
+    <Container maxWidth="lg" sx={{ mt: { xs: 13, md: 20 }, mb: { xs: 7, md: 21.4 } }}> 
       <Card>
         <CardContent>
           
-          <Typography variant="h4" sx={{ fontSize: { xs: '1.8rem', md: '2.125rem' }, mb: 3 }}> {/* Ajuste de tamaño y margen */}
+          <Typography variant="h3" sx={{ fontSize: { xs: '1.8rem', md: '2.125rem' }, mb: 4 }}> 
             Buscar Resolución
           </Typography>
 
-          {/* Campo de búsqueda y botón */}
           <Grid container spacing={2} alignItems="center" sx={{ mb: 3 }}> {/* Ajuste de espaciado y margen */}
             <Grid item xs={12} sm={8} md={9}> {/* Ajuste de grid */}
               <TextField

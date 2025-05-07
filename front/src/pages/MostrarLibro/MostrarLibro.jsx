@@ -1,23 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Card, CardContent, Typography, Button, Grid, Container, CircularProgress, Box, Paper } from '@mui/material';
+import { Card, CardContent, Typography, Button, Grid, Container, CircularProgress, Box, Paper, useMediaQuery, useTheme } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
-import api from '../../api/api'; // Asume que api está configurado
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import api from '../../api/api';
+import jsPDF from 'jspdf';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
 
 const MostrarLibro = () => {
-  const { id } = useParams(); // Obtiene el ID de la URL
+  const { id } = useParams();
   const navigate = useNavigate();
-  const [resolutionData, setResolutionData] = useState(null); // Estado para guardar los datos de la resolución
-  const [loading, setLoading] = useState(true); // Estado de carga
-  const [error, setError] = useState(null); // Estado de error
+  const [resolutionData, setResolutionData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Añadimos soporte para responsive
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true); // Inicia la carga
-      setError(null); // Resetea el error
+      setLoading(true);
+      setError(null);
       try {
         const response = await api.get(`/api/books/${id}`);
-        // Asumiendo que la API devuelve un array con un solo objeto
         const resolution = response.data && response.data.length > 0 ? response.data[0] : null; 
         if (resolution) {
           setResolutionData(resolution); 
@@ -28,25 +35,19 @@ const MostrarLibro = () => {
         console.error('Error al cargar la resolución:', err);
         setError('Error al obtener los datos de la resolución. Verifique la conexión o el ID.');
       } finally {
-        setLoading(false); // Finaliza la carga
+        setLoading(false);
       }
     };
     fetchData();
-  }, [id]); // Se ejecuta cada vez que el 'id' cambie
+  }, [id]);
 
-  // Función para construir la URL de la imagen
   const getImageUrl = (imagePath) => {
-    // Si la imagen ya es una URL completa, la devolvemos tal cual
     if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
       return imagePath;
     }
-
-    // Construimos la URL completa usando la ruta base del backend
-    // Cambia '/static/uploads/' por la ruta correcta si es diferente
     return `http://localhost:3000/${imagePath}`;
   };
 
-  // Función para descargar la imagen
   const handleDownload = async (imageUrl, index) => {
     try {
       const response = await fetch(imageUrl, {
@@ -77,6 +78,70 @@ const MostrarLibro = () => {
     }
   };
 
+  const handleDownloadAllAsPDF = async () => {
+    try {
+      if (!resolutionData || !resolutionData.images || resolutionData.images.length === 0) {
+        alert('No hay imágenes para descargar');
+        return;
+      }
+
+      const pdf = new jsPDF();
+      let isFirstPage = true;
+
+      for (const imagePath of resolutionData.images) {
+        try {
+          const response = await fetch(getImageUrl(imagePath));
+          const blob = await response.blob();
+          const imageUrl = URL.createObjectURL(blob);
+
+          const img = new Image();
+          await new Promise((resolve, reject) => {
+            img.onload = resolve;
+            img.onerror = reject;
+            img.src = imageUrl;
+          });
+
+          const pageWidth = pdf.internal.pageSize.getWidth();
+          const pageHeight = pdf.internal.pageSize.getHeight();
+          const imgRatio = img.width / img.height;
+          let imgWidth = pageWidth - 20;
+          let imgHeight = imgWidth / imgRatio;
+
+          if (imgHeight > pageHeight - 20) {
+            imgHeight = pageHeight - 20;
+            imgWidth = imgHeight * imgRatio;
+          }
+
+          if (!isFirstPage) {
+            pdf.addPage();
+          }
+
+          const x = (pageWidth - imgWidth) / 2;
+          const y = (pageHeight - imgHeight) / 2;
+
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+          const imageData = canvas.toDataURL('image/jpeg');
+
+          pdf.addImage(imageData, 'JPEG', x, y, imgWidth, imgHeight);
+          isFirstPage = false;
+
+          URL.revokeObjectURL(imageUrl);
+        } catch (error) {
+          console.error('Error al procesar imagen:', error);
+        }
+      }
+
+      pdf.save(`resolucion-${resolutionData.NumdeResolucion}.pdf`);
+    } catch (error) {
+      console.error('Error al generar PDF:', error);
+      alert('Error al generar el PDF. Por favor, intente nuevamente.');
+    }
+  };
+
   if (loading) {
     return (
       <Container sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
@@ -96,7 +161,6 @@ const MostrarLibro = () => {
     );
   }
 
-  // Si no hay datos después de cargar (y sin error explícito), muestra un mensaje
   if (!resolutionData) {
     return (
       <Container>
@@ -108,44 +172,51 @@ const MostrarLibro = () => {
     );
   }
 
-  // Obtenemos el array de imágenes considerando ambas posibles nomenclaturas
   const images = resolutionData.images || resolutionData.Images || [];
 
   return (
-    <Container maxWidth="xl" sx={{ mt: { xs: 4, md: 20 }, mb: 6 }}> 
+    <Container maxWidth="xl" sx={{ mt: { xs: 10, md: 20 }, mb: 6 }}> 
       <Card component={Paper} elevation={3}>
         <CardContent>
-          <Typography variant="h3" gutterBottom sx={{ fontSize: { xs: '1.8rem', md: '3.125rem' } }}>
-            Detalles de la Resolución
-          </Typography>
-
           <Grid container spacing={5}>
             <Grid item xs={12}>
-              {/* Muestra el N° Resolución si existe */}
-              {resolutionData.NumdeResolucion && (
-                <Typography variant="h4" sx={{ mb: 1 }}>
+              {resolutionData?.NumdeResolucion && (
+                <Typography variant={isMobile ? "h4" : "h3"} sx={{ mb: 2 }}>
                   <strong>N° Resolución:</strong> {resolutionData.NumdeResolucion}
                 </Typography>
               )}
             </Grid>
+
             <Grid item xs={12}>
-              <Typography variant="h5"> 
-                <strong>Asunto:</strong> {resolutionData.Asunto || resolutionData.asunto || 'No disponible'}
+              <Typography variant={isMobile ? "h5" : "h4"}> 
+                <strong>Asunto:</strong> {resolutionData?.Asunto || resolutionData?.asunto || 'No disponible'}
               </Typography>
             </Grid>
 
             <Grid item xs={12}>
-              <Typography variant="h5">
-                <strong>Referencia:</strong> {resolutionData.Referencia || resolutionData.referencia || 'No disponible'}
+              <Typography variant={isMobile ? "h5" : "h4"}>
+                <strong>Referencia:</strong> {resolutionData?.Referencia || resolutionData?.referencia || 'No disponible'}
               </Typography>
             </Grid>
 
-            {/* Sección de Imágenes */}
-            {images.length > 0 ? (
+            <Grid item xs={12}>
+              <Typography variant={isMobile ? "h6" : "h5"}>
+                <strong>Fecha de Creación:</strong>{' '}
+                {resolutionData?.fetcha_creacion ? 
+                  format(new Date(resolutionData.fetcha_creacion), 'dd MMMM yyyy', { locale: es }) 
+                  : 'No disponible'}
+              </Typography>
+            </Grid>
+
+            
+
+            {resolutionData && resolutionData.images && resolutionData.images.length > 0 ? (
               <Grid item xs={12}>
-                <Typography variant="h6" sx={{ mt: 2, mb: 2 }}>Imágenes:</Typography>
-                <Grid container spacing={1} sx={{ mb: 3 }}> 
-                  {images.map((img, index) => (
+                <Typography variant={isMobile ? "h5" : "h4"} sx={{ mt: 2, mb: 2 }}>
+                  Imágenes:
+                </Typography>
+                <Grid container spacing={2}> 
+                  {resolutionData.images.map((img, index) => (
                     <Grid item xs={12} sm={6} md={4} key={index}>
                       <Box sx={{ 
                         display: 'flex',
@@ -165,8 +236,8 @@ const MostrarLibro = () => {
                             boxShadow: 4,
                           },
                           p: 0,
-                          height: '400px', // Altura consistente
-                          width: '100%', // Ancho consistente
+                          height: '400px',
+                          width: '100%',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center'
@@ -193,7 +264,10 @@ const MostrarLibro = () => {
                           variant="contained"
                           startIcon={<DownloadIcon />}
                           onClick={() => handleDownload(getImageUrl(img), index)}
-                          sx={{ width: 'fit-content' }}
+                          sx={{ 
+                            width: 'fit-content',
+                            fontSize: { xs: '0.8rem', sm: '0.9rem' }
+                          }}
                         >
                           Descargar
                         </Button>
@@ -207,13 +281,40 @@ const MostrarLibro = () => {
                 <Typography sx={{ mt: 2 }}>No hay imágenes asociadas a esta resolución.</Typography>
               </Grid>
             )}
-
-            {/* Botón Volver */}
+{resolutionData && resolutionData.images && resolutionData.images.length > 0 && (
+              <Grid item xs={12}>
+                <Box sx={{ 
+                  display: 'flex', 
+                  justifyContent: 'center',
+                  width: '100%',
+                  mt: { xs: 2, sm: 3 },
+                  mb: { xs: 2, sm: 3 }
+                }}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    startIcon={<PictureAsPdfIcon />}
+                    onClick={handleDownloadAllAsPDF}
+                    sx={{ 
+                      minWidth: { xs: '90%', sm: '200px' },
+                      py: { xs: 1.5, sm: 2 },
+                      fontSize: { xs: '0.9rem', sm: '1rem' }
+                    }}
+                  >
+                    Descargar PDF
+                  </Button>
+                </Box>
+              </Grid>
+            )}
             <Grid item xs={12} sx={{ mt: 3, mb: 5 }}>
               <Button
                 variant="contained"
                 color="primary"
                 onClick={() => navigate(-1)}
+                sx={{ 
+                  fontSize: { xs: '0.9rem', sm: '1rem' },
+                  py: { xs: 1, sm: 1.5 }
+                }}
               >
                 Volver
               </Button>

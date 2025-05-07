@@ -1,17 +1,12 @@
 import React from 'react';
-import { Box, Typography, Button } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 
 const Footer = ({ darkMode }) => {
-  // Función que se ejecuta al hacer clic en el botón
-  const handleClick = () => {
-    alert('Llamar a este número de contacto: 3813960936.');
-  };
-
   return (
     <Box
       sx={{
-        backgroundColor: darkMode ? '#fff' : '#34495e',
-        color: darkMode ? '#34495e' : '#fff',
+        backgroundColor: darkMode ? '#1976d2' : '#34495e',
+        color: '#fff',
         padding: { xs: '20px 10px', sm: '10px' },
         textAlign: 'center',
         width: '100%',
@@ -41,25 +36,6 @@ const Footer = ({ darkMode }) => {
       >
         Dirección: Calle Italia 2601, San Miguel de Tucumán, Tucumán
       </Typography>
-
-      {/*
-      <Button
-        variant="contained"
-        sx={{
-          mt: { xs: 2, sm: 0 },
-          color: '#fff',
-          height: '30px',
-          fontFamily: 'Arial, Helvetica, sans-serif',
-          backgroundColor: darkMode ? '#1976d2' : '#34495e',
-          '&:hover': {
-            backgroundColor: darkMode ? '#1565c0' : '#2c3e50',
-          },
-        }}
-        onClick={handleClick}
-      >
-        Contactar con soporte
-      </Button>
-      */}
     </Box>
   );
 };

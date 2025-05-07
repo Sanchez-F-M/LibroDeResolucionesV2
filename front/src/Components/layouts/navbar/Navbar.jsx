@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   AppBar,
   Toolbar,
@@ -12,17 +12,10 @@ import { Brightness4, Brightness7 } from '@mui/icons-material';
 import { Link, useLocation } from 'react-router-dom';
 import Logo from '../../../assets/logo3-removebg-preview (1).png';
 
-const Navbar = () => {
-  const [darkMode, setDarkMode] = useState(false);
+const Navbar = ({ darkMode, toggleDarkMode }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const location = useLocation();
-
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-    document.body.style.backgroundColor = darkMode ? '#34495e' : '#ffffff';
-    document.body.style.color = darkMode ? '#ffffff' : '#000000';
-  };
 
   return (
     <AppBar
@@ -42,7 +35,6 @@ const Navbar = () => {
           justifyContent="space-between"
           columns={{ xs: 12, sm: 12, md: 12 }}
         >
-          {/* Logo: Si la ruta actual es "/login", se muestra sin enlace */}
           <Grid item xs={3} sm={3} md={2} display="flex" alignItems="center">
             {location.pathname === '/' ? (
               <img
@@ -69,19 +61,22 @@ const Navbar = () => {
             )}
           </Grid>
 
-          {/* Título principal */}
           <Grid item xs={6} sm={4} md={6} textAlign="center">
             <Typography variant={isMobile ? 'h6' : 'h2'}>
               Libro de Resoluciones
             </Typography>
           </Grid>
 
-          {/* Botón de cambio de modo */}
           <Grid
             item
             xs={3}
             sm={3}
             md={2}
+            sx={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              alignItems: 'center',
+            }}
             display="flex"
             justifyContent="flex-end"
           >
