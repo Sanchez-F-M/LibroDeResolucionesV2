@@ -1,7 +1,10 @@
 import axios from 'axios';
 
+const apiUrl = import.meta.env.VITE_API_URL;
+const maxUploadSize = import.meta.env.VITE_UPLOAD_MAX_SIZE;
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000',
+  baseURL: 'http://localhost:3000', 
 });
 
 api.interceptors.request.use(config => {
