@@ -12,8 +12,20 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 // Configuración de CORS más específica
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://libro-de-resoluciones.vercel.app', // Añade aquí tu dominio de Vercel
+  process.env.FRONTEND_URL // URL desde variable de entorno
+].filter(Boolean);
+
 app.use(cors({
-  origin: 'http://localhost:5173', // URL de tu frontend
+  origin: function(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true,
   exposedHeaders: ['Content-Disposition'] // Importante para las descargas
