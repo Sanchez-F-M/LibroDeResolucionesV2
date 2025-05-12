@@ -4,7 +4,7 @@ export const getByIdBook = async (req, res) => {
   const { id } = req.params
 
   try {
-    const [resolutions] = await db.query('SELECT * FROM resolution WHERE NumdeResolucion = ?', [id])
+    const [resolutions] = await db.query('SELECT NumdeResolucion, Asunto, Referencia, FechaCreacion as fetcha_creacion FROM resolution WHERE NumdeResolucion = ?', [id])
 
     if (resolutions.length === 0) {
       return res.status(404).json({ error: 'Resolución no encontrada' })
@@ -13,9 +13,10 @@ export const getByIdBook = async (req, res) => {
     const [images] = await db.query('SELECT * FROM images WHERE NumdeResolucion = ?', [id])
 
     const result = resolutions.map(resolution => ({
-      numderesoluciones: resolution.NumdeResolucion,
+      NumdeResolucion: resolution.NumdeResolucion,
       asunto: resolution.Asunto,
       referencia: resolution.Referencia,
+      fetcha_creacion: resolution.fetcha_creacion,
       images: images
         .filter(image => image.NumdeResolucion === resolution.NumdeResolucion)
         .map(image => image.ImagePath)
@@ -115,33 +116,48 @@ export const deleteBook = async (req, res) => {
 }
 
 export const createBook = async (req, res) => {
-  const { NumdeResolucion, Asunto, Referencia, ImagePaths } = req.body
+  const { NumdeResolucion, Asunto, Referencia, FechaCreacion } = req.body
+  const ImagePath = req.files
 
-  if (!NumdeResolucion || !Asunto || !Referencia || !Array.isArray(ImagePaths)) {
-    return res.status(400).json({ error: 'Datos incompletos o inválidos' })
+  if (!NumdeResolucion || !Asunto || !Referencia || !FechaCreacion || !ImagePath || ImagePath.length === 0) {
+    return res.status(400).json({ error: 'Faltan datos o archivos' })
   }
 
+  const fechaCreacion = new Date(FechaCreacion)
   let connection
 
   try {
     connection = await db.getConnection()
-
     await connection.beginTransaction()
 
-    const resolutionQuery = 'INSERT INTO resolution (NumdeResolucion, Asunto, Referencia) VALUES (?, ?, ?)'
-    await connection.query(resolutionQuery, [NumdeResolucion, Asunto, Referencia])
+    const insertResolution =
+      'INSERT INTO resolution (NumdeResolucion, Asunto, Referencia, FechaCreacion) VALUES (?, ?, ?, ?)'
+    await connection.query(insertResolution, [NumdeResolucion, Asunto, Referencia, fechaCreacion])
 
-    const imagesData = ImagePaths.map(path => [NumdeResolucion, path])
-    const imagesQuery = 'INSERT INTO images (NumdeResolucion, ImagePath) VALUES ?'
-    await connection.query(imagesQuery, [imagesData])
+    const imagePaths = ImagePath.map(file => [NumdeResolucion, `uploads/${file.filename}`])
+    const insertImages =
+      'INSERT INTO images (NumdeResolucion, ImagePath) VALUES ?'
+    await connection.query(insertImages, [imagePaths])
 
     await connection.commit()
 
-    res.status(201).json({ message: 'Resolución y sus imágenes creadas exitosamente' })
+    res.status(201).json({ message: 'Resolución creada exitosamente' })
   } catch (error) {
     if (connection) await connection.rollback()
-    res.status(500).json({ error: 'Error en la base de datos: ' + error.message })
+    console.error('Error en createBook:', error)
+    res.status(500).json({ error: 'Error al guardar la resolución: ' + error.message })
   } finally {
     if (connection) connection.release()
+  }
+}
+
+export const getLastResolutionNumber = async (req, res) => {
+  try {
+    const [result] = await db.query('SELECT MAX(NumdeResolucion) as lastNumber FROM resolution')
+    const lastNumber = result[0].lastNumber || 0 // Si no hay resoluciones, devuelve 0
+    res.status(200).json({ lastNumber: lastNumber + 1 }) // Devuelve el siguiente número
+  } catch (error) {
+    console.error('❌ Error en getLastResolutionNumber:', error)
+    res.status(500).json({ error: 'Error al obtener el último número de resolución' })
   }
 }

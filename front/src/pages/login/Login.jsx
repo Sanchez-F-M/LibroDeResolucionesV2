@@ -30,15 +30,12 @@ const Login = () => {
     }
 
     try {
-      // Se envían las credenciales al endpoint /user/login usando la instancia de Axios
-      const response = await api.post('/user/login', {
+      const response = await api.post('api/user/login', {
         Nombre: username,
         Contrasena: password,
       });
-      // Guardamos el token en localStorage para que el interceptor en api.js lo incluya en las siguientes peticiones
       localStorage.setItem('token', response.data.token);
       setError('');
-      // Redirigimos al usuario a la ruta protegida
       navigate('/home');
     } catch (err) {
       console.error('Error de autenticación:', err);
@@ -47,11 +44,11 @@ const Login = () => {
   };
 
   return (
-    <Container maxWidth={isMobile ? 'sm' : 'lg'} sx={{ mt: isMobile ? 23 : 10, p: isMobile ? 4 : 15.5, mb: 6 }}>
+    <Container maxWidth={isMobile ? 'sm' : 'md'} sx={{ mt: isMobile ? 14 : 20, p: isMobile ? 6 : 8.2, mb: isMobile ? 9 : 1 }}>
       <Grid container justifyContent="center">
         <Grid item xs={12} sm={10} md={8}>
-          <Paper elevation={12} sx={{ p: isMobile ? 6 : 15.9 }}>
-            <Typography variant={isMobile ? 'h4' : 'h2'} align="center" gutterBottom>
+          <Paper elevation={12} sx={{ p: isMobile ? 6 : 8 }}>
+            <Typography variant={isMobile ? 'h4' : 'h3'} align="center" gutterBottom>
               Iniciar Sesión
             </Typography>
             <form onSubmit={handleLogin}>

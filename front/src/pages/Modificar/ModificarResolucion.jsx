@@ -8,19 +8,31 @@ const ModificarResolucion = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     Asunto: '',
-    Referencia: ''
+    Referencia: '',
+    ImagePaths: [] // Mantener las rutas de las imágenes existentes
   });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    // Cargar datos actuales de la resolución para mostrarlos
     const fetchData = async () => {
       try {
-        const response = await api.get(`/book/${id}`);
+        const response = await api.get(`/api/books/${id}`);
         const resolution = response.data[0];
-        setFormData({ Asunto: resolution.Asunto, Referencia: resolution.Referencia });
+        if (resolution) {
+          setFormData({
+            Asunto: resolution.Asunto || resolution.asunto,
+            Referencia: resolution.Referencia || resolution.referencia,
+            ImagePaths: resolution.images || resolution.Images || []
+          });
+        } else {
+          setError('No se encontró la resolución');
+        }
       } catch (error) {
         console.error('Error al cargar la resolución:', error);
-        alert('Error al obtener los datos de la resolución');
+        setError('Error al cargar los datos de la resolución');
+      } finally {
+        setLoading(false);
       }
     };
     fetchData();
@@ -33,18 +45,35 @@ const ModificarResolucion = () => {
 
   const handleSubmit = async () => {
     try {
-      await api.put(`/book/${id}`, {
+      // Validar datos antes de enviar
+      if (!formData.Asunto || !formData.Referencia) {
+        setError('Por favor complete todos los campos');
+        return;
+      }
+
+      const response = await api.put(`/api/books/${id}`, {
         Asunto: formData.Asunto,
         Referencia: formData.Referencia,
-        ImagePaths: [] // Si necesitas actualizar imágenes, envía sus rutas
+        ImagePaths: formData.ImagePaths
       });
-      alert('Resolución actualizada exitosamente');
-      navigate('/buscador');
+
+      if (response.status === 200) {
+        alert('Resolución actualizada exitosamente');
+        navigate('/buscador');
+      }
     } catch (err) {
       console.error('Error al actualizar la resolución:', err);
-      alert('Error al actualizar la resolución');
+      setError(err.response?.data?.error || 'Error al actualizar la resolución');
     }
   };
+
+  if (loading) {
+    return (
+      <Container maxWidth="xl" sx={{ mt: { xs: 4, md: '100px' } }}>
+        <Typography>Cargando...</Typography>
+      </Container>
+    );
+  }
 
   return (
     <Container 
@@ -64,6 +93,11 @@ const ModificarResolucion = () => {
           >
             Resolución N°: {id}
           </Typography>
+          {error && (
+            <Typography color="error" sx={{ mb: 2 }}>
+              {error}
+            </Typography>
+          )}
           <Grid 
             container 
             spacing={3} 
@@ -78,6 +112,8 @@ const ModificarResolucion = () => {
                 value={formData.Asunto}
                 onChange={handleChange}
                 variant="outlined"
+                error={!formData.Asunto}
+                helperText={!formData.Asunto ? 'El asunto es requerido' : ''}
               />
             </Grid>
             <Grid item>
@@ -88,6 +124,8 @@ const ModificarResolucion = () => {
                 value={formData.Referencia}
                 onChange={handleChange}
                 variant="outlined"
+                error={!formData.Referencia}
+                helperText={!formData.Referencia ? 'La referencia es requerida' : ''}
               />
             </Grid>
             <Grid item>
@@ -97,6 +135,7 @@ const ModificarResolucion = () => {
                 fullWidth 
                 sx={{ mt: { xs: 2, md: 5 }, mb: { xs: 2, md: 16.2 } }} 
                 onClick={handleSubmit}
+                disabled={!formData.Asunto || !formData.Referencia}
               >
                 Guardar Cambios
               </Button>
