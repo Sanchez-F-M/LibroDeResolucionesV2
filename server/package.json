@@ -5,8 +5,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "echo 'No build step required'"
   },
   "keywords": [],
   "author": "",
@@ -14,19 +15,22 @@
   "dependencies": {
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.3",
+    "compression": "^1.8.0",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.2",
-    "mysql2": "^3.14.0",
-    "nodemon": "^3.1.9",
-    "zustand": "^5.0.3"
+    "mysql2": "^3.14.0"
   },
   "devDependencies": {
+    "nodemon": "^3.1.9",
     "standard": "^17.1.2"
   },
   "eslintConfig": {
     "extends": "standard"
+  },
+  "engines": {
+    "node": ">=16.0.0"
   }
 }

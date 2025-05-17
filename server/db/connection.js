@@ -2,18 +2,25 @@ import mysql from 'mysql2/promise'
 import dotenv from 'dotenv'
 dotenv.config()
 
-const db = mysql.createPool({
-  host: 'localhost',
-  user: 'root',
+const dbConfig = {
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
-  database: 'libroderesolucionDB',
+  database: process.env.DB_NAME,
   port: 3306,
   waitForConnections: true,
   connectionLimit: 10,
-  queueLimit: 0
-})
+  queueLimit: 0,
+  ...(process.env.NODE_ENV === 'production' && {
+    ssl: {
+      rejectUnauthorized: true
+    }
+  })
+}
 
-async function testConnection () {
+const db = mysql.createPool(dbConfig)
+
+async function testConnection() {
   try {
     const connection = await db.getConnection()
     console.log('✅ Conexión a la base de datos exitosa')
