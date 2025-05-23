@@ -1,10 +1,18 @@
 services:
   - type: web
     name: libro-resoluciones-api
+    runtime: node
     env: node
+    region: oregon
+    plan: free
     buildCommand: npm install
     startCommand: npm start
+    healthCheckPath: /health
     envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        generateValue: true
       - key: JWT_SECRET_KEY
         sync: false
       - key: DB_HOST
@@ -15,7 +23,7 @@ services:
         sync: false
       - key: DB_NAME
         sync: false
-      - key: NODE_ENV
-        value: production
+      - key: DB_PORT
+        value: 3306
       - key: FRONTEND_URL
         sync: false

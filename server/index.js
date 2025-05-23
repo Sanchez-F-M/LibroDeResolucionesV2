@@ -1,22 +1,33 @@
 import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
+import compression from 'compression'
 import 'dotenv/config'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
 import routes from './src/routes/routes.js'
+import { validateEnvironment } from './config/validateEnv.js'
+
+// Validar variables de entorno al inicio
+validateEnvironment()
 
 const app = express()
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
+// Middleware de compresión para mejorar rendimiento
+app.use(compression())
+
+// Definir orígenes permitidos globalmente
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  'http://localhost:5173', // desarrollo
+].filter(Boolean) // Elimina valores falsy
 
 // Configuración de CORS mejorada
 const corsOptions = {
   origin: function (origin, callback) {
-    const allowedOrigins = [
-      process.env.FRONTEND_URL,
-      'http://localhost:5173', // desarrollo
-    ]
-    
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true)
     } else {
@@ -29,9 +40,6 @@ const corsOptions = {
 }
 
 app.use(cors(corsOptions))
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
 
 // Middleware para archivos estáticos
 app.use('/uploads', (req, res, next) => {
