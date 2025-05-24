@@ -28,10 +28,16 @@ const allowedOrigins = [
 // Configuración de CORS mejorada
 const corsOptions = {
   origin: function (origin, callback) {
+    // Permitir requests sin origin (como health checks de Render)
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true)
     } else {
-      callback(new Error('No permitido por CORS'))
+      // En producción, permitir health checks internos
+      if (process.env.NODE_ENV === 'production' && !origin) {
+        callback(null, true)
+      } else {
+        callback(new Error('No permitido por CORS'))
+      }
     }
   },
   credentials: true,
@@ -60,8 +66,20 @@ app.use(bodyParser.json())
 // Puerto para el servidor
 const PORT = process.env.PORT || 3000
 
+// Health check específico para Render (sin CORS)
+app.get('/render-health', (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*')
+  res.status(200).json({ 
+    status: 'OK', 
+    service: 'libro-resoluciones-api',
+    timestamp: new Date().toISOString(),
+    env: process.env.NODE_ENV || 'development'
+  })
+})
+
 // Health check para Render (ruta raíz)
 app.get('/', (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*')
   res.status(200).json({ 
     status: 'OK', 
     message: 'Libro de Resoluciones API is running',
