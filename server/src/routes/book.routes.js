@@ -6,7 +6,8 @@ import {
   getByIdBook,
   updateBook,
   deleteBook,
-  getLastResolutionNumber
+  getLastResolutionNumber,
+  insertTestResolution
 } from '../controllers/book.controller.js'
 import { verifyToken } from '../../config/verifyToken.js'
 
@@ -28,6 +29,9 @@ bookRouter.get('/last-number', getLastResolutionNumber)
 
 // Ruta para obtener todas las resoluciones
 bookRouter.get('/all', getAllBooks)
+
+// Ruta especial para insertar resoluciones de prueba (requiere autenticación)
+bookRouter.post('/insert-test', verifyToken, insertTestResolution)
 
 // Resto de las rutas
 bookRouter.get('/:id', getByIdBook)

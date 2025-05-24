@@ -195,3 +195,36 @@ export const getAllBooks = async (req, res) => {
     res.status(500).json({ error: 'Error interno del servidor: ' + error.message })
   }
 }
+
+// Función especial para insertar resoluciones de prueba (sin archivos reales)
+export const insertTestResolution = async (req, res) => {
+  const { NumdeResolucion, Asunto, Referencia, FechaCreacion, ImagePaths } = req.body
+
+  if (!NumdeResolucion || !Asunto || !Referencia || !FechaCreacion) {
+    return res.status(400).json({ error: 'Faltan datos requeridos' })
+  }
+
+  const fechaCreacion = new Date(FechaCreacion)
+
+  try {
+    // Iniciar transacción
+    await db.exec('BEGIN TRANSACTION')
+
+    // Verificar si la resolución ya existe
+    const existing = await db.get('SELECT NumdeResolucion FROM resolution WHERE NumdeResolucion = ?', [NumdeResolucion])
+    if (existing) {
+      await db.exec('ROLLBACK')
+      return res.status(400).json({ error: 'El número de resolución ya existe' })
+    }
+
+    // Insertar resolución
+    await db.run(
+      'INSERT INTO resolution (NumdeResolucion, Asunto, Referencia, FechaCreacion) VALUES (?, ?, ?, ?)',
+      [NumdeResolucion, Asunto, Referencia, fechaCreacion.toISOString()]
+    )
+
+    // Insertar imágenes mock si se proporcionan
+    if (ImagePaths && Array.isArray(ImagePaths)) {
+      for (const imagePath of ImagePaths) {
+        await db.run(
+          'INSERT INTO images (NumdeResolucion, ImagePath) VALUES (?, ?)',
