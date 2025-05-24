@@ -7,11 +7,14 @@
   "engines": {
     "node": ">=20.0.0",
     "npm": ">=9.0.0"
-  },
-  "scripts": {
+  },  "scripts": {
     "dev": "nodemon index.js",
     "start": "node index.js",
     "seed": "node db/seed-data.js",
+    "create-admin": "node scripts/create-admin.js",
+    "create-user": "node scripts/create-user.js",
+    "create-admin-production": "node scripts/create-admin-production.js",
+    "verify-admin": "node scripts/verify-admin.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -33,11 +36,7 @@
   "devDependencies": {
     "nodemon": "^3.1.9",
     "standard": "^17.1.2"
-  },
-  "eslintConfig": {
+  },  "eslintConfig": {
     "extends": "standard"
-  },
-  "engines": {
-    "node": "18.x"
   }
 }
