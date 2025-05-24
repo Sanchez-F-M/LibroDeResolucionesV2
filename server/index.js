@@ -60,13 +60,29 @@ app.use(bodyParser.json())
 // Puerto para el servidor
 const PORT = process.env.PORT || 3000
 
-// Rutas API
-app.use('/api', routes)
+// Health check para Render (ruta raíz)
+app.get('/', (req, res) => {
+  res.status(200).json({ 
+    status: 'OK', 
+    message: 'Libro de Resoluciones API is running',
+    timestamp: new Date().toISOString(),
+    env: process.env.NODE_ENV || 'development',
+    port: PORT
+  })
+})
 
 // Verificación de estado del servidor
 app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'OK', timestamp: new Date().toISOString() })
+  res.status(200).json({ 
+    status: 'OK', 
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    memory: process.memoryUsage()
+  })
 })
+
+// Rutas API
+app.use('/api', routes)
 
 // Iniciar el servidor
 app.listen(PORT, '0.0.0.0', () => {

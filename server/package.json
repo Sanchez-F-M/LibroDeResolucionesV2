@@ -3,7 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "type": "module",  "scripts": {
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=9.0.0"
+  },
+  "scripts": {
     "dev": "nodemon index.js",
     "start": "node index.js",
     "seed": "node db/seed-data.js",
