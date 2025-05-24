@@ -2,7 +2,7 @@
 
 ## 📋 **CONFIGURACIÓN ACTUALIZADA**
 
-✅ **Health Check Path actualizado a:** `/` (ruta raíz)
+✅ **Health Check Path:** `/health` (endpoint principal)
 
 ## 🖥️ **CÓMO VERIFICAR EN EL DASHBOARD DE RENDER:**
 
@@ -18,11 +18,11 @@
 ### 3. **Verificar la configuración actual**
 Deberías ver:
 ```
-Health Check Path: /
+Health Check Path: /health
 ```
 
 Si ves algo diferente como:
-- ❌ `/health`
+- ❌ `/`
 - ❌ `/render-health` 
 - ❌ `/api/health`
 
@@ -30,7 +30,7 @@ Si ves algo diferente como:
 
 ### 4. **Cambiar si es necesario**
 1. Haz clic en **"Edit"** o el ícono de lápiz
-2. En el campo **"Health Check Path"** escribe: `/`
+2. En el campo **"Health Check Path"** escribe: `/health`
 3. Haz clic en **"Save Changes"**
 
 ### 5. **Redesplegar**
@@ -43,7 +43,7 @@ Después de cambiar la configuración:
 
 | Campo | Valor Correcto |
 |-------|----------------|
-| **Health Check Path** | `/` |
+| **Health Check Path** | `/health` |
 | **Auto-Deploy** | ✅ Enabled |
 | **Branch** | `Flavio` |
 | **Root Directory** | `server` |
@@ -52,31 +52,31 @@ Después de cambiar la configuración:
 
 Una vez desplegado, prueba estos endpoints:
 
-1. **Health check principal:**
-   ```
-   GET https://libro-resoluciones-api-[tu-id].onrender.com/
-   ```
-   
-2. **Health check detallado:**
+1. **Health check principal (Render):**
    ```
    GET https://libro-resoluciones-api-[tu-id].onrender.com/health
+   ```
+   
+2. **Ruta raíz (backup):**
+   ```
+   GET https://libro-resoluciones-api-[tu-id].onrender.com/
    ```
 
 **Ambos deberían responder con código 200 y JSON.**
 
 ## 🚨 **IMPORTANTE**
 
-Si el Health Check Path no está en `/`, Render seguirá intentando acceder a la ruta incorrecta y el despliegue fallará con timeout.
-
-**La ruta `/` debe estar configurada tanto en:**
-- ✅ Tu código (`index.js` - ya está)
-- ✅ Render dashboard (verificar ahora)
+El endpoint `/health` es más estándar y robusto:
+- ✅ Headers CORS explícitos
+- ✅ Información detallada del sistema
+- ✅ Content-Type aplicación/json
+- ✅ Compatible con health checkers
 
 ## 📝 **RESUMEN DE PASOS**
 
-1. ✅ Código actualizado con ruta `/` 
-2. ✅ `render.yaml` actualizado con `healthCheckPath: /`
+1. ✅ Código actualizado con endpoint `/health` mejorado
+2. ✅ `render.yaml` con `healthCheckPath: /health`
 3. 🔄 **PENDIENTE:** Verificar en dashboard de Render
 4. 🔄 **PENDIENTE:** Redesplegar si es necesario
 
-**¡Verifica ahora en el dashboard de Render y haz redeploy!**
+**¡Verifica que el Health Check Path esté en `/health` y haz redeploy!**

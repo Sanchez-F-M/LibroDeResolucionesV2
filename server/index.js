@@ -89,13 +89,18 @@ app.get('/', (req, res) => {
   })
 })
 
-// Verificación de estado del servidor
+// Verificación de estado del servidor (endpoint principal para Render)
 app.get('/health', (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*')
+  res.setHeader('Content-Type', 'application/json')
   res.status(200).json({ 
     status: 'OK', 
+    service: 'libro-resoluciones-api',
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
-    memory: process.memoryUsage()
+    memory: process.memoryUsage(),
+    env: process.env.NODE_ENV || 'development',
+    port: PORT
   })
 })
 
