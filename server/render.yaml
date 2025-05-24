@@ -7,7 +7,7 @@ services:
     plan: free
     buildCommand: npm install
     startCommand: npm start
-    healthCheckPath: /render-health
+    healthCheckPath: /
     envVars:
       - key: NODE_ENV
         value: production
