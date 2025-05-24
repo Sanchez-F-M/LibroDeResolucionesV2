@@ -22,39 +22,101 @@ app.use(compression())
 // Definir orígenes permitidos globalmente
 const allowedOrigins = [
   process.env.FRONTEND_URL,
-  'http://localhost:5173', // desarrollo
+  'http://localhost:5173', // desarrollo local
+  'http://localhost:5174', // desarrollo local alternativo
+  'http://localhost:5175', // desarrollo local alternativo 2
+  'https://front-jibs1li4h-libro-de-resoluciones-projects.vercel.app', // producción Vercel
 ].filter(Boolean) // Elimina valores falsy
 
-// Configuración de CORS mejorada
+console.log('🌐 Orígenes permitidos:', allowedOrigins)
+console.log('🌐 FRONTEND_URL:', process.env.FRONTEND_URL)
+console.log('🌐 NODE_ENV:', process.env.NODE_ENV)
+
+// Configuración de CORS mejorada y más permisiva
 const corsOptions = {
   origin: function (origin, callback) {
-    // Permitir requests sin origin (como health checks de Render)
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true)
-    } else {
-      // En producción, permitir health checks internos
-      if (process.env.NODE_ENV === 'production' && !origin) {
-        callback(null, true)
-      } else {
-        callback(new Error('No permitido por CORS'))
-      }
+    console.log('🔍 Request origin:', origin)
+    
+    // Permitir requests sin origin (health checks, Postman, curl, etc.)
+    if (!origin) {
+      console.log('✅ Permitiendo request sin origin')
+      return callback(null, true)
     }
+    
+    // Permitir orígenes en la lista
+    if (allowedOrigins.includes(origin)) {
+      console.log('✅ Origen permitido:', origin)
+      return callback(null, true)
+    }
+    
+    // En desarrollo, ser más permisivo
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('✅ Permitiendo en desarrollo:', origin)
+      return callback(null, true)
+    }
+    
+    // En producción, permitir dominios de Vercel
+    if (origin.includes('vercel.app') || origin.includes('render.com')) {
+      console.log('✅ Permitiendo dominio de plataforma:', origin)
+      return callback(null, true)
+    }
+    
+    console.log('❌ Origen rechazado:', origin)
+    callback(new Error(`No permitido por CORS: ${origin}`))
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With'],
+  optionsSuccessStatus: 200 // Para soporte de navegadores legacy
 }
 
 app.use(cors(corsOptions))
 
-// Middleware para archivos estáticos
+// Middleware adicional para manejar preflight requests
+app.options('*', (req, res) => {
+  console.log('🔄 OPTIONS request recibido para:', req.url)
+  const origin = req.headers.origin
+  
+  if (!origin || allowedOrigins.includes(origin) || 
+      origin.includes('vercel.app') || origin.includes('render.com') ||
+      process.env.NODE_ENV !== 'production') {
+    
+    if (origin) {
+      res.header('Access-Control-Allow-Origin', origin)
+    } else {
+      res.header('Access-Control-Allow-Origin', '*')
+    }
+    
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, Origin, X-Requested-With')
+    res.header('Access-Control-Allow-Credentials', 'true')
+    res.header('Access-Control-Max-Age', '86400') // Cache preflight por 24 horas
+    
+    return res.sendStatus(200)
+  }
+  
+  res.sendStatus(403)
+})
+
+// Middleware para archivos estáticos con CORS mejorado
 app.use('/uploads', (req, res, next) => {
   const origin = req.headers.origin
-  if (allowedOrigins.includes(origin)) {
-    res.header('Access-Control-Allow-Origin', origin)
+  
+  // Ser más permisivo con archivos estáticos
+  if (!origin || allowedOrigins.includes(origin) || 
+      origin.includes('vercel.app') || origin.includes('render.com') ||
+      process.env.NODE_ENV !== 'production') {
+    if (origin) {
+      res.header('Access-Control-Allow-Origin', origin)
+    } else {
+      res.header('Access-Control-Allow-Origin', '*')
+    }
   }
-  res.header('Access-Control-Allow-Methods', 'GET')
-  res.header('Access-Control-Allow-Headers', 'Content-Type')
+  
+  res.header('Access-Control-Allow-Methods', 'GET, OPTIONS')
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+  res.header('Access-Control-Allow-Credentials', 'true')
+  
   next()
 }, express.static(path.join(__dirname, 'uploads')))
 

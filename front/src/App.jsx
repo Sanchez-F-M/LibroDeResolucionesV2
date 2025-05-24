@@ -8,6 +8,7 @@ import Cargas from './pages/Cargas/Cargas';
 import Busquedas from './pages/busquedas/busquedas';
 import ModificarResolucion from './pages/Modificar/ModificarResolucion';
 import MostrarResolucion from './pages/MostrarLibro/MostrarLibro';
+import DiagnosticoApp from './pages/Diagnostico/DiagnosticoApp';
 
 const App = () => {
   const [darkMode, setDarkMode] = useState(false);
@@ -25,9 +26,9 @@ const App = () => {
           minHeight: '100vh',
         }}
       >
-        <Navbar darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
-        <Routes>
+        <Navbar darkMode={darkMode} toggleDarkMode={toggleDarkMode} />        <Routes>
           <Route path={'/'} element={<Login />} />
+          <Route path={'/diagnostico'} element={<DiagnosticoApp />} />
           <Route path={'/home'} element={<HomeContainer />} />
           <Route path={'/buscador'} element={<Busquedas />} />
           <Route path={'/cargas'} element={<Cargas />} />

@@ -27,10 +27,8 @@ const Login = () => {
     if (!username || !password) {
       setError('Por favor, complete todos los campos.');
       return;
-    }
-
-    try {
-      const response = await api.post('api/user/login', {
+    }    try {
+      const response = await api.post('/api/user/login', {
         Nombre: username,
         Contrasena: password,
       });
