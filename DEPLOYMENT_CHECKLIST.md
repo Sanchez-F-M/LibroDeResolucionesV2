@@ -1,10 +1,10 @@
-# CHECKLIST DE DESPLIEGUE EN RENDER
+# CHECKLIST DE DESPLIEGUE EN RENDER - CON SQLITE
 
 ## Pre-requisitos
 
 - [X] Cuenta en Render.com
 - [X] Repositorio de código en GitHub/GitLab
-- [ ] Base de datos MySQL en la nube configurada
+- [X] Migración a SQLite completada (sin necesidad de BD externa)
 - [X] Frontend ya desplegado en Vercel
 
 ## Pasos para el despliegue del backend:
@@ -23,16 +23,12 @@
 - [ ] Start Command: `npm start`
 - [ ] Environment: Node 18.x
 
-### 3. Variables de entorno (copiar de RENDER_ENV_VARS.md)
+### 3. Variables de entorno (solo 2 requeridas con SQLite)
 
-- [ ] JWT_SECRET_KEY
-- [ ] DB_HOST
-- [ ] DB_USER
-- [ ] DB_PASSWORD
-- [ ] DB_NAME
-- [ ] DB_PORT
-- [ ] NODE_ENV
-- [ ] FRONTEND_URL
+- [ ] JWT_SECRET_KEY (generar una clave secreta fuerte)
+- [ ] FRONTEND_URL (URL de tu frontend en Vercel)
+- [X] NODE_ENV (se configura automáticamente como 'production')
+- [X] PORT (se genera automáticamente por Render)
 
 ### 4. Configuración adicional
 
@@ -56,7 +52,14 @@
 
 ## Solución de problemas comunes:
 
-1. **Error de build**: Verificar versión de Node.js
-2. **Error de base de datos**: Verificar variables de entorno y conectividad
+1. **Error de build**: Verificar versión de Node.js y dependencias SQLite
+2. **Error de SQLite**: Verificar permisos de escritura (automático en Render)
 3. **Error de CORS**: Verificar FRONTEND_URL
 4. **Servicio no responde**: Verificar logs en Render dashboard
+5. **Variables de entorno**: Solo se necesitan JWT_SECRET_KEY y FRONTEND_URL
+
+## Ventajas de SQLite en Render:
+- 🎯 **Cero configuración** de base de datos externa
+- 💰 **Costo reducido** - Sin servicios de BD adicionales
+- ⚡ **Mayor rendimiento** - Base de datos integrada
+- 🔒 **Más seguro** - Sin conexiones de red a BD externa
