@@ -322,7 +322,7 @@
             log('📚 Iniciando test de API resoluciones...');
             
             try {
-                const response = await fetch(`${BACKEND_URL}/api/books`, {
+                const response = await fetch(`${BACKEND_URL}/api/books/all`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'

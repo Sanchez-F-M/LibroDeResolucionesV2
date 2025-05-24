@@ -27,7 +27,7 @@ const bookRouter = express.Router()
 bookRouter.get('/last-number', getLastResolutionNumber)
 
 // Ruta para obtener todas las resoluciones
-bookRouter.get('/', getAllBooks)
+bookRouter.get('/all', getAllBooks)
 
 // Resto de las rutas
 bookRouter.get('/:id', getByIdBook)
