@@ -1,18 +1,22 @@
-import fetch from 'node-fetch';
+/**
+ * Script para poblar la base de datos de producción con datos de prueba
+ * Versión CommonJS para compatibilidad
+ */
+
+const fetch = require('node-fetch');
 
 const API_BASE_URL = 'https://libro-resoluciones-api.onrender.com';
 
 // Función para hacer login y obtener token
 async function getAuthToken() {
-  try {
-    const response = await fetch(`${API_BASE_URL}/api/user/login`, {
+  try {    const response = await fetch(`${API_BASE_URL}/api/user/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        username: 'admin',
-        password: 'admin123'
+        Nombre: 'admin',
+        Contrasena: 'admin123'
       })
     });
 
@@ -145,6 +149,7 @@ async function populateDatabase() {
     } else {
       console.log('⚠️ No se pudo verificar la base de datos');
     }
+
   } catch (error) {
     console.error('💥 Error crítico:', error);
     process.exit(1);

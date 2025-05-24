@@ -1,0 +1,12 @@
+{
+  "name": "libro-resoluciones-root",
+  "version": "1.0.0",
+  "description": "Root package for Libro de Resoluciones project",
+  "scripts": {
+    "populate-production": "node populate-production-cjs.js",
+    "populate-test": "cd server && node populate-test-data.js"
+  },
+  "dependencies": {
+    "node-fetch": "^2.6.7"
+  }
+}
