@@ -161,3 +161,37 @@ export const getLastResolutionNumber = async (req, res) => {
     res.status(500).json({ error: 'Error al obtener el último número de resolución' })
   }
 }
+
+export const getAllBooks = async (req, res) => {
+  try {
+    const resolutions = await db.all(`
+      SELECT 
+        r.NumdeResolucion, 
+        r.Asunto, 
+        r.Referencia, 
+        r.FechaCreacion as fetcha_creacion 
+      FROM resolution r 
+      ORDER BY r.NumdeResolucion DESC
+    `)
+
+    // Para cada resolución, obtener sus imágenes
+    const resolutionsWithImages = await Promise.all(
+      resolutions.map(async (resolution) => {
+        const images = await db.all('SELECT ImagePath FROM images WHERE NumdeResolucion = ?', [resolution.NumdeResolucion])
+        
+        return {
+          NumdeResolucion: resolution.NumdeResolucion,
+          asunto: resolution.Asunto,
+          referencia: resolution.Referencia,
+          fetcha_creacion: resolution.fetcha_creacion,
+          images: images.map(image => image.ImagePath)
+        }
+      })
+    )
+
+    res.status(200).json(resolutionsWithImages)
+  } catch (error) {
+    console.error('❌ Error en getAllBooks:', error)
+    res.status(500).json({ error: 'Error interno del servidor: ' + error.message })
+  }
+}

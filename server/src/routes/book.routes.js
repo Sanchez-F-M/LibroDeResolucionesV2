@@ -2,6 +2,7 @@ import express from 'express'
 import multer from 'multer'
 import {
   createBook,
+  getAllBooks,
   getByIdBook,
   updateBook,
   deleteBook,
@@ -24,6 +25,9 @@ const bookRouter = express.Router()
 
 // Esta ruta debe ir primero para evitar conflictos con el parámetro :id
 bookRouter.get('/last-number', getLastResolutionNumber)
+
+// Ruta para obtener todas las resoluciones
+bookRouter.get('/', getAllBooks)
 
 // Resto de las rutas
 bookRouter.get('/:id', getByIdBook)
