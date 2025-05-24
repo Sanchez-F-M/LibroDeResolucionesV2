@@ -1,5 +1,5 @@
-// Validación de variables de entorno requeridas
-const requiredEnvVars = ['JWT_SECRET_KEY', 'DB_HOST', 'DB_USER', 'DB_NAME'];
+// Validación de variables de entorno requeridas para SQLite
+const requiredEnvVars = ['JWT_SECRET_KEY', 'FRONTEND_URL'];
 
 export function validateEnvironment() {
   const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
