@@ -6,6 +6,7 @@ const DiagnosticoApp = () => {
   const [apiUrl, setApiUrl] = useState('');
   const [error, setError] = useState('');
   const [loginTest, setLoginTest] = useState('');
+  const [booksTest, setBooksTest] = useState('');
 
   useEffect(() => {
     // Mostrar la URL de la API
@@ -71,6 +72,42 @@ const DiagnosticoApp = () => {
     }
   };
 
+  const testBooksAPI = async () => {
+    try {
+      setBooksTest('testing');
+      const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+      
+      console.log('📚 Probando API de resoluciones...');
+      
+      const response = await fetch(`${baseUrl}/api/books/all`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+      
+      const data = await response.json();
+      console.log('📚 Respuesta de API resoluciones:', data);
+      
+      if (response.ok) {
+        setBooksTest('success');
+        if (Array.isArray(data) && data.length > 0) {
+          console.log(`✅ ${data.length} resoluciones encontradas`);
+        } else {
+          console.log('⚠️ No hay resoluciones en la base de datos');
+        }
+      } else {
+        setBooksTest('error');
+        setError(data.error || 'Error en API de resoluciones');
+      }
+      
+    } catch (error) {
+      console.error('❌ Error en API de resoluciones:', error);
+      setBooksTest('error');
+      setError(error.message);
+    }
+  };
+
   return (
     <Container maxWidth="md" sx={{ mt: 4 }}>
       <Typography variant="h4" gutterBottom>
@@ -113,25 +150,57 @@ const DiagnosticoApp = () => {
         </Button>
         
         <Button 
-          variant="contained" 
-          color="secondary"
+          variant="contained"
           onClick={testLogin}
-          disabled={apiStatus !== 'success'}
+          sx={{ mr: 2 }}
         >
           🔐 Probar Login
         </Button>
-        
+
+        <Button 
+          variant="contained"
+          onClick={testBooksAPI}
+        >
+          📚 Probar API Resoluciones
+        </Button>
+      </Box>
+
+      <Box sx={{ mb: 3 }}>
+        <Typography variant="h6">Test de Login:</Typography>
         {loginTest === 'testing' && (
-          <CircularProgress size={20} sx={{ ml: 2 }} />
+          <Alert severity="info" sx={{ mt: 1 }}>
+            <CircularProgress size={20} sx={{ mr: 1 }} />
+            Probando login...
+          </Alert>
         )}
         {loginTest === 'success' && (
-          <Alert severity="success" sx={{ mt: 2 }}>
+          <Alert severity="success" sx={{ mt: 1 }}>
             ✅ Login funcionando correctamente
           </Alert>
         )}
         {loginTest === 'error' && (
-          <Alert severity="error" sx={{ mt: 2 }}>
+          <Alert severity="error" sx={{ mt: 1 }}>
             ❌ Error en login: {error}
+          </Alert>
+        )}
+      </Box>
+
+      <Box sx={{ mb: 3 }}>
+        <Typography variant="h6">Test de API Resoluciones:</Typography>
+        {booksTest === 'testing' && (
+          <Alert severity="info" sx={{ mt: 1 }}>
+            <CircularProgress size={20} sx={{ mr: 1 }} />
+            Probando API de resoluciones...
+          </Alert>
+        )}
+        {booksTest === 'success' && (
+          <Alert severity="success" sx={{ mt: 1 }}>
+            ✅ API de resoluciones funcionando correctamente
+          </Alert>
+        )}
+        {booksTest === 'error' && (
+          <Alert severity="error" sx={{ mt: 1 }}>
+            ❌ Error en API de resoluciones: {error}
           </Alert>
         )}
       </Box>
