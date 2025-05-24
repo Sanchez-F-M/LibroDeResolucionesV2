@@ -11,6 +11,7 @@
     "dev": "nodemon index.js",
     "start": "node index.js",
     "seed": "node db/seed-data.js",
+    "populate-test": "node populate-test-data.js",
     "create-admin": "node scripts/create-admin.js",
     "create-user": "node scripts/create-user.js",
     "create-admin-production": "node scripts/create-admin-production.js",
