@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import Navbar from './Components/layouts/navbar/Navbar';
 import Login from './pages/login/Login';
 import Footer from './Components/layouts/footer/Footer';
@@ -17,8 +17,25 @@ const App = () => {
     setDarkMode(!darkMode);
   };
 
+  // Component to handle redirects from 404 fallback
+  const RedirectHandler = () => {
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    useEffect(() => {
+      const redirectPath = sessionStorage.getItem('redirectPath');
+      if (redirectPath && location.pathname === '/') {
+        sessionStorage.removeItem('redirectPath');
+        navigate(redirectPath, { replace: true });
+      }
+    }, [navigate, location]);
+
+    return null;
+  };
+
   return (
     <BrowserRouter>
+      <RedirectHandler />
       <div
         style={{
           display: 'flex',
