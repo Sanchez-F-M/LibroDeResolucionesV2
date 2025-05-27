@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import Navbar from './Components/layouts/navbar/Navbar';
 import Login from './pages/login/Login';
 import Footer from './Components/layouts/footer/Footer';
@@ -8,6 +8,7 @@ import Cargas from './pages/Cargas/Cargas';
 import Busquedas from './pages/busquedas/busquedas';
 import ModificarResolucion from './pages/Modificar/ModificarResolucion';
 import MostrarResolucion from './pages/MostrarLibro/MostrarLibro';
+import DiagnosticoApp from './pages/Diagnostico/DiagnosticoApp';
 
 const App = () => {
   const [darkMode, setDarkMode] = useState(false);
@@ -16,8 +17,25 @@ const App = () => {
     setDarkMode(!darkMode);
   };
 
+  // Component to handle redirects from 404 fallback
+  const RedirectHandler = () => {
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    useEffect(() => {
+      const redirectPath = sessionStorage.getItem('redirectPath');
+      if (redirectPath && location.pathname === '/') {
+        sessionStorage.removeItem('redirectPath');
+        navigate(redirectPath, { replace: true });
+      }
+    }, [navigate, location]);
+
+    return null;
+  };
+
   return (
     <BrowserRouter>
+      <RedirectHandler />
       <div
         style={{
           display: 'flex',
@@ -25,9 +43,9 @@ const App = () => {
           minHeight: '100vh',
         }}
       >
-        <Navbar darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
-        <Routes>
+        <Navbar darkMode={darkMode} toggleDarkMode={toggleDarkMode} />        <Routes>
           <Route path={'/'} element={<Login />} />
+          <Route path={'/diagnostico'} element={<DiagnosticoApp />} />
           <Route path={'/home'} element={<HomeContainer />} />
           <Route path={'/buscador'} element={<Busquedas />} />
           <Route path={'/cargas'} element={<Cargas />} />
