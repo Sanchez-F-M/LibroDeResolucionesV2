@@ -16,8 +16,30 @@ const app = express()
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
+<<<<<<< HEAD
 // Middleware de compresión para mejorar rendimiento
 app.use(compression())
+=======
+// Configuración de CORS más específica
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://libro-de-resoluciones.vercel.app', // Añade aquí tu dominio de Vercel
+  process.env.FRONTEND_URL // URL desde variable de entorno
+].filter(Boolean);
+
+app.use(cors({
+  origin: function(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true,
+  exposedHeaders: ['Content-Disposition'] // Importante para las descargas
+}))
+>>>>>>> 1957813db2d6f67ff782bd411628f94d8d164ced
 
 // Definir orígenes permitidos globalmente
 const allowedOrigins = [
