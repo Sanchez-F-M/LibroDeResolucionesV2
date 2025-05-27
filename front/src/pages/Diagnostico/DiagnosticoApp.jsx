@@ -1,5 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Typography, Button, Alert, Box, CircularProgress } from '@mui/material';
+import { 
+  Container, 
+  Typography, 
+  Button, 
+  Alert, 
+  Box, 
+  CircularProgress,
+  Paper,
+  Stack,
+  Card,
+  CardContent,
+  Chip,
+  useMediaQuery,
+  useTheme,
+  Divider,
+  Grid
+} from '@mui/material';
+import BuildIcon from '@mui/icons-material/Build';
+import CloudIcon from '@mui/icons-material/Cloud';
+import LoginIcon from '@mui/icons-material/Login';
+import BookIcon from '@mui/icons-material/Book';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import ErrorIcon from '@mui/icons-material/Error';
+import InfoIcon from '@mui/icons-material/Info';
 
 const DiagnosticoApp = () => {
   const [apiStatus, setApiStatus] = useState('testing');
@@ -7,6 +31,11 @@ const DiagnosticoApp = () => {
   const [error, setError] = useState('');
   const [loginTest, setLoginTest] = useState('');
   const [booksTest, setBooksTest] = useState('');
+
+  // Responsive breakpoints
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
 
   useEffect(() => {
     // Mostrar la URL de la API
@@ -107,112 +136,274 @@ const DiagnosticoApp = () => {
       setError(error.message);
     }
   };
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case 'success':
+        return <CheckCircleIcon color="success" />;
+      case 'error':
+        return <ErrorIcon color="error" />;
+      case 'testing':
+        return <CircularProgress size={20} />;
+      default:
+        return <InfoIcon color="info" />;
+    }
+  };
+
+  const getStatusSeverity = (status) => {
+    switch (status) {
+      case 'success':
+        return 'success';
+      case 'error':
+        return 'error';
+      case 'testing':
+        return 'info';
+      default:
+        return 'info';
+    }
+  };
 
   return (
-    <Container maxWidth="md" sx={{ mt: 4 }}>
-      <Typography variant="h4" gutterBottom>
-        🔧 Diagnóstico de Aplicación
-      </Typography>
-      
-      <Box sx={{ mb: 3 }}>
-        <Typography variant="h6">Variables de Entorno:</Typography>
-        <Typography>API URL: <strong>{apiUrl}</strong></Typography>
-        <Typography>Entorno: <strong>{import.meta.env.VITE_APP_ENV || 'development'}</strong></Typography>
-      </Box>
-
-      <Box sx={{ mb: 3 }}>
-        <Typography variant="h6">Estado del Backend:</Typography>
-        {apiStatus === 'testing' && (
-          <Alert severity="info" sx={{ mt: 1 }}>
-            <CircularProgress size={20} sx={{ mr: 1 }} />
-            Probando conexión...
-          </Alert>
-        )}
-        {apiStatus === 'success' && (
-          <Alert severity="success" sx={{ mt: 1 }}>
-            ✅ Backend funcionando correctamente
-          </Alert>
-        )}
-        {apiStatus === 'error' && (
-          <Alert severity="error" sx={{ mt: 1 }}>
-            ❌ Error: {error}
-          </Alert>
-        )}
-      </Box>
-
-      <Box sx={{ mb: 3 }}>
-        <Button 
-          variant="contained" 
-          onClick={testConnection}
-          sx={{ mr: 2 }}
+    <Container maxWidth="lg" sx={{ 
+      mt: { xs: 10, md: 12 }, 
+      mb: { xs: 4, md: 6 },
+      px: { xs: 2, sm: 3, md: 4 }
+    }}>
+      {/* Header */}
+      <Box sx={{ textAlign: 'center', mb: 4 }}>
+        <Stack direction="row" alignItems="center" justifyContent="center" spacing={2} sx={{ mb: 2 }}>
+          <BuildIcon 
+            color="primary" 
+            sx={{ fontSize: { xs: 32, sm: 40, md: 48 } }} 
+          />
+          <Typography 
+            variant={isMobile ? "h4" : "h3"} 
+            color="primary" 
+            fontWeight="bold"
+          >
+            Diagnóstico del Sistema
+          </Typography>
+        </Stack>
+        <Typography 
+          variant={isMobile ? "body1" : "h6"} 
+          color="text.secondary"
+          sx={{ maxWidth: 600, mx: 'auto' }}
         >
-          🔄 Probar Conexión
-        </Button>
-        
-        <Button 
-          variant="contained"
-          onClick={testLogin}
-          sx={{ mr: 2 }}
-        >
-          🔐 Probar Login
-        </Button>
-
-        <Button 
-          variant="contained"
-          onClick={testBooksAPI}
-        >
-          📚 Probar API Resoluciones
-        </Button>
-      </Box>
-
-      <Box sx={{ mb: 3 }}>
-        <Typography variant="h6">Test de Login:</Typography>
-        {loginTest === 'testing' && (
-          <Alert severity="info" sx={{ mt: 1 }}>
-            <CircularProgress size={20} sx={{ mr: 1 }} />
-            Probando login...
-          </Alert>
-        )}
-        {loginTest === 'success' && (
-          <Alert severity="success" sx={{ mt: 1 }}>
-            ✅ Login funcionando correctamente
-          </Alert>
-        )}
-        {loginTest === 'error' && (
-          <Alert severity="error" sx={{ mt: 1 }}>
-            ❌ Error en login: {error}
-          </Alert>
-        )}
-      </Box>
-
-      <Box sx={{ mb: 3 }}>
-        <Typography variant="h6">Test de API Resoluciones:</Typography>
-        {booksTest === 'testing' && (
-          <Alert severity="info" sx={{ mt: 1 }}>
-            <CircularProgress size={20} sx={{ mr: 1 }} />
-            Probando API de resoluciones...
-          </Alert>
-        )}
-        {booksTest === 'success' && (
-          <Alert severity="success" sx={{ mt: 1 }}>
-            ✅ API de resoluciones funcionando correctamente
-          </Alert>
-        )}
-        {booksTest === 'error' && (
-          <Alert severity="error" sx={{ mt: 1 }}>
-            ❌ Error en API de resoluciones: {error}
-          </Alert>
-        )}
-      </Box>
-
-      <Box sx={{ mb: 3 }}>
-        <Typography variant="h6">Instrucciones:</Typography>
-        <Typography variant="body2">
-          1. Si el backend está funcionando, la aplicación principal debería cargar<br/>
-          2. Si hay errores, revise la consola del navegador (F12)<br/>
-          3. Use las credenciales: admin / admin123
+          Panel de diagnóstico para verificar el estado y funcionamiento de la aplicación
         </Typography>
       </Box>
+
+      <Grid container spacing={3}>
+        {/* Variables de Entorno */}
+        <Grid item xs={12} md={6}>
+          <Card elevation={2} sx={{ height: '100%', borderRadius: 2 }}>
+            <CardContent>
+              <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 2 }}>
+                <InfoIcon color="primary" />
+                <Typography variant="h6" fontWeight="bold">
+                  Configuración
+                </Typography>
+              </Stack>
+              <Divider sx={{ mb: 2 }} />
+              <Stack spacing={2}>
+                <Box>
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                    URL de la API:
+                  </Typography>
+                  <Chip 
+                    label={apiUrl || 'No configurada'} 
+                    color="primary" 
+                    variant="outlined"
+                    sx={{ 
+                      fontSize: { xs: '0.75rem', sm: '0.8rem' },
+                      maxWidth: '100%',
+                      height: 'auto',
+                      '& .MuiChip-label': {
+                        display: 'block',
+                        whiteSpace: 'normal',
+                        wordBreak: 'break-all'
+                      }
+                    }}
+                  />
+                </Box>
+                <Box>
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                    Entorno:
+                  </Typography>
+                  <Chip 
+                    label={import.meta.env.VITE_APP_ENV || 'development'} 
+                    color="info" 
+                    variant="outlined"
+                    size={isMobile ? "small" : "medium"}
+                  />
+                </Box>
+              </Stack>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        {/* Estado del Backend */}
+        <Grid item xs={12} md={6}>
+          <Card elevation={2} sx={{ height: '100%', borderRadius: 2 }}>
+            <CardContent>
+              <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 2 }}>
+                <CloudIcon color="primary" />
+                <Typography variant="h6" fontWeight="bold">
+                  Estado del Backend
+                </Typography>
+              </Stack>
+              <Divider sx={{ mb: 2 }} />
+              <Alert 
+                severity={getStatusSeverity(apiStatus)} 
+                icon={getStatusIcon(apiStatus)}
+                sx={{ borderRadius: 2 }}
+              >
+                {apiStatus === 'testing' && 'Verificando conexión con el servidor...'}
+                {apiStatus === 'success' && 'Conexión establecida correctamente'}
+                {apiStatus === 'error' && `Error de conexión: ${error}`}
+              </Alert>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        {/* Botones de Control */}
+        <Grid item xs={12}>
+          <Paper elevation={2} sx={{ p: 3, borderRadius: 2 }}>
+            <Typography variant="h6" fontWeight="bold" sx={{ mb: 3 }}>
+              Pruebas del Sistema
+            </Typography>
+            <Stack 
+              direction={{ xs: 'column', sm: 'row' }} 
+              spacing={2}
+              sx={{ mb: 3 }}
+            >
+              <Button 
+                variant="contained" 
+                startIcon={<RefreshIcon />}
+                onClick={testConnection}
+                fullWidth={isMobile}
+                size={isMobile ? "large" : "medium"}
+                sx={{ 
+                  borderRadius: 2,
+                  textTransform: 'none',
+                  fontWeight: 600
+                }}
+              >
+                Probar Conexión
+              </Button>
+              <Button 
+                variant="contained"
+                startIcon={<LoginIcon />}
+                onClick={testLogin}
+                fullWidth={isMobile}
+                size={isMobile ? "large" : "medium"}
+                sx={{ 
+                  borderRadius: 2,
+                  textTransform: 'none',
+                  fontWeight: 600
+                }}
+              >
+                Probar Login
+              </Button>
+              <Button 
+                variant="contained"
+                startIcon={<BookIcon />}
+                onClick={testBooksAPI}
+                fullWidth={isMobile}
+                size={isMobile ? "large" : "medium"}
+                sx={{ 
+                  borderRadius: 2,
+                  textTransform: 'none',
+                  fontWeight: 600
+                }}
+              >
+                Probar API Resoluciones
+              </Button>
+            </Stack>
+          </Paper>
+        </Grid>
+
+        {/* Resultados de las Pruebas */}
+        <Grid item xs={12} md={6}>
+          <Card elevation={2} sx={{ height: '100%', borderRadius: 2 }}>
+            <CardContent>
+              <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 2 }}>
+                <LoginIcon color="primary" />
+                <Typography variant="h6" fontWeight="bold">
+                  Test de Autenticación
+                </Typography>
+              </Stack>
+              <Divider sx={{ mb: 2 }} />
+              {loginTest ? (
+                <Alert 
+                  severity={getStatusSeverity(loginTest)} 
+                  icon={getStatusIcon(loginTest)}
+                  sx={{ borderRadius: 2 }}
+                >
+                  {loginTest === 'testing' && 'Probando autenticación...'}
+                  {loginTest === 'success' && 'Sistema de login funcionando correctamente'}
+                  {loginTest === 'error' && `Error en autenticación: ${error}`}
+                </Alert>
+              ) : (
+                <Typography variant="body2" color="text.secondary">
+                  Haga clic en "Probar Login" para verificar la autenticación
+                </Typography>
+              )}
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} md={6}>
+          <Card elevation={2} sx={{ height: '100%', borderRadius: 2 }}>
+            <CardContent>
+              <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 2 }}>
+                <BookIcon color="primary" />
+                <Typography variant="h6" fontWeight="bold">
+                  Test de API Resoluciones
+                </Typography>
+              </Stack>
+              <Divider sx={{ mb: 2 }} />
+              {booksTest ? (
+                <Alert 
+                  severity={getStatusSeverity(booksTest)} 
+                  icon={getStatusIcon(booksTest)}
+                  sx={{ borderRadius: 2 }}
+                >
+                  {booksTest === 'testing' && 'Verificando API de resoluciones...'}
+                  {booksTest === 'success' && 'API de resoluciones funcionando correctamente'}
+                  {booksTest === 'error' && `Error en API: ${error}`}
+                </Alert>
+              ) : (
+                <Typography variant="body2" color="text.secondary">
+                  Haga clic en "Probar API Resoluciones" para verificar el servicio
+                </Typography>
+              )}
+            </CardContent>
+          </Card>
+        </Grid>
+
+        {/* Instrucciones */}
+        <Grid item xs={12}>
+          <Paper elevation={1} sx={{ p: 3, borderRadius: 2, bgcolor: 'grey.50' }}>
+            <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
+              Instrucciones de Uso
+            </Typography>
+            <Stack spacing={1}>
+              <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Box component="span" sx={{ fontWeight: 'bold', color: 'primary.main' }}>1.</Box>
+                Si el backend está funcionando, la aplicación principal debería cargar correctamente
+              </Typography>
+              <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Box component="span" sx={{ fontWeight: 'bold', color: 'primary.main' }}>2.</Box>
+                Si hay errores, revise la consola del navegador (F12) para más detalles
+              </Typography>
+              <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Box component="span" sx={{ fontWeight: 'bold', color: 'primary.main' }}>3.</Box>
+                Use las credenciales de administrador: <strong>admin</strong> / <strong>admin123</strong>
+              </Typography>
+            </Stack>
+          </Paper>
+        </Grid>
+      </Grid>
     </Container>
   );
 };

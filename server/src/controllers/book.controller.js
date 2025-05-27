@@ -153,9 +153,44 @@ export const createBook = async (req, res) => {
 
 export const getLastResolutionNumber = async (req, res) => {
   try {
-    const result = await db.get('SELECT MAX(NumdeResolucion) as lastNumber FROM resolution')
-    const lastNumber = result?.lastNumber || 0 // Si no hay resoluciones, devuelve 0
-    res.status(200).json({ lastNumber: lastNumber + 1 }) // Devuelve el siguiente número
+    // Obtener todos los números de resolución
+    const results = await db.all('SELECT NumdeResolucion FROM resolution')
+    
+    let maxNumber = 0
+    
+    // Extraer números de diferentes formatos
+    results.forEach(row => {
+      const resolutionNumber = row.NumdeResolucion
+      let numberPart = 0
+      
+      if (typeof resolutionNumber === 'string') {
+        // Caso 1: Formato "RES-XXX-YYYY" -> extraer XXX
+        const resMatch = resolutionNumber.match(/^RES-(\d+)-/)
+        if (resMatch) {
+          numberPart = parseInt(resMatch[1], 10)
+        }
+        // Caso 2: Formato "YYYYNNN" (ej: 2025001) -> extraer NNN
+        else if (/^\d{7}$/.test(resolutionNumber)) {
+          numberPart = parseInt(resolutionNumber.slice(-3), 10)
+        }
+        // Caso 3: String numérico simple
+        else if (/^\d+$/.test(resolutionNumber)) {
+          numberPart = parseInt(resolutionNumber, 10)
+        }
+      } else if (typeof resolutionNumber === 'number') {
+        // Caso 4: Número directo
+        numberPart = resolutionNumber
+      }
+      
+      if (numberPart > maxNumber) {
+        maxNumber = numberPart
+      }
+    })
+    
+    const nextNumber = maxNumber + 1
+    console.log(`📊 Último número encontrado: ${maxNumber}, próximo número: ${nextNumber}`)
+    
+    res.status(200).json({ lastNumber: nextNumber })
   } catch (error) {
     console.error('❌ Error en getLastResolutionNumber:', error)
     res.status(500).json({ error: 'Error al obtener el último número de resolución' })
@@ -215,9 +250,7 @@ export const insertTestResolution = async (req, res) => {
     if (existing) {
       await db.exec('ROLLBACK')
       return res.status(400).json({ error: 'El número de resolución ya existe' })
-    }
-
-    // Insertar resolución
+    }    // Insertar resolución
     await db.run(
       'INSERT INTO resolution (NumdeResolucion, Asunto, Referencia, FechaCreacion) VALUES (?, ?, ?, ?)',
       [NumdeResolucion, Asunto, Referencia, fechaCreacion.toISOString()]
@@ -228,3 +261,30 @@ export const insertTestResolution = async (req, res) => {
       for (const imagePath of ImagePaths) {
         await db.run(
           'INSERT INTO images (NumdeResolucion, ImagePath) VALUES (?, ?)',
+          [NumdeResolucion, imagePath]
+        )
+      }
+    }
+
+    // Confirmar transacción
+    await db.exec('COMMIT')
+
+    res.status(201).json({ 
+      message: 'Resolución mock creada exitosamente',
+      NumdeResolucion 
+    })
+  } catch (error) {
+    await db.exec('ROLLBACK')
+    console.error('Error al crear resolución mock:', error)
+    res.status(500).json({ error: 'Error interno del servidor' })
+  }
+}
+
+export { 
+  getAllBooks as getResolutions, 
+  getByIdBook as getResolutionById, 
+  createBook as createResolution, 
+  updateBook as updateResolution, 
+  deleteBook as deleteResolution,
+  insertTestResolution as createMockResolution 
+}
