@@ -25,7 +25,7 @@ const allowedOrigins = [
   'http://localhost:5173', // desarrollo local
   'http://localhost:5174', // desarrollo local alternativo
   'http://localhost:5175', // desarrollo local alternativo 2
-  'https://front-jibs1li4h-libro-de-resoluciones-projects.vercel.app', // producción Vercel
+  'https://front-jibs1li4h-libro-de-resoluciones-projects.vercel.app' // producción Vercel
 ].filter(Boolean) // Elimina valores falsy
 
 console.log('🌐 Orígenes permitidos:', allowedOrigins)
@@ -36,31 +36,31 @@ console.log('🌐 NODE_ENV:', process.env.NODE_ENV)
 const corsOptions = {
   origin: function (origin, callback) {
     console.log('🔍 Request origin:', origin)
-    
+
     // Permitir requests sin origin (health checks, Postman, curl, etc.)
     if (!origin) {
       console.log('✅ Permitiendo request sin origin')
       return callback(null, true)
     }
-    
+
     // Permitir orígenes en la lista
     if (allowedOrigins.includes(origin)) {
       console.log('✅ Origen permitido:', origin)
       return callback(null, true)
     }
-    
+
     // En desarrollo, ser más permisivo
     if (process.env.NODE_ENV !== 'production') {
       console.log('✅ Permitiendo en desarrollo:', origin)
       return callback(null, true)
     }
-    
+
     // En producción, permitir dominios de Vercel
     if (origin.includes('vercel.app') || origin.includes('render.com')) {
       console.log('✅ Permitiendo dominio de plataforma:', origin)
       return callback(null, true)
     }
-    
+
     console.log('❌ Origen rechazado:', origin)
     callback(new Error(`No permitido por CORS: ${origin}`))
   },
@@ -76,34 +76,33 @@ app.use(cors(corsOptions))
 app.options('*', (req, res) => {
   console.log('🔄 OPTIONS request recibido para:', req.url)
   const origin = req.headers.origin
-  
-  if (!origin || allowedOrigins.includes(origin) || 
+
+  if (!origin || allowedOrigins.includes(origin) ||
       origin.includes('vercel.app') || origin.includes('render.com') ||
       process.env.NODE_ENV !== 'production') {
-    
     if (origin) {
       res.header('Access-Control-Allow-Origin', origin)
     } else {
       res.header('Access-Control-Allow-Origin', '*')
     }
-    
+
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, Origin, X-Requested-With')
     res.header('Access-Control-Allow-Credentials', 'true')
     res.header('Access-Control-Max-Age', '86400') // Cache preflight por 24 horas
-    
+
     return res.sendStatus(200)
   }
-  
+
   res.sendStatus(403)
 })
 
 // Middleware para archivos estáticos con CORS mejorado
 app.use('/uploads', (req, res, next) => {
   const origin = req.headers.origin
-  
+
   // Ser más permisivo con archivos estáticos
-  if (!origin || allowedOrigins.includes(origin) || 
+  if (!origin || allowedOrigins.includes(origin) ||
       origin.includes('vercel.app') || origin.includes('render.com') ||
       process.env.NODE_ENV !== 'production') {
     if (origin) {
@@ -112,11 +111,11 @@ app.use('/uploads', (req, res, next) => {
       res.header('Access-Control-Allow-Origin', '*')
     }
   }
-  
+
   res.header('Access-Control-Allow-Methods', 'GET, OPTIONS')
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
   res.header('Access-Control-Allow-Credentials', 'true')
-  
+
   next()
 }, express.static(path.join(__dirname, 'uploads')))
 
@@ -131,8 +130,8 @@ const PORT = process.env.PORT || 3000
 // Health check específico para Render (sin CORS)
 app.get('/render-health', (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*')
-  res.status(200).json({ 
-    status: 'OK', 
+  res.status(200).json({
+    status: 'OK',
     service: 'libro-resoluciones-api',
     timestamp: new Date().toISOString(),
     env: process.env.NODE_ENV || 'development'
@@ -142,8 +141,8 @@ app.get('/render-health', (req, res) => {
 // Health check para Render (ruta raíz)
 app.get('/', (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*')
-  res.status(200).json({ 
-    status: 'OK', 
+  res.status(200).json({
+    status: 'OK',
     message: 'Libro de Resoluciones API is running',
     timestamp: new Date().toISOString(),
     env: process.env.NODE_ENV || 'development',
@@ -155,8 +154,8 @@ app.get('/', (req, res) => {
 app.get('/health', (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Content-Type', 'application/json')
-  res.status(200).json({ 
-    status: 'OK', 
+  res.status(200).json({
+    status: 'OK',
     service: 'libro-resoluciones-api',
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
