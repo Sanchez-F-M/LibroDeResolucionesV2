@@ -25,9 +25,7 @@ const allowedOrigins = [
   'http://localhost:5173', // desarrollo local
   'http://localhost:5174', // desarrollo local alternativo
   'http://localhost:5175', // desarrollo local alternativo 2
-  'http://localhost:3000',
-  'https://libro-de-resoluciones-v2.vercel.app', // producción Vercel principal
-  'https://front-jibs1li4h-libro-de-resoluciones-projects.vercel.app' // producción Vercel alternativo
+  'https://front-jibs1li4h-libro-de-resoluciones-projects.vercel.app' // producción Vercel
 ].filter(Boolean) // Elimina valores falsy
 
 // Configuración de CORS
@@ -35,29 +33,6 @@ const corsOptions = {
   origin: function (origin, callback) {
     // Permitir requests sin origin (ej: aplicaciones móviles, Postman)
     if (!origin) return callback(null, true)
-    
-<<<<<<< HEAD
-    // Permitir dominios específicos en desarrollo
-    if (process.env.NODE_ENV !== 'production') {
-      if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
-        return callback(null, true)
-      }
-    }
-    
-    // Verificar si el origin está en la lista permitida
-    if (allowedOrigins.includes(origin) || 
-        origin.includes('vercel.app') || 
-        origin.includes('render.com')) {
-      return callback(null, true)
-    }
-    
-    callback(null, true) // Ser permisivo en desarrollo
-=======
-    // Permitir requests sin origin (health checks, Postman, curl, etc.)
-    if (!origin) {
-      console.log('✅ Permitiendo request sin origin')
-      return callback(null, true)
-    }
     
     // Permitir orígenes en la lista
     if (allowedOrigins.includes(origin)) {
@@ -73,7 +48,6 @@ const corsOptions = {
 
     console.log('❌ Origen rechazado:', origin)
     callback(new Error(`No permitido por CORS: ${origin}`))
->>>>>>> Flavio
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With'],
@@ -112,7 +86,6 @@ app.use((req, res, next) => {
   const timestamp = new Date().toISOString()
   console.log(`📋 [${timestamp}] ${req.method} ${req.path} - Origin: ${req.headers.origin || 'No origin'}`)
   next()
-<<<<<<< HEAD
 }, express.static(path.join(__dirname, 'uploads')))
 
 // Middlewares para parseo de datos
@@ -130,8 +103,6 @@ app.get('/render-health', (req, res) => {
     timestamp: new Date().toISOString(),
     env: process.env.NODE_ENV || 'development'
   })
-=======
->>>>>>> Flavio
 })
 
 // Health check en ruta raíz para Render
@@ -146,11 +117,7 @@ app.get('/', (req, res) => {
   })
 })
 
-<<<<<<< HEAD
-// Verificación de estado del servidor
-=======
 // Health check endpoint detallado
->>>>>>> Flavio
 app.get('/health', (req, res) => {
   console.log('❤️ Health check detallado')
   res.status(200).json({
@@ -169,40 +136,6 @@ app.use('/api', routes)
 
 // Middleware de manejo de errores
 app.use((err, req, res, next) => {
-<<<<<<< HEAD
-  console.error('❌ Error:', err.stack)
-  res.status(500).json({ 
-    error: 'Algo salió mal!',
-    message: process.env.NODE_ENV === 'development' ? err.message : 'Error interno del servidor'
-  })
-})
-
-// Ruta 404
-app.use('*', (req, res) => {
-  res.status(404).json({ 
-    error: 'Ruta no encontrada',
-    path: req.originalUrl 
-  })
-})
-
-// Iniciar el servidor
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 Server running on port ${PORT}`)
-  console.log('🌍 Environment:', process.env.NODE_ENV || 'development')
-  console.log('🔗 Allowed origins:', allowedOrigins)
-  console.log('📁 Static files served from:', path.join(__dirname, 'uploads'))
-})
-
-// Manejo de errores no capturados
-process.on('uncaughtException', (err) => {
-  console.error('❌ Uncaught Exception:', err)
-  process.exit(1)
-})
-
-process.on('unhandledRejection', (err) => {
-  console.error('❌ Unhandled Rejection:', err)
-  process.exit(1)
-=======
   console.error('❌ Error middleware:', err.message)
   
   if (err.message.includes('CORS')) {
@@ -217,7 +150,6 @@ process.on('unhandledRejection', (err) => {
     error: 'Error interno del servidor',
     message: process.env.NODE_ENV === 'development' ? err.message : 'Error interno'
   })
->>>>>>> Flavio
 })
 
 // Manejo de rutas no encontradas
@@ -256,3 +188,62 @@ process.on('unhandledRejection', (err) => {
 })
 
 export default app
+
+{
+  "configurations" [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Backend Server",
+      "program": "${workspaceFolder}/server/index.js",
+      "cwd": "${workspaceFolder}/server",
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "envFile": "${workspaceFolder}/server/.env",
+      "restart": true,
+      "console": "integratedTerminal",
+      "skipFiles": [
+        "<node_internals>/**"
+      ]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Frontend Dev Server",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
+      "cwd": "${workspaceFolder}/front",
+      "console": "integratedTerminal",
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "skipFiles": [
+        "<node_internals>/**"
+      ]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Run Population Script",
+      "program": "${workspaceFolder}/populate-production-cjs.js",
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "skipFiles": [
+        "<node_internals>/**"
+      ]
+    }
+  ],
+  "compounds" [
+    {
+      "name": "Launch Full Stack",
+      "configurations": [
+        "Launch Backend Server",
+        "Launch Frontend Dev Server"
+      ]
+    }
+  ]
+}
