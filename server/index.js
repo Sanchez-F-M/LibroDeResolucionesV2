@@ -16,20 +16,6 @@ const app = express()
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-<<<<<<< HEAD
-// Puerto para el servidor
-const PORT = process.env.PORT || 3000
-
-// Definir orígenes permitidos
-const allowedOrigins = [
-  'http://localhost:5173',
-  'http://localhost:5174', 
-  'http://localhost:5175',
-  'http://localhost:3000',
-  process.env.FRONTEND_URL,
-  'https://libro-de-resoluciones-v2.vercel.app'
-].filter(Boolean) // Filtrar valores undefined/null
-=======
 // Middleware de compresión para mejorar rendimiento
 app.use(compression())
 
@@ -39,9 +25,10 @@ const allowedOrigins = [
   'http://localhost:5173', // desarrollo local
   'http://localhost:5174', // desarrollo local alternativo
   'http://localhost:5175', // desarrollo local alternativo 2
-  'https://front-jibs1li4h-libro-de-resoluciones-projects.vercel.app' // producción Vercel
+  'http://localhost:3000',
+  'https://libro-de-resoluciones-v2.vercel.app', // producción Vercel principal
+  'https://front-jibs1li4h-libro-de-resoluciones-projects.vercel.app' // producción Vercel alternativo
 ].filter(Boolean) // Elimina valores falsy
->>>>>>> Flavio
 
 // Configuración de CORS
 const corsOptions = {
