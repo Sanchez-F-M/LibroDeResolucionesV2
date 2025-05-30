@@ -16,30 +16,8 @@ const app = express()
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-<<<<<<< HEAD
 // Middleware de compresión para mejorar rendimiento
 app.use(compression())
-=======
-// Configuración de CORS más específica
-const allowedOrigins = [
-  'http://localhost:5173',
-  'https://libro-de-resoluciones.vercel.app', // Añade aquí tu dominio de Vercel
-  process.env.FRONTEND_URL // URL desde variable de entorno
-].filter(Boolean);
-
-app.use(cors({
-  origin: function(origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true,
-  exposedHeaders: ['Content-Disposition'] // Importante para las descargas
-}))
->>>>>>> 1957813db2d6f67ff782bd411628f94d8d164ced
 
 // Definir orígenes permitidos globalmente
 const allowedOrigins = [
@@ -47,7 +25,7 @@ const allowedOrigins = [
   'http://localhost:5173', // desarrollo local
   'http://localhost:5174', // desarrollo local alternativo
   'http://localhost:5175', // desarrollo local alternativo 2
-  'https://front-jibs1li4h-libro-de-resoluciones-projects.vercel.app', // producción Vercel
+  'https://front-jibs1li4h-libro-de-resoluciones-projects.vercel.app' // producción Vercel
 ].filter(Boolean) // Elimina valores falsy
 
 console.log('🌐 Orígenes permitidos:', allowedOrigins)
@@ -71,18 +49,12 @@ const corsOptions = {
       return callback(null, true)
     }
     
-    // En desarrollo, ser más permisivo
-    if (process.env.NODE_ENV !== 'production') {
-      console.log('✅ Permitiendo en desarrollo:', origin)
-      return callback(null, true)
-    }
-    
-    // En producción, permitir dominios de Vercel
+    // Permitir dominios de Vercel y Render
     if (origin.includes('vercel.app') || origin.includes('render.com')) {
       console.log('✅ Permitiendo dominio de plataforma:', origin)
       return callback(null, true)
     }
-    
+
     console.log('❌ Origen rechazado:', origin)
     callback(new Error(`No permitido por CORS: ${origin}`))
   },
@@ -99,101 +71,112 @@ app.options('*', (req, res) => {
   console.log('🔄 OPTIONS request recibido para:', req.url)
   const origin = req.headers.origin
   
-  if (!origin || allowedOrigins.includes(origin) || 
-      origin.includes('vercel.app') || origin.includes('render.com') ||
-      process.env.NODE_ENV !== 'production') {
-    
-    if (origin) {
-      res.header('Access-Control-Allow-Origin', origin)
-    } else {
-      res.header('Access-Control-Allow-Origin', '*')
-    }
-    
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+  if (!origin || allowedOrigins.includes(origin) || origin.includes('vercel.app') || origin.includes('render.com')) {
+    res.header('Access-Control-Allow-Origin', origin || '*')
+    res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS')
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, Origin, X-Requested-With')
     res.header('Access-Control-Allow-Credentials', 'true')
-    res.header('Access-Control-Max-Age', '86400') // Cache preflight por 24 horas
-    
-    return res.sendStatus(200)
+    res.status(200).send()
+  } else {
+    res.status(403).send('CORS no permitido')
   }
-  
-  res.sendStatus(403)
 })
 
-// Middleware para archivos estáticos con CORS mejorado
-app.use('/uploads', (req, res, next) => {
-  const origin = req.headers.origin
-  
-  // Ser más permisivo con archivos estáticos
-  if (!origin || allowedOrigins.includes(origin) || 
-      origin.includes('vercel.app') || origin.includes('render.com') ||
-      process.env.NODE_ENV !== 'production') {
-    if (origin) {
-      res.header('Access-Control-Allow-Origin', origin)
-    } else {
-      res.header('Access-Control-Allow-Origin', '*')
-    }
-  }
-  
-  res.header('Access-Control-Allow-Methods', 'GET, OPTIONS')
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
-  res.header('Access-Control-Allow-Credentials', 'true')
-  
+// Body parsers
+app.use(bodyParser.json({ limit: '50mb' }))
+app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }))
+app.use(express.json({ limit: '50mb' }))
+
+// Configurar directorio de archivos estáticos
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
+
+// Middleware de logging para todas las requests
+app.use((req, res, next) => {
+  const timestamp = new Date().toISOString()
+  console.log(`📋 [${timestamp}] ${req.method} ${req.path} - Origin: ${req.headers.origin || 'No origin'}`)
   next()
-}, express.static(path.join(__dirname, 'uploads')))
-
-// Middlewares para parseo de datos
-app.use(express.json())
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
-
-// Puerto para el servidor
-const PORT = process.env.PORT || 3000
-
-// Health check específico para Render (sin CORS)
-app.get('/render-health', (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*')
-  res.status(200).json({ 
-    status: 'OK', 
-    service: 'libro-resoluciones-api',
-    timestamp: new Date().toISOString(),
-    env: process.env.NODE_ENV || 'development'
-  })
 })
 
-// Health check para Render (ruta raíz)
+// Health check en ruta raíz para Render
 app.get('/', (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*')
-  res.status(200).json({ 
-    status: 'OK', 
+  console.log('❤️ Health check desde ruta raíz')
+  res.status(200).json({
+    status: 'OK',
     message: 'Libro de Resoluciones API is running',
     timestamp: new Date().toISOString(),
     env: process.env.NODE_ENV || 'development',
-    port: PORT
+    port: process.env.PORT || 3000
   })
 })
 
-// Verificación de estado del servidor (endpoint principal para Render)
+// Health check endpoint detallado
 app.get('/health', (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*')
-  res.setHeader('Content-Type', 'application/json')
-  res.status(200).json({ 
-    status: 'OK', 
-    service: 'libro-resoluciones-api',
+  console.log('❤️ Health check detallado')
+  res.status(200).json({
+    status: 'healthy',
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
     memory: process.memoryUsage(),
     env: process.env.NODE_ENV || 'development',
-    port: PORT
+    corsOrigins: allowedOrigins.length,
+    port: process.env.PORT || 3000
   })
 })
 
-// Rutas API
+// Usar rutas de la API
 app.use('/api', routes)
 
-// Iniciar el servidor
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server running on port ${PORT}`)
-  console.log('Environment:', process.env.NODE_ENV || 'development')
-  console.log('Allowed origins:', allowedOrigins)
+// Middleware de manejo de errores
+app.use((err, req, res, next) => {
+  console.error('❌ Error middleware:', err.message)
+  
+  if (err.message.includes('CORS')) {
+    return res.status(403).json({
+      error: 'CORS Error',
+      message: err.message,
+      origin: req.headers.origin
+    })
+  }
+  
+  res.status(500).json({
+    error: 'Error interno del servidor',
+    message: process.env.NODE_ENV === 'development' ? err.message : 'Error interno'
+  })
 })
+
+// Manejo de rutas no encontradas
+app.use('*', (req, res) => {
+  console.log(`❓ Ruta no encontrada: ${req.method} ${req.originalUrl}`)
+  res.status(404).json({
+    error: 'Ruta no encontrada',
+    path: req.originalUrl,
+    method: req.method
+  })
+})
+
+// Configuración del puerto
+const PORT = process.env.PORT || 3000
+
+// Iniciar servidor
+app.listen(PORT, '0.0.0.0', () => {
+  console.log('🚀 ========================================')
+  console.log(`🚀 Server running on port ${PORT}`)
+  console.log(`🚀 Environment: ${process.env.NODE_ENV || 'development'}`)
+  console.log(`🚀 CORS origins: ${allowedOrigins.length} configured`)
+  console.log('🚀 Health check: / and /health')
+  console.log('🚀 API endpoints: /api/*')
+  console.log('🚀 ========================================')
+})
+
+// Manejo de errores no capturados
+process.on('uncaughtException', (err) => {
+  console.error('❌ Uncaught Exception:', err)
+  process.exit(1)
+})
+
+process.on('unhandledRejection', (err) => {
+  console.error('❌ Unhandled Rejection:', err)
+  process.exit(1)
+})
+
+export default app
