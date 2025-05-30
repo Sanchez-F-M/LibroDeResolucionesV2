@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poblado de Base de Datos - Libro de Resoluciones</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c5aa0;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .status {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        .info { background-color: #d1ecf1; color: #0c5460; }
+        .warning { background-color: #fff3cd; color: #856404; }
+        button {
+            background-color: #2c5aa0;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background-color: #1e3f73;
+        }
+        button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+        .progress {
+            background-color: #e9ecef;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .progress-bar {
+            background-color: #2c5aa0;
+            height: 25px;
+            border-radius: 5px;
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏛️ Poblado de Base de Datos<br>Libro de Resoluciones</h1>
+        
+        <div class="status info">
+            <strong>📋 Estado:</strong> Listo para poblar la base de datos de producción
+        </div>
+
+        <div class="status warning">
+            <strong>⚠️ Importante:</strong> Este proceso creará datos de prueba en la base de datos de producción. Asegúrate de que esto es lo que deseas hacer.
+        </div>
+
+        <button id="startBtn" onclick="startPopulation()">🚀 Iniciar Poblado de Datos</button>
+        <button id="checkBtn" onclick="checkDatabase()">🔍 Verificar Base de Datos</button>
+        <button id="loginBtn" onclick="testLogin()">🔐 Probar Login</button>
+
+        <div class="progress" id="progressContainer" style="display: none;">
+            <div class="progress-bar" id="progressBar" style="width: 0%;">0%</div>
+        </div>
+
+        <div class="log" id="log"></div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'https://libro-resoluciones-api.onrender.com';
+        let token = null;
+
+        function log(message, type = 'info') {
+            const logElement = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.innerHTML = `<span style="color: #666;">[${timestamp}]</span> ${message}`;
+            
+            if (type === 'error') logEntry.style.color = '#721c24';
+            if (type === 'success') logEntry.style.color = '#155724';
+            if (type === 'warning') logEntry.style.color = '#856404';
+            
+            logElement.appendChild(logEntry);
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+
+        function updateProgress(current, total) {
+            const progressContainer = document.getElementById('progressContainer');
+            const progressBar = document.getElementById('progressBar');
+            
+            if (total > 0) {
+                progressContainer.style.display = 'block';
+                const percentage = Math.round((current / total) * 100);
+                progressBar.style.width = `${percentage}%`;
+                progressBar.textContent = `${percentage}% (${current}/${total})`;
+            } else {
+                progressContainer.style.display = 'none';
+            }
+        }
+
+        async function getAuthToken() {
+            try {
+                log('🔐 Obteniendo token de autenticación...');
+                
+                const response = await fetch(`${API_BASE_URL}/api/user/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        Nombre: 'admin',
+                        Contrasena: 'admin123'
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error en login: ${response.status}`);
+                }
+
+                const data = await response.json();
+                token = data.token;
+                log('✅ Login exitoso', 'success');
+                return data.token;
+            } catch (error) {
+                log(`❌ Error obteniendo token: ${error.message}`, 'error');
+                throw error;
+            }
+        }
+
+        // Datos de prueba realistas
+        const testResolutions = [
+            {
+                NumdeResolucion: '001-2025',
+                Asunto: 'Aprobación del Presupuesto Anual 2025',
+                Referencia: 'Expediente N° 12345/2025 - Secretaría de Hacienda',
+                FechaCreacion: '2025-01-15'
+            },
+            {
+                NumdeResolucion: '002-2025',
+                Asunto: 'Designación de Personal en Comisaría Primera',
+                Referencia: 'Nota N° 456/2025 - División de Recursos Humanos',
+                FechaCreacion: '2025-01-20'
+            },
+            {
+                NumdeResolucion: '003-2025',
+                Asunto: 'Protocolo de Seguridad Ciudadana',
+                Referencia: 'Informe N° 789/2025 - Comisaría Central',
+                FechaCreacion: '2025-02-01'
+            },
+            {
+                NumdeResolucion: '004-2025',
+                Asunto: 'Adquisición de Equipamiento Policial',
+                Referencia: 'Licitación N° 101/2025 - Departamento de Compras',
+                FechaCreacion: '2025-02-10'
+            },
+            {
+                NumdeResolucion: '005-2025',
+                Asunto: 'Modificación de Turnos de Servicio',
+                Referencia: 'Memorando N° 234/2025 - Jefatura Operativa',
+                FechaCreacion: '2025-02-15'
+            },
+            {
+                NumdeResolucion: '006-2025',
+                Asunto: 'Procedimiento de Control Vehicular',
+                Referencia: 'Circular N° 567/2025 - Tránsito Municipal',
+                FechaCreacion: '2025-02-20'
+            },
+            {
+                NumdeResolucion: '007-2025',
+                Asunto: 'Capacitación en Derechos Humanos',
+                Referencia: 'Programa N° 890/2025 - Instituto de Formación',
+                FechaCreacion: '2025-02-25'
+            },
+            {
+                NumdeResolucion: '008-2025',
+                Asunto: 'Asignación de Móviles Policiales',
+                Referencia: 'Listado N° 123/2025 - Parque Automotor',
+                FechaCreacion: '2025-03-01'
+            }
+        ];
+
+        async function createResolution(resolutionData) {
+            try {
+                // Crear un archivo dummy para cumplir con los requisitos
+                const dummyFile = new File(['Documento de resolución'], 'resolucion.txt', {
+                    type: 'text/plain'
+                });
+
+                const formData = new FormData();
+                formData.append('NumdeResolucion', resolutionData.NumdeResolucion);
+                formData.append('Asunto', resolutionData.Asunto);
+                formData.append('Referencia', resolutionData.Referencia);
+                formData.append('FechaCreacion', resolutionData.FechaCreacion);
+                formData.append('files', dummyFile);
+
+                const response = await fetch(`${API_BASE_URL}/api/books`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`${response.status}: ${errorText}`);
+                }
+
+                const result = await response.json();
+                log(`✅ Resolución ${resolutionData.NumdeResolucion} creada exitosamente`, 'success');
+                return result;
+            } catch (error) {
+                log(`❌ Error creando resolución ${resolutionData.NumdeResolucion}: ${error.message}`, 'error');
+                return null;
+            }
+        }
+
+        async function startPopulation() {
+            const startBtn = document.getElementById('startBtn');
+            startBtn.disabled = true;
+            startBtn.textContent = '⏳ Procesando...';
+
+            try {
+                log('🚀 Iniciando poblado de base de datos en producción...');
+                
+                // Obtener token
+                await getAuthToken();
+
+                let successCount = 0;
+                let errorCount = 0;
+
+                log(`📝 Creando ${testResolutions.length} resoluciones de prueba...`);
+
+                // Procesar resoluciones
+                for (let i = 0; i < testResolutions.length; i++) {
+                    const resolution = testResolutions[i];
+                    updateProgress(i, testResolutions.length);
+                    
+                    log(`📄 Procesando: ${resolution.NumdeResolucion} - ${resolution.Asunto}`);
+                    
+                    const result = await createResolution(resolution);
+                    
+                    if (result) {
+                        successCount++;
+                    } else {
+                        errorCount++;
+                    }
+
+                    // Pausa entre requests
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                }
+
+                updateProgress(testResolutions.length, testResolutions.length);
+
+                log('🎉 ========================================', 'success');
+                log('🎉 POBLACIÓN DE DATOS COMPLETADA', 'success');
+                log(`🎉 ✅ Exitosas: ${successCount}`, 'success');
+                log(`🎉 ❌ Errores: ${errorCount}`, errorCount > 0 ? 'warning' : 'success');
+                log('🎉 ========================================', 'success');
+
+                // Verificar datos
+                await checkDatabase();
+
+            } catch (error) {
+                log(`❌ Error general: ${error.message}`, 'error');
+            } finally {
+                startBtn.disabled = false;
+                startBtn.textContent = '🚀 Iniciar Poblado de Datos';
+            }
+        }
+
+        async function checkDatabase() {
+            try {
+                log('🔍 Verificando datos en la base de datos...');
+                
+                const response = await fetch(`${API_BASE_URL}/api/books/all`);
+                
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.status}`);
+                }
+
+                const allBooks = await response.json();
+                
+                if (Array.isArray(allBooks)) {
+                    log(`✅ Total de resoluciones en la base de datos: ${allBooks.length}`, 'success');
+                    allBooks.forEach((book, index) => {
+                        log(`   ${index + 1}. ${book.NumdeResolucion} - ${book.Asunto}`);
+                    });
+                } else if (allBooks.error) {
+                    log(`⚠️ Base de datos vacía: ${allBooks.error}`, 'warning');
+                } else {
+                    log('⚠️ Formato de respuesta inesperado', 'warning');
+                    console.log(allBooks);
+                }
+            } catch (error) {
+                log(`❌ Error verificando base de datos: ${error.message}`, 'error');
+            }
+        }
+
+        async function testLogin() {
+            try {
+                log('🔐 Probando login de administrador...');
+                await getAuthToken();
+                log('✅ Login de administrador funciona correctamente', 'success');
+            } catch (error) {
+                log(`❌ Error en login: ${error.message}`, 'error');
+            }
+        }
+
+        // Verificar estado inicial
+        window.addEventListener('load', () => {
+            log('🌐 Conectado a: ' + API_BASE_URL);
+            log('📋 Listo para poblar la base de datos');
+            checkDatabase();
+        });
+    </script>
+</body>
+</html>
