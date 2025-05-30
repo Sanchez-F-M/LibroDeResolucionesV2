@@ -38,31 +38,50 @@ async function createTables () {
     // Crear tabla de resoluciones
     await db.exec(`
       CREATE TABLE IF NOT EXISTS resolution (
-        NumdeResolucion TEXT PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        NumdeResolucion TEXT UNIQUE NOT NULL,
         Asunto TEXT NOT NULL,
-        Referencia TEXT NOT NULL,
-        FechaCreacion DATETIME DEFAULT CURRENT_TIMESTAMP
+        Referencia TEXT,
+        FechaCreacion DATETIME,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
     `)
 
-    // Crear tabla de imágenes
+    // Crear índices para optimizar consultas
+    await db.exec(`
+      CREATE INDEX IF NOT EXISTS idx_resolution_numero ON resolution(NumdeResolucion);
+      CREATE INDEX IF NOT EXISTS idx_resolution_fecha ON resolution(FechaCreacion);
+      CREATE INDEX IF NOT EXISTS idx_resolution_asunto ON resolution(Asunto);
+    `)    // Crear tabla de imágenes
     await db.exec(`
       CREATE TABLE IF NOT EXISTS images (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         NumdeResolucion TEXT NOT NULL,
         ImagePath TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (NumdeResolucion) REFERENCES resolution(NumdeResolucion) ON DELETE CASCADE
       )
+    `)
+
+    // Crear índice para imágenes
+    await db.exec(`
+      CREATE INDEX IF NOT EXISTS idx_images_resolucion ON images(NumdeResolucion);
     `)
 
     // Crear tabla de usuarios
     await db.exec(`
       CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        ID INTEGER PRIMARY KEY AUTOINCREMENT,
         Nombre TEXT UNIQUE NOT NULL,
         Contrasena TEXT NOT NULL,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
+    `)
+
+    // Crear índice para usuarios
+    await db.exec(`
+      CREATE INDEX IF NOT EXISTS idx_users_nombre ON users(Nombre);
     `)
 
     console.log('✅ Tablas SQLite creadas exitosamente')

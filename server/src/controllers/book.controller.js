@@ -258,16 +258,18 @@ export const insertTestResolution = async (req, res) => {
 
     // Insertar imágenes mock si se proporcionan
     if (ImagePaths && Array.isArray(ImagePaths)) {
-      for (const imagePath of ImagePaths) {
+            for (const imagePath of ImagePaths) {
         await db.run(
           'INSERT INTO images (NumdeResolucion, ImagePath) VALUES (?, ?)',
           [NumdeResolucion, imagePath]
         )
       }
-    }    // Confirmar transacción
+    }
+
+    // Confirmar transacción
     await db.exec('COMMIT')
 
-    res.status(201).json({ 
+        res.status(201).json({ 
       message: 'Resolución mock creada exitosamente',
       NumdeResolucion
     })

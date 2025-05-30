@@ -28,20 +28,11 @@ const allowedOrigins = [
   'https://front-jibs1li4h-libro-de-resoluciones-projects.vercel.app' // producción Vercel
 ].filter(Boolean) // Elimina valores falsy
 
-console.log('🌐 Orígenes permitidos:', allowedOrigins)
-console.log('🌐 FRONTEND_URL:', process.env.FRONTEND_URL)
-console.log('🌐 NODE_ENV:', process.env.NODE_ENV)
-
-// Configuración de CORS mejorada y más permisiva
+// Configuración de CORS
 const corsOptions = {
   origin: function (origin, callback) {
-    console.log('🔍 Request origin:', origin)
-    
-    // Permitir requests sin origin (health checks, Postman, curl, etc.)
-    if (!origin) {
-      console.log('✅ Permitiendo request sin origin')
-      return callback(null, true)
-    }
+    // Permitir requests sin origin (ej: aplicaciones móviles, Postman)
+    if (!origin) return callback(null, true)
     
     // Permitir orígenes en la lista
     if (allowedOrigins.includes(origin)) {
@@ -58,10 +49,10 @@ const corsOptions = {
     console.log('❌ Origen rechazado:', origin)
     callback(new Error(`No permitido por CORS: ${origin}`))
   },
-  credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With'],
-  optionsSuccessStatus: 200 // Para soporte de navegadores legacy
+  credentials: true,
+  optionsSuccessStatus: 200
 }
 
 app.use(cors(corsOptions))
@@ -95,6 +86,23 @@ app.use((req, res, next) => {
   const timestamp = new Date().toISOString()
   console.log(`📋 [${timestamp}] ${req.method} ${req.path} - Origin: ${req.headers.origin || 'No origin'}`)
   next()
+}, express.static(path.join(__dirname, 'uploads')))
+
+// Middlewares para parseo de datos
+app.use(compression())
+app.use(express.json({ limit: '50mb' }))
+app.use(express.urlencoded({ extended: true, limit: '50mb' }))
+app.use(bodyParser.json({ limit: '50mb' }))
+
+// Health check específico para Render
+app.get('/render-health', (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*')
+  res.status(200).json({ 
+    status: 'OK', 
+    service: 'libro-resoluciones-api',
+    timestamp: new Date().toISOString(),
+    env: process.env.NODE_ENV || 'development'
+  })
 })
 
 // Health check en ruta raíz para Render
@@ -180,3 +188,62 @@ process.on('unhandledRejection', (err) => {
 })
 
 export default app
+
+{
+  "configurations" [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Backend Server",
+      "program": "${workspaceFolder}/server/index.js",
+      "cwd": "${workspaceFolder}/server",
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "envFile": "${workspaceFolder}/server/.env",
+      "restart": true,
+      "console": "integratedTerminal",
+      "skipFiles": [
+        "<node_internals>/**"
+      ]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Frontend Dev Server",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
+      "cwd": "${workspaceFolder}/front",
+      "console": "integratedTerminal",
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "skipFiles": [
+        "<node_internals>/**"
+      ]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Run Population Script",
+      "program": "${workspaceFolder}/populate-production-cjs.js",
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "skipFiles": [
+        "<node_internals>/**"
+      ]
+    }
+  ],
+  "compounds" [
+    {
+      "name": "Launch Full Stack",
+      "configurations": [
+        "Launch Backend Server",
+        "Launch Frontend Dev Server"
+      ]
+    }
+  ]
+}
