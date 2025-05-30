@@ -26,7 +26,7 @@ export const search = async (req, res) => {
   }
 
   try {
-    const [data] = await db.query(query, params)
+    const data = await db.all(query, params)
 
     if (!data.length) {
       return res.status(404).json({ error: 'No se encontraron resoluciones' })

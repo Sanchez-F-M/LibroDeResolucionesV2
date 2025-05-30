@@ -11,13 +11,21 @@ import {
   Input,
   Fab,
   IconButton,
-  
   Container,
+  Box,
+  Stack,
+  Chip,
+  Paper,
+  Alert,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
-import Box from '@mui/material/Box';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import ImageIcon from '@mui/icons-material/Image';
+import DescriptionIcon from '@mui/icons-material/Description';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import api from '../../api/api';
@@ -29,15 +37,19 @@ const Cargas = () => {
   const [previews, setPreviews] = useState([]);
   const [nextResolutionNumber, setNextResolutionNumber] = useState(null);
   const [fecha, setFecha] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
 
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isTablet = useMediaQuery(theme.breakpoints.down('md'));
   useEffect(() => {
     const fetchNextResolutionNumber = async () => {
       try {
         const response = await api.get('/api/books/last-number');
         console.log('Respuesta del servidor:', response.data);
         
-        const nextNumber = response.data.lastNumber;
-        console.log('Próximo número:', nextNumber); 
+        const nextNumber = response.data.lastNumber; // El servidor ya devuelve el siguiente número disponible
+        console.log('Próximo número disponible:', nextNumber); 
         
         if (nextNumber) {
           setNextResolutionNumber(nextNumber);
@@ -78,12 +90,13 @@ const Cargas = () => {
       return prevPreviews.filter((_, i) => i !== index);
     });
   };
-
   const handleUpload = async () => {
     if (files.length === 0 || !nextResolutionNumber || !asunto || !referencia || !fecha) {
       alert('Por favor complete todos los campos y seleccione al menos un archivo.');
       return;
     }
+
+    setIsUploading(true);
 
     const formData = new FormData();
 
@@ -97,18 +110,23 @@ const Cargas = () => {
     try {
       const response = await api.post('/api/books', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
-      });
-
-      if (response.status === 200 || response.status === 201) {
+      });      if (response.status === 200 || response.status === 201) {
         setFiles([]);
         setAsunto('');
         setReferencia('');
         setFecha(null);
         setPreviews([]);
         alert('Resolución cargada exitosamente.');
+        
+        // Obtener el próximo número disponible (el servidor ya devuelve el siguiente número)
+        const nextResponse = await api.get('/api/books/last-number');
+        setNextResolutionNumber(nextResponse.data.lastNumber);
       }
     } catch (error) {
       console.error('Error al cargar la resolución:', error);
+      alert('Error al cargar la resolución. Inténtelo nuevamente.');
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -138,135 +156,353 @@ const Cargas = () => {
       );
     }
   };
-
   return (
-    <Grid container  justifyContent="center" sx={{ mt: { xs: 3, sm: 5, md: 7 } }}>
-      <Grid item xs={12} sm={10} md={8}>
-        <Card>
-          <CardContent sx={{ p: { xs: 2, sm: 4, md: 9 } }}>
-          
-            <Typography variant="h4" align="left" sx={{ mb: 5, mt: 10 }}>
-              
-            </Typography>
+    <Container 
+      maxWidth="lg" 
+      sx={{ 
+        py: { xs: 2, sm: 3, md: 4 },
+        px: { xs: 1, sm: 2 },
+        minHeight: 'calc(100vh - 200px)',
+      }}
+    >
+      <Card 
+        elevation={4}
+        sx={{
+          borderRadius: { xs: 2, sm: 3 },
+          overflow: 'visible',
+        }}
+      >
+        <CardContent
+          sx={{
+            p: { xs: 2, sm: 3, md: 4 },
+          }}
+        >
+          {/* Título principal */}
+          <Box sx={{ textAlign: 'center', mb: { xs: 3, sm: 4 } }}>
             <Typography
-              variant="h3"
-              align="center"
-              sx={{ mb: 3, mt: { xs: 1, sm: 3 }, color: 'primary.main', fontWeight: 'bold' }}
+              variant={isMobile ? 'h5' : isTablet ? 'h4' : 'h3'}
+              sx={{ 
+                color: 'primary.main', 
+                fontWeight: 'bold',
+                mb: 2,
+              }}
             >
-              Resolución N° {nextResolutionNumber || '...'}
+              Nueva Resolución
             </Typography>
-            <Container sx={{ p: { xs: 1, sm: 3 } }}>
-              <TextField
-                label="Asunto"
-                variant="outlined"
-                fullWidth
-                value={asunto}
-                onChange={(e) => setAsunto(e.target.value)}
-                sx={{ mt: 2, mb: 2 }}
-              />
-              <TextField
-                label="Referencia"
-                variant="outlined"
-                fullWidth
-                value={referencia}
-                onChange={(e) => setReferencia(e.target.value)}
-                sx={{ mt: 2, mb: 2 }}
-              />
-              <Typography variant="h6" sx={{ mt: 2 }}>
-                Fecha
+            <Chip 
+              label={`N° ${nextResolutionNumber || '...'}`}
+              color="primary"
+              size={isMobile ? 'medium' : 'large'}
+              sx={{
+                fontSize: { xs: '1rem', sm: '1.2rem' },
+                fontWeight: 'bold',
+                px: { xs: 2, sm: 3 },
+              }}
+            />
+          </Box>
+
+          {/* Formulario */}
+          <Stack spacing={{ xs: 3, sm: 4 }}>
+            {/* Campo Asunto */}
+            <TextField
+              label="Asunto"
+              variant="outlined"
+              fullWidth
+              value={asunto}
+              onChange={(e) => setAsunto(e.target.value)}
+              size={isMobile ? 'small' : 'medium'}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: { xs: 1, sm: 2 },
+                },
+              }}
+              multiline
+              rows={isMobile ? 2 : 3}
+            />
+
+            {/* Campo Referencia */}
+            <TextField
+              label="Referencia"
+              variant="outlined"
+              fullWidth
+              value={referencia}
+              onChange={(e) => setReferencia(e.target.value)}
+              size={isMobile ? 'small' : 'medium'}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: { xs: 1, sm: 2 },
+                },
+              }}
+              multiline
+              rows={isMobile ? 2 : 3}
+            />
+
+            {/* Campo Fecha */}
+            <Box>
+              <Typography 
+                variant="h6" 
+                sx={{ 
+                  mb: 2,
+                  fontSize: { xs: '1rem', sm: '1.25rem' },
+                  fontWeight: 'bold',
+                }}
+              >
+                Fecha de Resolución
               </Typography>
-              <Box sx={{ mt: 2 }}>
+              <Paper
+                elevation={1}
+                sx={{
+                  p: { xs: 2, sm: 3 },
+                  borderRadius: { xs: 1, sm: 2 },
+                  border: `1px solid ${theme.palette.divider}`,
+                }}
+              >
                 <DatePicker
                   selected={fecha}
                   onChange={(date) => setFecha(date)}
                   dateFormat="dd/MM/yyyy"
                   className="form-control"
-                  style={{ width: '100%' }}
+                  placeholderText="Seleccione una fecha"
+                  style={{ 
+                    width: '100%',
+                    padding: isMobile ? '8px' : '12px',
+                    fontSize: isMobile ? '14px' : '16px',
+                  }}
                 />
-              </Box>
-            </Container>
-
-            <Typography
-              variant="h4"
-              align="center"
-              sx={{ mt: { xs: 4, sm: 6 }, mb: { xs: 2, sm: 4 } }}
-            >
-              Seleccionar Archivos
-            </Typography>
-
-            <Box sx={{ display: 'flex', justifyContent: 'center', mb: 10 }}>
-              <Fab color="primary" aria-label="add" component="label">
-                <AddIcon />
-                <Input
-                  type="file"
-                  multiple
-                  onChange={handleFileChange}
-                  sx={{ display: 'none' }}
-                />
-              </Fab>
+              </Paper>
             </Box>
 
-            <Grid container spacing={2} sx={{ mb: 3 }}>
-              {previews.map((preview, index) => (
-                <Grid item xs={12} sm={6} key={index}>
-                  <Card>
-                    {renderPreview(preview, index)}
-                    <Box
-                      sx={{
-                        p: 1,
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <Typography variant="body2" noWrap sx={{ flex: 1 }}>
-                        {preview.name}
-                      </Typography>
-                      <IconButton
-                        onClick={() => handleDeleteFile(index)}
-                        color="error"
-                        size="small"
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </Box>
-                  </Card>
-                </Grid>
-              ))}
-            </Grid>
+            {/* Sección de archivos */}
+            <Box>
+              <Typography
+                variant={isMobile ? 'h6' : 'h5'}
+                sx={{ 
+                  mb: 3,
+                  textAlign: 'center',
+                  fontWeight: 'bold',
+                }}
+              >
+                Archivos Adjuntos
+              </Typography>
 
-            <Button
-              variant="contained"
-              color="primary"
-              fullWidth
-              onClick={handleUpload}
-              sx={{ mt: { xs: 3, sm: 4 }, mb: { xs: 2, sm: 4 } }}
+              {/* Botón de selección de archivos */}
+              <Box 
+                sx={{ 
+                  display: 'flex', 
+                  justifyContent: 'center', 
+                  mb: 3,
+                }}
+              >
+                <Paper
+                  elevation={2}
+                  sx={{
+                    p: { xs: 3, sm: 4 },
+                    borderRadius: { xs: 2, sm: 3 },
+                    border: `2px dashed ${theme.palette.primary.main}`,
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      backgroundColor: theme.palette.primary.main + '10',
+                      transform: 'translateY(-2px)',
+                    },
+                  }}
+                  component="label"
+                >
+                  <CloudUploadIcon 
+                    sx={{ 
+                      fontSize: { xs: '2rem', sm: '3rem' },
+                      color: 'primary.main',
+                      mb: 1,
+                    }} 
+                  />
+                  <Typography 
+                    variant="body1" 
+                    sx={{ 
+                      fontWeight: 'bold',
+                      color: 'primary.main',
+                      mb: 1,
+                    }}
+                  >
+                    Seleccionar Archivos
+                  </Typography>
+                  <Typography 
+                    variant="body2" 
+                    color="text.secondary"
+                  >
+                    Haga clic para seleccionar imágenes o documentos
+                  </Typography>
+                  <Input
+                    type="file"
+                    multiple
+                    onChange={handleFileChange}
+                    sx={{ display: 'none' }}
+                    accept="image/*,.pdf,.doc,.docx"
+                  />
+                </Paper>
+              </Box>
+
+              {/* Vista previa de archivos */}
+              {previews.length > 0 && (
+                <Box sx={{ mb: 3 }}>
+                  <Typography 
+                    variant="h6" 
+                    sx={{ 
+                      mb: 2,
+                      fontSize: { xs: '1rem', sm: '1.25rem' },
+                    }}
+                  >
+                    Archivos Seleccionados ({previews.length})
+                  </Typography>
+                  <Grid container spacing={{ xs: 1, sm: 2 }}>
+                    {previews.map((preview, index) => (
+                      <Grid item xs={12} sm={6} md={4} key={index}>
+                        <Card 
+                          elevation={3}
+                          sx={{
+                            borderRadius: { xs: 1, sm: 2 },
+                            overflow: 'hidden',
+                          }}
+                        >
+                          {preview.type.startsWith('image/') ? (
+                            <CardMedia
+                              component="img"
+                              height={isMobile ? "150" : "200"}
+                              image={preview.url}
+                              alt={`Previsualización ${index + 1}`}
+                              sx={{ objectFit: 'cover' }}
+                            />
+                          ) : (
+                            <Box
+                              sx={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                height: { xs: 120, sm: 150 },
+                                bgcolor: 'grey.100',
+                                p: 2,
+                              }}
+                            >
+                              <DescriptionIcon 
+                                sx={{ 
+                                  fontSize: { xs: '2rem', sm: '3rem' },
+                                  color: 'text.secondary',
+                                  mb: 1,
+                                }} 
+                              />
+                              <Typography 
+                                variant="body2" 
+                                textAlign="center"
+                                sx={{
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  whiteSpace: 'nowrap',
+                                  maxWidth: '100%',
+                                }}
+                              >
+                                {preview.name}
+                              </Typography>
+                            </Box>
+                          )}
+                          <Box
+                            sx={{
+                              p: { xs: 1, sm: 2 },
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                              bgcolor: 'background.paper',
+                            }}
+                          >
+                            <Typography 
+                              variant="body2" 
+                              sx={{
+                                flex: 1,
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap',
+                                fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                              }}
+                            >
+                              {preview.name}
+                            </Typography>
+                            <IconButton
+                              onClick={() => handleDeleteFile(index)}
+                              color="error"
+                              size={isMobile ? 'small' : 'medium'}
+                              sx={{ ml: 1 }}
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          </Box>
+                        </Card>
+                      </Grid>
+                    ))}
+                  </Grid>
+                </Box>
+              )}
+            </Box>
+
+            {/* Botones de acción */}
+            <Stack 
+              direction={{ xs: 'column', sm: 'row' }}
+              spacing={{ xs: 2, sm: 3 }}
+              sx={{ pt: 2 }}
             >
-              Guardar Resolución ({files.length})
-            </Button>
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+              <Button
+                variant="contained"
+                color="primary"
+                fullWidth={isMobile}
+                onClick={handleUpload}
+                disabled={isUploading || !asunto || !referencia || !fecha || files.length === 0}
+                size={isMobile ? 'medium' : 'large'}
+                sx={{
+                  py: { xs: 1.5, sm: 2 },
+                  fontSize: { xs: '1rem', sm: '1.1rem' },
+                  fontWeight: 'bold',
+                  borderRadius: { xs: 1, sm: 2 },
+                  flex: { sm: 2 },
+                }}
+              >
+                {isUploading ? 'Guardando...' : `Guardar Resolución (${files.length} archivo${files.length !== 1 ? 's' : ''})`}
+              </Button>
+
               <Button
                 component={Link}
                 to="/home"
-                color="info"
                 variant="outlined"
+                color="primary"
                 startIcon={<ArrowBackIcon />}
-                sx={{ 
-                  mr: 5,
-                  '&:hover': {
-                    backgroundColor: 'primary.light',
-                    color: 'primary.dark',
-                    borderColor: 'primary.main'
-                  }
+                fullWidth={isMobile}
+                size={isMobile ? 'medium' : 'large'}
+                sx={{
+                  py: { xs: 1.5, sm: 2 },
+                  fontSize: { xs: '1rem', sm: '1.1rem' },
+                  fontWeight: 'bold',
+                  borderRadius: { xs: 1, sm: 2 },
+                  flex: { sm: 1 },
                 }}
               >
                 Volver al Inicio
               </Button>
-            </Box>
-          </CardContent>
-        </Card>
-      </Grid>
-    </Grid>
+            </Stack>
+
+            {/* Información adicional */}
+            {(!asunto || !referencia || !fecha || files.length === 0) && (
+              <Alert 
+                severity="info" 
+                sx={{ 
+                  mt: 2,
+                  borderRadius: { xs: 1, sm: 2 },
+                }}
+              >
+                Complete todos los campos y seleccione al menos un archivo para guardar la resolución.
+              </Alert>
+            )}
+          </Stack>
+        </CardContent>
+      </Card>
+    </Container>
   );
 };
 

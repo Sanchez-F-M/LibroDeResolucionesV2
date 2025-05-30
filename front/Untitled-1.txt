@@ -1,0 +1,10 @@
+src/
+  components/
+    common/
+      CustomButton.jsx
+      CustomDialog.jsx
+      ImageWithFallback.jsx
+    layouts/
+      Layout.jsx
+      navbar/
+      footer/

@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Población de Base de Datos - Producción</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .info {
+            background-color: #e8f5e8;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #27ae60;
+        }
+        .warning {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #ffc107;
+        }
+        .error {
+            background-color: #f8d7da;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #dc3545;
+        }
+        .success {
+            background-color: #d4edda;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #28a745;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        .log {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            margin-top: 20px;
+        }
+        .progress {
+            width: 100%;
+            height: 20px;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .progress-bar {
+            height: 100%;
+            background-color: #007bff;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        .credentials {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #dee2e6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🗄️ Población de Base de Datos en Producción</h1>
+        
+        <div class="info">
+            <h3>📋 Información</h3>
+            <p>Esta herramienta poblará la base de datos de producción con 5 resoluciones de prueba.</p>
+            <p><strong>Backend:</strong> <code id="backendUrl">https://libro-resoluciones-api.onrender.com</code></p>
+        </div>
+
+        <div class="credentials">
+            <h4>🔐 Credenciales Requeridas</h4>
+            <p><strong>Usuario:</strong> admin</p>
+            <p><strong>Contraseña:</strong> admin123</p>
+            <p><em>Estas credenciales se usarán automáticamente para autenticación.</em></p>
+        </div>
+
+        <div class="warning">
+            <h4>⚠️ Advertencia</h4>
+            <p>Este proceso:</p>
+            <ul>
+                <li>Creará 5 resoluciones de prueba si no existen</li>
+                <li>No duplicará resoluciones existentes</li>
+                <li>Puede tardar 1-2 minutos en completarse</li>
+            </ul>
+        </div>
+
+        <div>
+            <button onclick="populateDatabase()" id="populateBtn">🚀 Poblar Base de Datos</button>
+            <button onclick="checkDatabase()" id="checkBtn">🔍 Verificar Estado</button>
+            <button onclick="clearLog()" id="clearBtn">🧹 Limpiar Log</button>
+        </div>
+
+        <div class="progress" id="progressContainer" style="display: none;">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div id="result"></div>
+        <div class="log" id="log"></div>
+    </div>
+
+    <script>
+        const BACKEND_URL = 'https://libro-resoluciones-api.onrender.com';
+        let authToken = null;
+
+        const testResolutions = [
+            {
+                NumdeResolucion: 2025001,
+                Asunto: 'Designación de Personal de Seguridad',
+                Referencia: 'Expediente N° 12345/2025 - Ministerio de Seguridad',
+                FechaCreacion: '2025-01-15'
+            },
+            {
+                NumdeResolucion: 2025002,
+                Asunto: 'Modificación de Horarios de Guardia',
+                Referencia: 'Nota Interna N° 456/2025 - Departamento de Personal',
+                FechaCreacion: '2025-01-16'
+            },
+            {
+                NumdeResolucion: 2025003,
+                Asunto: 'Adquisición de Equipamiento Policial',
+                Referencia: 'Licitación Pública N° 001/2025 - Suministros',
+                FechaCreacion: '2025-01-17'
+            },
+            {
+                NumdeResolucion: 2025004,
+                Asunto: 'Protocolo de Seguridad COVID-19',
+                Referencia: 'Circular N° 789/2025 - Área de Salud Ocupacional',
+                FechaCreacion: '2025-01-18'
+            },
+            {
+                NumdeResolucion: 2025005,
+                Asunto: 'Creación de Nueva Comisaría',
+                Referencia: 'Decreto Provincial N° 123/2025 - Gobernación',
+                FechaCreacion: '2025-01-19'
+            }
+        ];
+
+        function log(message) {
+            const logElement = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logElement.textContent += `[${timestamp}] ${message}\n`;
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+
+        function showResult(type, message) {
+            const resultElement = document.getElementById('result');
+            resultElement.className = type;
+            resultElement.innerHTML = `<h4>${type === 'success' ? '✅ Éxito' : type === 'error' ? '❌ Error' : '⚠️ Información'}</h4><p>${message}</p>`;
+        }
+
+        function updateProgress(current, total) {
+            const progressContainer = document.getElementById('progressContainer');
+            const progressBar = document.getElementById('progressBar');
+            
+            if (total > 0) {
+                progressContainer.style.display = 'block';
+                const percentage = (current / total) * 100;
+                progressBar.style.width = `${percentage}%`;
+            } else {
+                progressContainer.style.display = 'none';
+            }
+        }
+
+        function setButtonsDisabled(disabled) {
+            document.getElementById('populateBtn').disabled = disabled;
+            document.getElementById('checkBtn').disabled = disabled;
+        }
+
+        async function loginAndGetToken() {
+            log('🔐 Obteniendo token de autenticación...');
+            
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/user/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        Nombre: 'admin',
+                        Contrasena: 'admin123'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.token) {
+                    log('✅ Token obtenido exitosamente');
+                    authToken = data.token;
+                    return data.token;
+                } else {
+                    throw new Error(`Error en login: ${data.error || 'Sin token'}`);
+                }
+            } catch (error) {
+                log(`❌ Error en login: ${error.message}`);
+                throw error;
+            }
+        }
+
+        async function createResolution(resolution, index) {
+            log(`📝 Creando resolución ${resolution.NumdeResolucion} (${index + 1}/${testResolutions.length})...`);
+            
+            try {
+                const formData = new FormData();
+                formData.append('NumdeResolucion', resolution.NumdeResolucion);
+                formData.append('Asunto', resolution.Asunto);
+                formData.append('Referencia', resolution.Referencia);
+                formData.append('FechaCreacion', resolution.FechaCreacion);
+                
+                const response = await fetch(`${BACKEND_URL}/api/books`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    log(`✅ Resolución ${resolution.NumdeResolucion} creada exitosamente`);
+                    return true;
+                } else {
+                    log(`⚠️ Resolución ${resolution.NumdeResolucion}: ${data.error}`);
+                    return false;
+                }
+            } catch (error) {
+                log(`❌ Error al crear resolución ${resolution.NumdeResolucion}: ${error.message}`);
+                return false;
+            }
+        }
+
+        async function populateDatabase() {
+            setButtonsDisabled(true);
+            log('🚀 Iniciando población de base de datos en producción...');
+            
+            try {
+                // Obtener token
+                await loginAndGetToken();
+                
+                let created = 0;
+                let failed = 0;
+                
+                // Crear cada resolución
+                for (let i = 0; i < testResolutions.length; i++) {
+                    updateProgress(i, testResolutions.length);
+                    
+                    const success = await createResolution(testResolutions[i], i);
+                    if (success) {
+                        created++;
+                    } else {
+                        failed++;
+                    }
+                    
+                    // Pausa entre requests
+                    if (i < testResolutions.length - 1) {
+                        await new Promise(resolve => setTimeout(resolve, 1000));
+                    }
+                }
+                
+                updateProgress(testResolutions.length, testResolutions.length);
+                
+                log(`\n📊 RESUMEN DE POBLACIÓN:`);
+                log(`✅ Resoluciones creadas: ${created}`);
+                log(`⚠️ Resoluciones que ya existían: ${failed}`);
+                log(`📋 Total procesadas: ${created + failed}`);
+                
+                // Verificar resultado
+                await checkDatabase();
+                
+                if (created > 0) {
+                    showResult('success', `¡Base de datos poblada exitosamente! Se crearon ${created} resoluciones nuevas.`);
+                } else {
+                    showResult('warning', 'Todas las resoluciones ya existían en la base de datos.');
+                }
+                
+            } catch (error) {
+                log(`💥 Error fatal: ${error.message}`);
+                showResult('error', `Error al poblar la base de datos: ${error.message}`);
+            } finally {
+                setButtonsDisabled(false);
+                updateProgress(0, 0);
+            }
+        }
+
+        async function checkDatabase() {
+            log('🔍 Verificando estado de la base de datos...');
+            
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/books/all`);
+                const data = await response.json();
+                
+                if (response.ok && Array.isArray(data) && data.length > 0) {
+                    log(`✅ Base de datos operativa con ${data.length} resoluciones:`);
+                    data.forEach(r => {
+                        log(`   - ${r.NumdeResolucion}: ${r.asunto || r.Asunto}`);
+                    });
+                    
+                    if (!document.getElementById('populateBtn').disabled) {
+                        showResult('success', `Base de datos operativa con ${data.length} resoluciones disponibles.`);
+                    }
+                } else if (response.ok && Array.isArray(data) && data.length === 0) {
+                    log('⚠️ Base de datos vacía - no hay resoluciones');
+                    if (!document.getElementById('populateBtn').disabled) {
+                        showResult('warning', 'La base de datos está vacía. Use el botón "Poblar Base de Datos" para agregar resoluciones de prueba.');
+                    }
+                } else {
+                    log(`❌ Error al verificar base de datos: ${data.error || 'Respuesta inválida'}`);
+                    if (!document.getElementById('populateBtn').disabled) {
+                        showResult('error', `Error al acceder a la base de datos: ${data.error || 'Respuesta inválida'}`);
+                    }
+                }
+            } catch (error) {
+                log(`❌ Error de conexión: ${error.message}`);
+                if (!document.getElementById('populateBtn').disabled) {
+                    showResult('error', `Error de conexión con el backend: ${error.message}`);
+                }
+            }
+        }
+
+        function clearLog() {
+            document.getElementById('log').textContent = '';
+            document.getElementById('result').innerHTML = '';
+            updateProgress(0, 0);
+        }
+
+        // Verificar estado inicial al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🔧 Herramienta de población cargada');
+            log(`🌐 Backend: ${BACKEND_URL}`);
+            checkDatabase();
+        });
+    </script>
+</body>
+</html>

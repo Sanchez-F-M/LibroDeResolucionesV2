@@ -5,7 +5,8 @@ import {
   Typography,
   TextField,
   Button,
-  Grid,
+  Box,
+  Alert,
   useMediaQuery,
   useTheme,
 } from '@mui/material';
@@ -20,7 +21,7 @@ const Login = () => {
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-
+  const isTablet = useMediaQuery(theme.breakpoints.down('md'));
   const handleLogin = async (e) => {
     e.preventDefault();
 
@@ -30,62 +31,131 @@ const Login = () => {
     }
 
     try {
-      const response = await api.post('api/user/login', {
+      console.log('Intentando login con:', { Nombre: username, Contrasena: '***' });
+      const response = await api.post('/api/user/login', {
         Nombre: username,
         Contrasena: password,
       });
+      console.log('Login exitoso:', response.data);
       localStorage.setItem('token', response.data.token);
       setError('');
       navigate('/home');
     } catch (err) {
-      console.error('Error de autenticación:', err);
-      setError(err.response?.data.error || 'Error en el inicio de sesión');
+      console.error('Error completo de autenticación:', err);
+      console.error('Respuesta del servidor:', err.response?.data);
+      console.error('Status:', err.response?.status);
+      console.error('Headers:', err.response?.headers);
+      setError(err.response?.data?.error || 'Error en el inicio de sesión');
     }
   };
 
   return (
-    <Container maxWidth={isMobile ? 'sm' : 'md'} sx={{ mt: isMobile ? 14 : 20, p: isMobile ? 6 : 8.2, mb: isMobile ? 9 : 1 }}>
-      <Grid container justifyContent="center">
-        <Grid item xs={12} sm={10} md={8}>
-          <Paper elevation={12} sx={{ p: isMobile ? 6 : 8 }}>
-            <Typography variant={isMobile ? 'h4' : 'h3'} align="center" gutterBottom>
+    <Container 
+      maxWidth="sm" 
+      sx={{ 
+        minHeight: 'calc(100vh - 200px)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        py: { xs: 2, sm: 4, md: 6 },
+        px: { xs: 2, sm: 3 },
+      }}
+    >
+      <Box sx={{ width: '100%', maxWidth: { xs: '100%', sm: '400px' } }}>
+        <Paper 
+          elevation={8} 
+          sx={{ 
+            p: { xs: 3, sm: 4, md: 5 },
+            borderRadius: { xs: 2, sm: 3 },
+            boxShadow: theme.shadows[8],
+          }}
+        >
+          <Typography 
+            variant={isMobile ? 'h5' : 'h4'} 
+            align="center" 
+            gutterBottom
+            sx={{
+              mb: { xs: 3, sm: 4 },
+              fontWeight: 'bold',
+              color: theme.palette.primary.main,
+            }}
+          >
+            Iniciar Sesión
+          </Typography>
+
+          {error && (
+            <Alert 
+              severity="error" 
+              sx={{ 
+                mb: { xs: 2, sm: 3 },
+                borderRadius: 1,
+              }}
+            >
+              {error}
+            </Alert>
+          )}
+
+          <Box component="form" onSubmit={handleLogin}>
+            <TextField
+              fullWidth
+              label="Nombre de usuario"
+              variant="outlined"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              sx={{ 
+                mb: { xs: 2, sm: 3 },
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: { xs: 1, sm: 2 },
+                },
+              }}
+              size={isMobile ? 'small' : 'medium'}
+            />
+
+            <TextField
+              fullWidth
+              label="Contraseña"
+              type="password"
+              variant="outlined"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              sx={{ 
+                mb: { xs: 3, sm: 4 },
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: { xs: 1, sm: 2 },
+                },
+              }}
+              size={isMobile ? 'small' : 'medium'}
+            />
+
+            <Button 
+              type="submit" 
+              variant="contained" 
+              fullWidth 
+              size={isMobile ? 'medium' : 'large'}
+              sx={{
+                py: { xs: 1.5, sm: 2 },
+                fontSize: { xs: '1rem', sm: '1.1rem' },
+                borderRadius: { xs: 1, sm: 2 },
+                fontWeight: 'bold',
+                backgroundColor: 'white',
+                color: theme.palette.primary.main,
+                border: `2px solid ${theme.palette.primary.main}`,
+                boxShadow: theme.shadows[4],
+                '&:hover': {
+                  backgroundColor: theme.palette.primary.main,
+                  color: 'white',
+                  border: `2px solid ${theme.palette.primary.main}`,
+                  boxShadow: theme.shadows[8],
+                  transform: 'translateY(-1px)',
+                },
+                transition: 'all 0.3s ease',
+              }}
+            >
               Iniciar Sesión
-            </Typography>
-            <form onSubmit={handleLogin}>
-              <Grid container spacing={5}>
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Nombre de usuario"
-                    variant="outlined"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    error={!!error}
-                    helperText={error}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Contraseña"
-                    type="password"
-                    variant="outlined"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    error={!!error}
-                    helperText={error}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <Button type="submit" variant="contained" color="primary" fullWidth size="large">
-                    Iniciar Sesión
-                  </Button>
-                </Grid>
-              </Grid>
-            </form>
-          </Paper>
-        </Grid>
-      </Grid>
+            </Button>
+          </Box>
+        </Paper>
+      </Box>
     </Container>
   );
 };

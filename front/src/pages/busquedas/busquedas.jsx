@@ -28,9 +28,13 @@ import {
   useMediaQuery,
   Box,
   IconButton,
+  Stack,
+  Chip,
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CloseIcon from '@mui/icons-material/Close';
+import EditIcon from '@mui/icons-material/Edit';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useTheme } from '@mui/material/styles';
 import api from '../../api/api';
 import { useNavigate } from 'react-router-dom';
@@ -45,6 +49,7 @@ const Busquedas = () => {
   
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isTablet = useMediaQuery(theme.breakpoints.down('md'));
 
   const handleSearch = async () => {
     try {
@@ -108,117 +113,283 @@ const Busquedas = () => {
       navigate(`/modificar/${id}`);
   };
 
-
   return (
-    <Container maxWidth="lg" sx={{ mt: { xs: 13, md: 20 }, mb: { xs: 7, md: 21.4 } }}> 
-      <Card>
-        <CardContent>
-          
-          <Typography variant="h3" sx={{ fontSize: { xs: '1.8rem', md: '2.125rem' }, mb: 4 }}> 
+    <Container 
+      maxWidth="xl" 
+      sx={{ 
+        py: { xs: 2, sm: 3, md: 4 },
+        px: { xs: 1, sm: 2, md: 3 },
+        minHeight: 'calc(100vh - 200px)',
+      }}
+    > 
+      <Card 
+        elevation={4}
+        sx={{
+          borderRadius: { xs: 2, sm: 3 },
+          overflow: 'visible',
+        }}
+      >
+        <CardContent
+          sx={{
+            p: { xs: 2, sm: 3, md: 4 },
+          }}
+        >
+          <Typography 
+            variant={isMobile ? 'h5' : isTablet ? 'h4' : 'h3'} 
+            sx={{ 
+              mb: { xs: 3, sm: 4 },
+              fontWeight: 'bold',
+              color: theme.palette.primary.main,
+              textAlign: { xs: 'center', sm: 'left' },
+            }}
+          > 
             Buscar Resolución
           </Typography>
 
-          <Grid container spacing={2} alignItems="center" sx={{ mb: 3 }}> {/* Ajuste de espaciado y margen */}
-            <Grid item xs={12} sm={8} md={9}> {/* Ajuste de grid */}
+          {/* Campo de búsqueda y botón */}
+          <Box sx={{ mb: { xs: 3, sm: 4 } }}>
+            <Stack
+              direction={{ xs: 'column', sm: 'row' }}
+              spacing={{ xs: 2, sm: 2 }}
+              alignItems={{ xs: 'stretch', sm: 'flex-end' }}
+            >
               <TextField
                 fullWidth
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
                 label="Ingrese el término de búsqueda"
-                variant="outlined" // Añadir variante
+                variant="outlined"
+                size={isMobile ? 'small' : 'medium'}
+                sx={{
+                  flex: 1,
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: { xs: 1, sm: 2 },
+                  },
+                }}
               />
-            </Grid>
-            <Grid item xs={12} sm={4} md={3}> {/* Ajuste de grid */}
-              <Button variant="contained" color="primary" fullWidth onClick={handleSearch} size="large"> {/* Ajuste de tamaño */}
+              <Button 
+                variant="contained" 
+                color="primary" 
+                onClick={handleSearch} 
+                size={isMobile ? 'medium' : 'large'}
+                sx={{
+                  minWidth: { xs: '100%', sm: '120px' },
+                  py: { xs: 1.5, sm: 1.8 },
+                  borderRadius: { xs: 1, sm: 2 },
+                  fontWeight: 'bold',
+                }}
+              >
                 Buscar
               </Button>
-            </Grid>
-          </Grid>
+            </Stack>
+          </Box>
 
           {/* Criterios de búsqueda */}
-          <Grid container spacing={2} alignItems="center" sx={{ mb: 4 }}> {/* Ajuste de margen */}
-            <Grid item xs={12}>
-              <FormControl component="fieldset">
-                <FormLabel component="legend">Criterio de búsqueda</FormLabel>
-                <RadioGroup row={!isMobile} value={criterion} onChange={(e) => setCriterion(e.target.value)}>
-                  <FormControlLabel value="Asunto" control={<Radio />} label="Asunto" />
-                  <FormControlLabel value="Referencia" control={<Radio />} label="Referencia" />
-                  {/* Asegúrate que el valor coincida con el backend */}
-                  <FormControlLabel value="NumdeResolucion" control={<Radio />} label="Nro Resolución" /> 
-                </RadioGroup>
-              </FormControl>
-            </Grid>
-          </Grid>
+          <Box sx={{ mb: { xs: 3, sm: 4 } }}>
+            <FormControl component="fieldset">
+              <FormLabel 
+                component="legend"
+                sx={{
+                  fontSize: { xs: '0.9rem', sm: '1rem' },
+                  mb: { xs: 1, sm: 2 },
+                }}
+              >
+                Criterio de búsqueda
+              </FormLabel>
+              <RadioGroup 
+                row={!isMobile} 
+                value={criterion} 
+                onChange={(e) => setCriterion(e.target.value)}
+                sx={{
+                  '& .MuiFormControlLabel-root': {
+                    mb: { xs: 1, sm: 0 },
+                    mr: { xs: 0, sm: 3 },
+                  },
+                }}
+              >
+                <FormControlLabel value="Asunto" control={<Radio size={isMobile ? 'small' : 'medium'} />} label="Asunto" />
+                <FormControlLabel value="Referencia" control={<Radio size={isMobile ? 'small' : 'medium'} />} label="Referencia" />
+                <FormControlLabel value="NumdeResolucion" control={<Radio size={isMobile ? 'small' : 'medium'} />} label="Nro Resolución" />
+              </RadioGroup>
+            </FormControl>
+          </Box>
 
           {/* Resultados de la búsqueda */}
           {results.length > 0 && (
-            <TableContainer component={Paper}>
-              <Table stickyHeader aria-label="sticky table"> {/* Mejoras tabla */}
-                <TableHead>
-                  <TableRow >
-                    <TableCell>N° Resolución</TableCell>
-                    <TableCell>Asunto</TableCell>
-                    <TableCell>Referencia</TableCell>
-                    <TableCell align="center">Acciones</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
+            <Box sx={{ mt: { xs: 2, sm: 3 } }}>
+              {isMobile ? (
+                // Vista de cards para móviles
+                <Stack spacing={2}>
                   {results.map((resolution) => (
-                    <TableRow
+                    <Card 
                       key={resolution.NumdeResolucion}
-                      hover
-                      sx={{ cursor: 'pointer' }}
-                      // Acción principal al hacer clic en cualquier parte de la fila (excepto botones)
-                      onClick={() => handleRowClick(resolution.NumdeResolucion)} 
+                      elevation={2}
+                      sx={{
+                        cursor: 'pointer',
+                        '&:hover': {
+                          elevation: 4,
+                          transform: 'translateY(-1px)',
+                        },
+                        transition: 'all 0.2s ease',
+                      }}
+                      onClick={() => handleRowClick(resolution.NumdeResolucion)}
                     >
-                      {/* Estas celdas ahora también disparan el modal via el onClick de TableRow */}
-                      <TableCell>{resolution.NumdeResolucion}</TableCell>
-                      <TableCell>{resolution.Asunto}</TableCell>
-                      <TableCell>{resolution.Referencia}</TableCell>
-                      <TableCell align="center">
-                        {/* Botón Modificar con su propia lógica, detiene la propagación */}
-                        <Button
-                          variant="contained"
-                          size="small" // Botón más pequeño
-                          onClick={(e) => {
-                              e.stopPropagation(); // Previene que se active el handleRowClick
+                      <CardContent sx={{ p: 2 }}>
+                        <Typography variant="h6" gutterBottom color="primary">
+                          N° {resolution.NumdeResolucion}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                          <strong>Asunto:</strong> {resolution.Asunto}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                          <strong>Referencia:</strong> {resolution.Referencia}
+                        </Typography>
+                        <Stack direction="row" spacing={1}>
+                          <Button
+                            variant="contained"
+                            size="small"
+                            startIcon={<EditIcon />}
+                            onClick={(e) => {
+                              e.stopPropagation();
                               handleNavigateToModify(resolution.NumdeResolucion);
-                          }}
-                          sx={{ mr: 1 }} // Margen derecho
-                        >
-                          Modificar
-                        </Button>
-                         {/* Botón Ver Detalles (navega a MostrarLibro) */}
-                      <Button
-                           variant="outlined" // Estilo diferente
-                          size="small"
-                          onClick={(e) => {
-                               e.stopPropagation(); // Previene que se active el handleRowClick
+                            }}
+                            sx={{ flex: 1 }}
+                          >
+                            Modificar
+                          </Button>
+                          <Button
+                            variant="outlined"
+                            size="small"
+                            startIcon={<VisibilityIcon />}
+                            onClick={(e) => {
+                              e.stopPropagation();
                               handleNavigateToShow(resolution.NumdeResolucion);
-                          }}
-                        >
-                          Ver Detalles
-                        </Button>
-                      </TableCell>
-                    </TableRow>
+                            }}
+                            sx={{ flex: 1 }}
+                          >
+                            Ver
+                          </Button>
+                        </Stack>
+                      </CardContent>
+                    </Card>
                   ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
+                </Stack>
+              ) : (
+                // Vista de tabla para tablets y desktop
+                <TableContainer component={Paper} elevation={2}>
+                  <Table stickyHeader>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell sx={{ fontWeight: 'bold' }}>N° Resolución</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>Asunto</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>Referencia</TableCell>
+                        <TableCell align="center" sx={{ fontWeight: 'bold' }}>Acciones</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {results.map((resolution) => (
+                        <TableRow
+                          key={resolution.NumdeResolucion}
+                          hover
+                          sx={{ 
+                            cursor: 'pointer',
+                            '&:hover': {
+                              backgroundColor: theme.palette.action.hover,
+                            },
+                          }}
+                          onClick={() => handleRowClick(resolution.NumdeResolucion)}
+                        >
+                          <TableCell>
+                            <Chip 
+                              label={resolution.NumdeResolucion} 
+                              color="primary" 
+                              variant="outlined"
+                              size="small"
+                            />
+                          </TableCell>
+                          <TableCell sx={{ maxWidth: { md: '200px', lg: '300px' } }}>
+                            <Typography 
+                              variant="body2" 
+                              sx={{ 
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap',
+                              }}
+                            >
+                              {resolution.Asunto}
+                            </Typography>
+                          </TableCell>
+                          <TableCell sx={{ maxWidth: { md: '150px', lg: '200px' } }}>
+                            <Typography 
+                              variant="body2" 
+                              sx={{ 
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap',
+                              }}
+                            >
+                              {resolution.Referencia}
+                            </Typography>
+                          </TableCell>
+                          <TableCell align="center">
+                            <Stack direction="row" spacing={1} justifyContent="center">
+                              <Button
+                                variant="contained"
+                                size="small"
+                                startIcon={<EditIcon />}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleNavigateToModify(resolution.NumdeResolucion);
+                                }}
+                              >
+                                Modificar
+                              </Button>
+                              <Button
+                                variant="outlined"
+                                size="small"
+                                startIcon={<VisibilityIcon />}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleNavigateToShow(resolution.NumdeResolucion);
+                                }}
+                              >
+                                Ver
+                              </Button>
+                            </Stack>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              )}
+            </Box>
           )}
         </CardContent>
-      </Card>
-
-      {/* Modal de detalles */}
+      </Card>      {/* Modal de detalles responsive */}
       <Dialog 
         open={openDialog} 
         onClose={handleCloseDialog} 
         maxWidth="md" 
         fullWidth
-        fullScreen={isMobile} // Pantalla completa en móviles
+        fullScreen={isMobile}
+        sx={{
+          '& .MuiDialog-paper': {
+            borderRadius: { xs: 0, sm: 2 },
+            margin: { xs: 0, sm: 2 },
+          },
+        }}
       >
-        <DialogTitle>
-          Detalles de la Resolución
+        <DialogTitle
+          sx={{
+            position: 'relative',
+            pb: 2,
+            borderBottom: `1px solid ${theme.palette.divider}`,
+          }}
+        >
+          <Typography variant={isMobile ? 'h6' : 'h5'} fontWeight="bold">
+            Detalles de la Resolución
+          </Typography>
           {isMobile && (
             <IconButton
               aria-label="close"
@@ -227,101 +398,217 @@ const Busquedas = () => {
                 position: 'absolute',
                 right: 8,
                 top: 8,
+                color: theme.palette.grey[500],
               }}
             >
               <CloseIcon />
             </IconButton>
           )}
         </DialogTitle>
-        <DialogContent dividers>
+        
+        <DialogContent 
+          dividers
+          sx={{
+            p: { xs: 2, sm: 3 },
+            maxHeight: { xs: '70vh', sm: '60vh' },
+            overflowY: 'auto',
+          }}
+        >
           {selectedResolution ? (
-            <>
-              <Typography variant="subtitle1" gutterBottom>
-                <strong>N° Resolución:</strong> {selectedResolution.NumdeResolucion}
-              </Typography>
-              <Typography variant="subtitle1" gutterBottom>
-                <strong>Asunto:</strong> {selectedResolution.Asunto || selectedResolution.asunto || 'No disponible'} 
-              </Typography>
-              <Typography variant="subtitle1" gutterBottom>
-                <strong>Referencia:</strong> {selectedResolution.Referencia || selectedResolution.referencia || 'No disponible'}
-              </Typography>
+            <Stack spacing={{ xs: 2, sm: 3 }}>
+              <Box>
+                <Typography 
+                  variant="body1" 
+                  sx={{ 
+                    mb: 1, 
+                    fontSize: { xs: '0.9rem', sm: '1rem' },
+                  }}
+                >
+                  <strong>N° Resolución:</strong>
+                </Typography>
+                <Chip 
+                  label={selectedResolution.NumdeResolucion} 
+                  color="primary" 
+                  size={isMobile ? 'small' : 'medium'}
+                />
+              </Box>
+
+              <Box>
+                <Typography 
+                  variant="body1" 
+                  sx={{ 
+                    mb: 1,
+                    fontSize: { xs: '0.9rem', sm: '1rem' },
+                  }}
+                >
+                  <strong>Asunto:</strong>
+                </Typography>
+                <Typography 
+                  variant="body2" 
+                  sx={{ 
+                    pl: 1,
+                    fontSize: { xs: '0.85rem', sm: '0.95rem' },
+                    lineHeight: 1.4,
+                  }}
+                >
+                  {selectedResolution.Asunto || selectedResolution.asunto || 'No disponible'}
+                </Typography>
+              </Box>
+
+              <Box>
+                <Typography 
+                  variant="body1" 
+                  sx={{ 
+                    mb: 1,
+                    fontSize: { xs: '0.9rem', sm: '1rem' },
+                  }}
+                >
+                  <strong>Referencia:</strong>
+                </Typography>
+                <Typography 
+                  variant="body2" 
+                  sx={{ 
+                    pl: 1,
+                    fontSize: { xs: '0.85rem', sm: '0.95rem' },
+                    lineHeight: 1.4,
+                  }}
+                >
+                  {selectedResolution.Referencia || selectedResolution.referencia || 'No disponible'}
+                </Typography>
+              </Box>
               
               {(selectedResolution.images?.length > 0 || selectedResolution.Images?.length > 0) && (
-                <>
-                  <Typography variant="h6" sx={{ mt: 2, mb: 1 }}>
+                <Box>
+                  <Typography 
+                    variant="h6" 
+                    sx={{ 
+                      mb: 2,
+                      fontSize: { xs: '1.1rem', sm: '1.25rem' },
+                    }}
+                  >
                     Imágenes:
                   </Typography>
-                  <Grid container spacing={2}>
+                  <Grid container spacing={{ xs: 1, sm: 2 }}>
                     {(selectedResolution.images || selectedResolution.Images || []).map((img, idx) => (
-                      <Grid item xs={12} sm={isMobile ? 12 : 6} md={isMobile ? 12 : 4} key={idx}>
-                        <Card>
+                      <Grid item xs={12} sm={6} md={4} key={idx}>
+                        <Card 
+                          elevation={3}
+                          sx={{
+                            borderRadius: { xs: 1, sm: 2 },
+                            overflow: 'hidden',
+                          }}
+                        >
                           <CardMedia
                             component="img"
-                            height={isMobile ? "250" : "200"}
+                            height={isMobile ? "200" : "180"}
                             image={getImageUrl(img)}
                             alt={`Imagen ${idx + 1}`}
                             sx={{ 
                               objectFit: 'contain',
-                              width: '100%'
+                              backgroundColor: theme.palette.grey[50],
                             }}
                           />
                         </Card>
                       </Grid>
                     ))}
                   </Grid>
-                </>
+                </Box>
               )}
+              
               {(!selectedResolution.images && !selectedResolution.Images) && (
-                  <Typography sx={{ mt: 2 }}>No hay imágenes asociadas.</Typography>
+                <Box 
+                  sx={{ 
+                    textAlign: 'center', 
+                    py: 3,
+                    color: theme.palette.text.secondary,
+                  }}
+                >
+                  <Typography variant="body2">
+                    No hay imágenes asociadas a esta resolución.
+                  </Typography>
+                </Box>
               )}
-            </>
+            </Stack>
           ) : (
-            <Typography>Cargando detalles...</Typography>
+            <Box 
+              sx={{ 
+                textAlign: 'center', 
+                py: 4,
+              }}
+            >
+              <Typography>Cargando detalles...</Typography>
+            </Box>
           )}
         </DialogContent>
-        <DialogActions sx={{ flexDirection: isMobile ? 'column' : 'row', p: 2 }}>
+        
+        <DialogActions 
+          sx={{ 
+            flexDirection: { xs: 'column', sm: 'row' },
+            gap: { xs: 1, sm: 2 },
+            p: { xs: 2, sm: 3 },
+            borderTop: `1px solid ${theme.palette.divider}`,
+          }}
+        >
           {selectedResolution && (
             <Button 
               onClick={() => handleNavigateToShow(selectedResolution.NumdeResolucion)} 
               color="primary"
-              fullWidth={isMobile}
               variant="contained"
-              sx={{ mb: isMobile ? 1 : 0 }}
+              fullWidth={isMobile}
+              startIcon={<VisibilityIcon />}
+              sx={{
+                order: { xs: 1, sm: 1 },
+                fontWeight: 'bold',
+              }}
             >
               Ver Página Completa
             </Button>
           )}
           <Button 
             onClick={handleCloseDialog} 
-            color="primary"
-            fullWidth={isMobile}
+            color="inherit"
             variant="outlined"
+            fullWidth={isMobile}
+            sx={{
+              order: { xs: 2, sm: 2 },
+            }}
           >
             Cerrar
           </Button>
         </DialogActions>
       </Dialog>
-        <Box sx={{ display: 'flex', alignItems: 'center', mb: 5, mt: 5 }}>
-              <Button
-                component={Link}
-                to="/home"
-                color="info"
-                variant="outlined"
-                startIcon={<ArrowBackIcon />}
-                sx={{ 
-                  mr: 5,
-                  '&:hover': {
-                    backgroundColor: 'primary.light',
-                    color: 'primary.dark',
-                    borderColor: 'primary.main'
-                  }
-                }}
-              >
-                Volver al Inicio
-              </Button>
-            </Box>
+
+      {/* Botón de navegación */}
+      <Box 
+        sx={{ 
+          display: 'flex', 
+          justifyContent: { xs: 'center', sm: 'flex-start' },
+          mt: { xs: 3, sm: 4 },
+          pt: 2,
+        }}
+      >
+        <Button
+          component={Link}
+          to="/home"
+          color="primary"
+          variant="outlined"
+          startIcon={<ArrowBackIcon />}
+          size={isMobile ? 'medium' : 'large'}
+          sx={{ 
+            fontWeight: 'bold',
+            borderRadius: { xs: 1, sm: 2 },
+            px: { xs: 3, sm: 4 },
+            '&:hover': {
+              backgroundColor: 'primary.light',
+              color: 'primary.dark',
+              borderColor: 'primary.main',
+            },
+          }}
+        >
+          Volver al Inicio
+        </Button>
+      </Box>
     </Container>
-    
   );
 };
 
