@@ -8,23 +8,10 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
-  },
-  "dependencies": {
+  },  "dependencies": {
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
     "@fontsource/roboto": "^5.1.0",
-<<<<<<< HEAD
-    "axios": "^1.6.5",
-    "@mui/icons-material": "^5.15.5",
-    "@mui/material": "^5.15.5",
-    "date-fns": "^3.3.1",
-    "jspdf": "^2.5.1",
-    "react": "^18.2.0",
-    "react-datepicker": "^4.25.0",
-    "react-dom": "^18.2.0",
-    "react-router-dom": "^6.21.3",
-    "zustand": "^4.4.7"
-=======
     "@mui/icons-material": "^6.1.7",
     "@mui/material": "^6.1.7",
     "axios": "^1.9.0",
@@ -35,7 +22,6 @@
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.0.2",
     "zustand": "^5.0.3"
->>>>>>> Flavio
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",
