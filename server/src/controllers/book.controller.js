@@ -264,14 +264,22 @@ export const insertTestResolution = async (req, res) => {
           [NumdeResolucion, imagePath]
         )
       }
+<<<<<<< HEAD
     }
 
     // Confirmar transacción
+=======
+    }    // Confirmar transacción
+>>>>>>> Flavio
     await db.exec('COMMIT')
 
     res.status(201).json({ 
       message: 'Resolución mock creada exitosamente',
+<<<<<<< HEAD
       NumdeResolucion 
+=======
+      NumdeResolucion
+>>>>>>> Flavio
     })
   } catch (error) {
     await db.exec('ROLLBACK')

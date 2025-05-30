@@ -1,13 +1,13 @@
 import db from './sqlite-connection.js'
 import bcrypt from 'bcrypt'
 
-async function seedDatabase() {
+async function seedDatabase () {
   try {
     console.log('🌱 Iniciando seed de datos...')
 
     // Crear usuario administrador por defecto
     const hashedPassword = await bcrypt.hash('admin123', 10)
-    
+
     try {
       await db.run(`
         INSERT INTO users (Nombre, Contrasena)

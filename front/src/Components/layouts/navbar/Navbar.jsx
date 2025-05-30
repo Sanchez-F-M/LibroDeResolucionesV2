@@ -4,7 +4,8 @@ import {
   Toolbar,
   Typography,
   IconButton,
-  Grid,
+  Box,
+  Container,
   useMediaQuery,
   useTheme,
 } from '@mui/material';
@@ -15,6 +16,7 @@ import Logo from '../../../assets/logo3-removebg-preview (1).png';
 const Navbar = ({ darkMode, toggleDarkMode }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isTablet = useMediaQuery(theme.breakpoints.down('md'));
   const location = useLocation();
 
   return (
@@ -22,70 +24,115 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
       position="fixed"
       sx={{
         backgroundColor: darkMode ? '#1976d2' : '#34495e',
-        width: '100%',
-        height: isMobile ? 90 : 135,
         zIndex: 1000,
-        padding: isMobile ? 1 : 2,
+        height: { xs: 70, sm: 90, md: 135 },
+        display: 'flex',
+        justifyContent: 'center',
       }}
     >
-      <Toolbar>
-        <Grid
-          container
-          alignItems="center"
-          justifyContent="space-between"
-          columns={{ xs: 12, sm: 12, md: 12 }}
+      <Container maxWidth="xl">
+        <Toolbar 
+          sx={{
+            height: '100%',
+            padding: { xs: '0 8px', sm: '0 16px' },
+            minHeight: '0 !important',
+          }}
         >
-          <Grid item xs={3} sm={3} md={2} display="flex" alignItems="center">
-            {location.pathname === '/' ? (
-              <img
-                src={Logo}
-                alt="Logo"
-                style={{
-                  width: isMobile ? 50 : 110,
-                  height: isMobile ? 52 : 115,
-                  marginRight: 8,
-                }}
-              />
-            ) : (
-              <Link to="/home">
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              width: '100%',
+              height: '100%',
+            }}
+          >
+            {/* Logo Section */}
+            <Box 
+              sx={{ 
+                display: 'flex', 
+                alignItems: 'center',
+                minWidth: { xs: 60, sm: 80, md: 120 },
+              }}
+            >
+              {location.pathname === '/' ? (
                 <img
                   src={Logo}
                   alt="Logo"
                   style={{
-                    width: isMobile ? 50 : 100,
-                    height: isMobile ? 52 : 105,
-                    marginRight: 8,
+                    width: isMobile ? 40 : isTablet ? 70 : 110,
+                    height: isMobile ? 42 : isTablet ? 73 : 115,
+                    objectFit: 'contain',
                   }}
                 />
-              </Link>
-            )}
-          </Grid>
+              ) : (
+                <Link to="/home" style={{ display: 'flex', alignItems: 'center' }}>
+                  <img
+                    src={Logo}
+                    alt="Logo"
+                    style={{
+                      width: isMobile ? 40 : isTablet ? 70 : 100,
+                      height: isMobile ? 42 : isTablet ? 73 : 105,
+                      objectFit: 'contain',
+                    }}
+                  />
+                </Link>
+              )}
+            </Box>
 
-          <Grid item xs={6} sm={4} md={6} textAlign="center">
-            <Typography variant={isMobile ? 'h6' : 'h2'}>
-              Libro de Resoluciones
-            </Typography>
-          </Grid>
+            {/* Title Section */}
+            <Box 
+              sx={{ 
+                flex: 1,
+                display: 'flex',
+                justifyContent: 'center',
+                px: { xs: 1, sm: 2 },
+              }}
+            >
+              <Typography 
+                variant={isMobile ? 'h6' : isTablet ? 'h4' : 'h2'}
+                sx={{
+                  fontWeight: 'bold',
+                  textAlign: 'center',
+                  fontSize: {
+                    xs: '0.9rem',
+                    sm: '1.2rem',
+                    md: '1.8rem',
+                    lg: '3rem',
+                  },
+                  lineHeight: 1.2,
+                  whiteSpace: { xs: 'nowrap', sm: 'normal' },
+                  overflow: { xs: 'hidden', sm: 'visible' },
+                  textOverflow: { xs: 'ellipsis', sm: 'unset' },
+                }}
+              >
+                {isMobile ? 'Resoluciones' : 'Libro de Resoluciones'}
+              </Typography>
+            </Box>
 
-          <Grid
-            item
-            xs={3}
-            sm={3}
-            md={2}
-            sx={{
-              display: 'flex',
-              justifyContent: 'flex-end',
-              alignItems: 'center',
-            }}
-            display="flex"
-            justifyContent="flex-end"
-          >
-            <IconButton onClick={toggleDarkMode} color="inherit">
-              {darkMode ? <Brightness7 /> : <Brightness4 />}
-            </IconButton>
-          </Grid>
-        </Grid>
-      </Toolbar>
+            {/* Dark Mode Toggle Section */}
+            <Box 
+              sx={{ 
+                display: 'flex',
+                justifyContent: 'flex-end',
+                alignItems: 'center',
+                minWidth: { xs: 48, sm: 60, md: 80 },
+              }}
+            >
+              <IconButton 
+                onClick={toggleDarkMode} 
+                color="inherit"
+                size={isMobile ? 'small' : 'medium'}
+                sx={{
+                  padding: { xs: '6px', sm: '8px' },
+                }}
+              >
+                {darkMode ? <Brightness7 /> : <Brightness4 />}
+              </IconButton>
+            </Box>
+          </Box>
+        </Toolbar>
+      </Container>
     </AppBar>
   );
 };

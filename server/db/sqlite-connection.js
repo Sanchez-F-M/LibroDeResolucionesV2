@@ -7,13 +7,13 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 // Crear la base de datos en la carpeta del proyecto
-const dbPath = path.join(__dirname, '../database.sqlite')
+const dbPath = path.join(__dirname, '../database.db')
 
 let db = null
 
-async function initDatabase() {
+async function initDatabase () {
   if (db) return db
-  
+
   try {
     db = await open({
       filename: dbPath,
@@ -21,10 +21,10 @@ async function initDatabase() {
     })
 
     console.log('✅ Conexión a SQLite exitosa')
-    
+
     // Crear tablas
     await createTables()
-    
+
     return db
   } catch (error) {
     console.error('❌ Error al conectar a SQLite:', error)
@@ -32,7 +32,7 @@ async function initDatabase() {
   }
 }
 
-async function createTables() {
+async function createTables () {
   try {
     // Tabla de usuarios
     await db.exec(`

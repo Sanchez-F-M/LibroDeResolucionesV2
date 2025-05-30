@@ -24,16 +24,14 @@ const upload = multer({ storage })
 
 const bookRouter = express.Router()
 
-// Esta ruta debe ir primero para evitar conflictos con el parámetro :id
+// Estas rutas deben ir primero para evitar conflictos con el parámetro :id
 bookRouter.get('/last-number', getLastResolutionNumber)
-
-// Ruta para obtener todas las resoluciones
 bookRouter.get('/all', getAllBooks)
 
 // Ruta especial para insertar resoluciones de prueba (requiere autenticación)
 bookRouter.post('/insert-test', verifyToken, insertTestResolution)
 
-// Resto de las rutas
+// Resto de las rutas - /:id debe ir AL FINAL para no capturar las rutas específicas
 bookRouter.get('/:id', getByIdBook)
 bookRouter.post('/', upload.array('files'), createBook)
 bookRouter.put('/:id', verifyToken, updateBook)
