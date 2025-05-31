@@ -1,19 +1,3 @@
-<<<<<<< HEAD
-import mysql from 'mysql2/promise'
-import dotenv from 'dotenv'
-dotenv.config()
-
-const db = mysql.createPool({
-  host: 'localhost',
-  user: 'root',
-  password: process.env.DB_PASSWORD,
-  database: 'libroderesolucionDB',
-  port: 3306,
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
-})
-=======
 // Configuración SQLite para producción
 import sqlite3 from 'sqlite3'
 import { open } from 'sqlite'
@@ -30,7 +14,6 @@ let db = null
 
 async function initDatabase () {
   if (db) return db
->>>>>>> Flavio
 
   try {
     db = await open({
@@ -50,9 +33,6 @@ async function initDatabase () {
   }
 }
 
-<<<<<<< HEAD
-testConnection()
-=======
 async function createTables () {
   try {
     // Crear tabla de resoluciones
@@ -67,14 +47,15 @@ async function createTables () {
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
     `)
->>>>>>> Flavio
 
     // Crear índices para optimizar consultas
     await db.exec(`
       CREATE INDEX IF NOT EXISTS idx_resolution_numero ON resolution(NumdeResolucion);
       CREATE INDEX IF NOT EXISTS idx_resolution_fecha ON resolution(FechaCreacion);
       CREATE INDEX IF NOT EXISTS idx_resolution_asunto ON resolution(Asunto);
-    `)    // Crear tabla de imágenes
+    `)
+
+    // Crear tabla de imágenes
     await db.exec(`
       CREATE TABLE IF NOT EXISTS images (
         id INTEGER PRIMARY KEY AUTOINCREMENT,

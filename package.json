@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "description": "Root package for Libro de Resoluciones project",
   "scripts": {
-    "populate-production": "node populate-production-cjs.js",
-    "populate-test": "cd server && node populate-test-data.js"
+    "start:server": "cd server && npm start",
+    "start:client": "cd front && npm run dev",
+    "start": "concurrently \"npm run start:server\" \"npm run start:client\""
   },
   "dependencies": {
-    "form-data": "^4.0.2",
-    "node-fetch": "^2.6.7"
+    "concurrently": "^8.2.2"
   }
 }
