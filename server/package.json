@@ -11,13 +11,7 @@
   "scripts": {
     "dev": "nodemon index.js",
     "start": "node index.js",
-    "seed": "node db/seed-data.js",
-    "populate-test": "node populate-test-data.js",
-    "create-admin": "node scripts/create-admin.js",
-    "create-user": "node scripts/create-user.js",
-    "create-admin-production": "node scripts/create-admin-production.js",
-    "verify-admin": "node scripts/verify-admin.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "verify-admin": "node scripts/verify-admin.js"
   },
   "keywords": [],
   "author": "",
@@ -38,8 +32,5 @@
   "devDependencies": {
     "nodemon": "^3.1.9",
     "standard": "^17.1.2"
-  },
-  "eslintConfig": {
-    "extends": "standard"
   }
 }
