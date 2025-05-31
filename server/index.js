@@ -25,7 +25,7 @@ const allowedOrigins = [
   'http://localhost:5173', // desarrollo local
   'http://localhost:5174', // desarrollo local alternativo
   'http://localhost:5175', // desarrollo local alternativo 2
-  'https://front-jibs1li4h-libro-de-resoluciones-projects.vercel.app' // producción Vercel
+  'https://libro-de-resoluciones-v2-9izd-fe0i5ihfg.vercel.app' // producción Vercel
 ].filter(Boolean) // Elimina valores falsy
 
 // Configuración de CORS
