@@ -5,6 +5,10 @@
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
 		"_exporter_id": "27538948"
 	},
+	"variable": [
+		{ "key": "base_url", "value": "https://libro-resoluciones-api.onrender.com/api" },
+		{ "key": "auth_token", "value": "" }
+	],
 	"item": [
 		{
 			"name": "Auth",
@@ -13,8 +17,13 @@
 					"name": "getAuth",
 					"request": {
 						"method": "GET",
-						"header": [],
-						"url": "http://localhost:3000/api/user/profile"
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": "{{base_url}}/user/profile"
 					},
 					"response": []
 				},
@@ -25,41 +34,10 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"Nombre\": \"jUAN PRAZ\",\n    \"Contrasena\": \"matias1234\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": "{\n    \"Nombre\": \"nuevo_usuario\",\n    \"Contrasena\": \"password123\"\n}",
+							"options": { "raw": { "language": "json" } }
 						},
-						"url": "http://localhost:3000/api/user/register"
-					},
-					"response": []
-				},
-				{
-					"name": "UpdateAuth",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"url": "http://localhost:3525/auth"
-					},
-					"response": []
-				},
-				{
-					"name": "deleteAuth",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": "http://localhost:3525/auth/1"
-					},
-					"response": []
-				},
-				{
-					"name": "getbyIdAuth",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": "http://localhost:3525/auth/2"
+						"url": "{{base_url}}/user/register"
 					},
 					"response": []
 				},
@@ -70,14 +48,10 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"Nombre\": \"jUAN PRAZ\",\n    \"Contrasena\": \"matias1234\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": "{\n    \"Nombre\": \"nuevo_usuario\",\n    \"Contrasena\": \"password123\"\n}",
+							"options": { "raw": { "language": "json" } }
 						},
-						"url": "http://localhost:3000/api/user/login"
+						"url": "{{base_url}}/user/login"
 					},
 					"response": []
 				}
@@ -87,11 +61,25 @@
 			"name": "Book",
 			"item": [
 				{
-					"name": "getBook",
+					"name": "getAllBooks",
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": "http://localhost:3000/api/book"
+						"url": "{{base_url}}/books/all"
+					},
+					"response": []
+				},
+				{
+					"name": "getBookById",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": "{{base_url}}/books/{{book_id}}"
 					},
 					"response": []
 				},
@@ -100,22 +88,25 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": {
-								"token": ""
-							}
+							"bearer": [ { "key": "token", "value": "{{auth_token}}" } ]
 						},
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"NumdeResolucion\": 7,\n  \"Asunto\": \"Resolución sobre crimen ambiente\",\n  \"Referencia\": \"Flavio Sanchez\",\n  \"ImagePaths\": [\"imagen1.jpg\", \"imagen2.jpg\", \"imagen3.jpg\"]\n}\n",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": "{\n  \"NumdeResolucion\": \"7\",\n  \"Asunto\": \"Resolución sobre crimen ambiente\",\n  \"Referencia\": \"Flavio Sanchez\",\n  \"ImagePaths\": [\"imagen1.jpg\", \"imagen2.jpg\", \"imagen3.jpg\"]\n}",
+							"options": { "raw": { "language": "json" } }
 						},
-						"url": "http://localhost:3000/api/books"
+						"url": "{{base_url}}/books"
 					},
 					"response": []
 				},
@@ -124,54 +115,43 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": {
-								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJOb21icmUiOiJqVUFOIFBSQVoiLCJpYXQiOjE3NDI1MTEzNDMsImV4cCI6MTc0MjU5Nzc0M30.12S1liQzT9yvzU-lBTxRj25tq8vdpHgEWLcxs7O9Ikg"
-							}
+							"bearer": [ { "key": "token", "value": "{{auth_token}}" } ]
 						},
 						"method": "PUT",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"Asunto\": \"Resolución sobre crimen agravado\",\n    \"Referencia\": \"Juan Sanchez\",\n    \"ImagePaths\": [\n        \"imagen1.jpg\",\n        \"imagen2.jpg\",\n        \"imagen3.jpg\"\n    ]\n}\n",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": "{\n    \"Asunto\": \"Resolución sobre crimen agravado\",\n    \"Referencia\": \"Juan Sanchez\",\n    \"ImagePaths\": [\n        \"imagen1.jpg\",\n        \"imagen2.jpg\",\n        \"imagen3.jpg\"\n    ]\n}",
+							"options": { "raw": { "language": "json" } }
 						},
-						"url": "http://localhost:3000/api/books/4"
+						"url": "{{base_url}}/books/{{book_id}}"
 					},
 					"response": []
 				},
 				{
 					"name": "deleteBook",
 					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": "http://localhost:3525/book/"
-					},
-					"response": []
-				},
-				{
-					"name": "getbyIdBook",
-					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": {
-								"token": ""
-							}
+							"bearer": [ { "key": "token", "value": "{{auth_token}}" } ]
 						},
-						"method": "GET",
+						"method": "DELETE",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer",
-								"description": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJOb21icmUiOiJSYW1vbiIsImlhdCI6MTczNTg0ODY2MCwiZXhwIjoxNzM1OTM1MDYwfQ.BUcEHFQ9nfPlpXsj7Bfy5int-h8cQlpd7bxxIJWLH08",
-								"type": "text",
-								"disabled": true
+								"value": "Bearer {{auth_token}}"
 							}
 						],
-						"url": "http://localhost:3000/api/books/4"
+						"url": "{{base_url}}/books/{{book_id}}"
 					},
 					"response": []
 				}
@@ -184,17 +164,18 @@
 					"name": "Search",
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"criterion\": \"Referencia\",\n  \"value\": \"j\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"options": { "raw": { "language": "json" } }
 						},
-						"url": "http://localhost:3000/api/search"
+						"url": "{{base_url}}/search"
 					},
 					"response": []
 				}
