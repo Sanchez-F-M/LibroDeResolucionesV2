@@ -234,6 +234,62 @@ app.get('/diagnose', async (req, res) => {
   }
 })
 
+// Endpoint temporal para inicializar base de datos
+app.post('/init-db', async (req, res) => {
+  try {
+    console.log('🗄️ Inicializando base de datos')
+    
+    const sqlite3 = (await import('sqlite3')).default
+    const { open } = await import('sqlite')
+    const path = await import('path')
+    const { fileURLToPath } = await import('url')
+    
+    const __filename = fileURLToPath(import.meta.url)
+    const __dirname = path.dirname(__filename)
+    const dbPath = path.join(__dirname, 'database.sqlite')
+    
+    const db = await open({
+      filename: dbPath,
+      driver: sqlite3.Database
+    })
+    
+    // Crear tablas si no existen
+    await db.exec(`
+      CREATE TABLE IF NOT EXISTS users (
+        ID INTEGER PRIMARY KEY AUTOINCREMENT,
+        Nombre TEXT UNIQUE NOT NULL,
+        Contrasena TEXT NOT NULL
+      );
+      
+      CREATE TABLE IF NOT EXISTS books (
+        ID INTEGER PRIMARY KEY AUTOINCREMENT,
+        NumeroResolucion TEXT UNIQUE NOT NULL,
+        Fecha TEXT NOT NULL,
+        Tema TEXT NOT NULL,
+        Descripcion TEXT,
+        Archivo TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      );
+    `)
+    
+    await db.close()
+    
+    res.json({
+      success: true,
+      message: 'Base de datos inicializada exitosamente',
+      tables: ['users', 'books']
+    })
+    
+  } catch (error) {
+    console.error('❌ Error inicializando DB:', error)
+    res.status(500).json({
+      success: false,
+      error: 'Error inicializando base de datos',
+      message: error.message
+    })
+  }
+})
+
 // Endpoint para crear admin manualmente
 app.post('/create-admin', async (req, res) => {
   try {
