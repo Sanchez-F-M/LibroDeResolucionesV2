@@ -34,11 +34,11 @@ async function createAdminUser() {
     const existingUser = await db.get(
       'SELECT ID FROM users WHERE Nombre = ?',
       [adminUsername]
-    )
-
-    if (existingUser) {
+    )    if (existingUser) {
       console.log('⚠️  El usuario administrador ya existe')
-      console.log('💡 Para resetear la contraseña, elimine el usuario primero')
+      console.log('✅ Sistema listo para usar')
+      console.log(`👤 Usuario: ${adminUsername}`)
+      console.log(`🔑 Contraseña: ${adminPassword}`)
       return
     }
 
