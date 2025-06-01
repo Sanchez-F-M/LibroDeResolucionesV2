@@ -131,6 +131,171 @@ app.get('/health', (req, res) => {
   })
 })
 
+// Endpoint de diagnóstico para deployment
+app.get('/diagnose', async (req, res) => {
+  try {
+    console.log('🔍 Ejecutando diagnóstico de deployment')
+    
+    const diagnosis = {
+      timestamp: new Date().toISOString(),
+      environment: {
+        NODE_ENV: process.env.NODE_ENV || 'NOT SET',
+        PORT: process.env.PORT || 'NOT SET',
+        JWT_SECRET_KEY: process.env.JWT_SECRET_KEY ? 'SET' : 'NOT SET',
+        FRONTEND_URL: process.env.FRONTEND_URL || 'NOT SET',
+        ADMIN_USERNAME: process.env.ADMIN_USERNAME || 'NOT SET',
+        ADMIN_PASSWORD: process.env.ADMIN_PASSWORD ? 'SET' : 'NOT SET'
+      },
+      database: {
+        status: 'unknown',
+        tables: [],
+        users: 0,
+        books: 0
+      },
+      recommendations: []
+    }
+    
+    // Verificar base de datos
+    try {
+      const sqlite3 = (await import('sqlite3')).default
+      const { open } = await import('sqlite')
+      const path = await import('path')
+      const { fileURLToPath } = await import('url')
+      
+      const __filename = fileURLToPath(import.meta.url)
+      const __dirname = path.dirname(__filename)
+      const dbPath = path.join(__dirname, 'database.sqlite')
+      
+      const db = await open({
+        filename: dbPath,
+        driver: sqlite3.Database
+      })
+      
+      diagnosis.database.status = 'connected'
+      
+      // Verificar tablas
+      const tables = await db.all(`
+        SELECT name FROM sqlite_master 
+        WHERE type='table' AND name NOT LIKE 'sqlite_%'
+      `)
+      diagnosis.database.tables = tables.map(t => t.name)
+      
+      // Verificar usuarios
+      try {
+        const users = await db.all('SELECT COUNT(*) as count FROM users')
+        diagnosis.database.users = users[0].count
+      } catch (err) {
+        diagnosis.database.users = 'table_not_exists'
+      }
+      
+      // Verificar libros
+      try {
+        const books = await db.all('SELECT COUNT(*) as count FROM books')
+        diagnosis.database.books = books[0].count
+      } catch (err) {
+        diagnosis.database.books = 'table_not_exists'
+      }
+      
+      await db.close()
+      
+    } catch (error) {
+      diagnosis.database.status = 'error'
+      diagnosis.database.error = error.message
+    }
+    
+    // Generar recomendaciones
+    if (!process.env.JWT_SECRET_KEY) {
+      diagnosis.recommendations.push('Configure JWT_SECRET_KEY en Render')
+    }
+    if (!process.env.FRONTEND_URL) {
+      diagnosis.recommendations.push('Configure FRONTEND_URL en Render')
+    }
+    if (!process.env.ADMIN_USERNAME) {
+      diagnosis.recommendations.push('Configure ADMIN_USERNAME en Render')
+    }
+    if (!process.env.ADMIN_PASSWORD) {
+      diagnosis.recommendations.push('Configure ADMIN_PASSWORD en Render')
+    }
+    if (diagnosis.database.users === 0) {
+      diagnosis.recommendations.push('Ejecutar create-admin script después de configurar variables')
+    }
+    
+    res.json(diagnosis)
+    
+  } catch (error) {
+    console.error('❌ Error en diagnóstico:', error)
+    res.status(500).json({
+      error: 'Error en diagnóstico',
+      message: error.message
+    })
+  }
+})
+
+// Endpoint para crear admin manualmente
+app.post('/create-admin', async (req, res) => {
+  try {
+    console.log('👤 Ejecutando creación manual de admin')
+    
+    const adminUsername = process.env.ADMIN_USERNAME || 'admin'
+    const adminPassword = process.env.ADMIN_PASSWORD || 'admin123'
+    
+    const sqlite3 = (await import('sqlite3')).default
+    const { open } = await import('sqlite')
+    const bcrypt = await import('bcrypt')
+    const path = await import('path')
+    const { fileURLToPath } = await import('url')
+    
+    const __filename = fileURLToPath(import.meta.url)
+    const __dirname = path.dirname(__filename)
+    const dbPath = path.join(__dirname, 'database.sqlite')
+    
+    const db = await open({
+      filename: dbPath,
+      driver: sqlite3.Database
+    })
+    
+    // Verificar si el usuario ya existe
+    const existingUser = await db.get(
+      'SELECT ID FROM users WHERE Nombre = ?',
+      [adminUsername]
+    )
+    
+    if (existingUser) {
+      await db.close()
+      return res.json({
+        success: true,
+        message: 'Usuario admin ya existe',
+        username: adminUsername
+      })
+    }
+    
+    // Hashear la contraseña
+    const hashedPassword = await bcrypt.hash(adminPassword, 10)
+    
+    // Insertar el usuario administrador
+    await db.run(
+      'INSERT INTO users (Nombre, Contrasena) VALUES (?, ?)',
+      [adminUsername, hashedPassword]
+    )
+    
+    await db.close()
+    
+    res.json({
+      success: true,
+      message: 'Usuario admin creado exitosamente',
+      username: adminUsername
+    })
+    
+  } catch (error) {
+    console.error('❌ Error creando admin:', error)
+    res.status(500).json({
+      success: false,
+      error: 'Error creando admin',
+      message: error.message
+    })
+  }
+})
+
 // Usar rutas de la API
 app.use('/api', routes)
 
