@@ -33,7 +33,7 @@ import api from '../../api/api';
 import jsPDF from 'jspdf';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { getImageUrl, downloadImage, handleImageError, preloadImage, getOptimizedImageUrl } from '../../utils/imageUtils';
+import { getImageUrl, downloadImage, handleImageError, preloadImage, getOptimizedImageUrl, testImageConnectivity } from '../../utils/imageUtils';
 
 const MostrarLibro = () => {
   const { id } = useParams();
@@ -44,33 +44,51 @@ const MostrarLibro = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [imageLoadingStates, setImageLoadingStates] = useState({});
   const [preloadedImages, setPreloadedImages] = useState({});
+  const [debugMode, setDebugMode] = useState(false);
 
   // Responsive breakpoints
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
-  useEffect(() => {
+  const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));  useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       setError(null);
+      
+      // En móviles, ejecutar test de conectividad si está en modo debug
+      if (isMobile && (window.location.search.includes('debug') || localStorage.getItem('debugMode'))) {
+        setDebugMode(true);
+        console.log('🔍 Modo debug activado para móvil');
+        try {
+          const testResults = await testImageConnectivity();
+          console.table(testResults.tests);
+        } catch (testError) {
+          console.error('❌ Error en test de conectividad:', testError);
+        }
+      }
+      
       try {
+        console.log(isMobile ? '📱 Cargando datos en móvil...' : '💻 Cargando datos en desktop...');
         const response = await api.get(`/api/books/${id}`);
         const resolution = response.data && response.data.length > 0 ? response.data[0] : null; 
+        
         if (resolution) {
           setResolutionData(resolution);
+          console.log('✅ Datos cargados:', resolution);
           
           // Precargar imágenes para móviles
           const images = resolution.images || resolution.Images || [];
           if (images.length > 0 && isMobile) {
-            console.log('📱 Precargando imágenes para móvil...');
+            console.log('📱 Precargando', images.length, 'imágenes para móvil...');
             const preloadPromises = images.map(async (img, index) => {
               setImageLoadingStates(prev => ({ ...prev, [index]: true }));
               try {
+                console.log(`📷 Precargando imagen ${index + 1}:`, img);
                 const preloadedUrl = await preloadImage(img);
                 setPreloadedImages(prev => ({ ...prev, [index]: preloadedUrl }));
                 setImageLoadingStates(prev => ({ ...prev, [index]: false }));
+                console.log(`✅ Imagen ${index + 1} precargada`);
               } catch (error) {
-                console.error(`Error precargando imagen ${index}:`, error);
+                console.error(`❌ Error precargando imagen ${index + 1}:`, error);
                 setImageLoadingStates(prev => ({ ...prev, [index]: false }));
               }
             });
@@ -82,7 +100,7 @@ const MostrarLibro = () => {
           setError('No se encontró la resolución especificada.');
         }
       } catch (err) {
-        console.error('Error al cargar la resolución:', err);
+        console.error('❌ Error al cargar la resolución:', err);
         setError('Error al obtener los datos de la resolución. Verifique la conexión o el ID.');
       } finally {
         setLoading(false);
@@ -386,9 +404,7 @@ const MostrarLibro = () => {
                     py: { xs: 1.5, sm: 2 }
                   }}
                 />
-              </Box>
-
-              {/* Imágenes */}
+              </Box>              {/* Imágenes */}
               {images && images.length > 0 ? (
                 <>
                   <Divider />
@@ -402,7 +418,22 @@ const MostrarLibro = () => {
                       >
                         Documentos Adjuntos ({images.length})
                       </Typography>
-                    </Stack>                    {/* Grid de imágenes */}
+                      {/* Botón de debug para móviles */}
+                      {isMobile && (
+                        <Button
+                          size="small"
+                          variant="outlined"
+                          onClick={async () => {
+                            console.log('🔍 Ejecutando test de conectividad...');
+                            const results = await testImageConnectivity();
+                            alert(`Test completado. Ver consola para detalles.\nBackend: ${results.tests.backendHealth?.status || 'Error'}\nImágenes: ${results.tests.imageAccess?.status || 'Error'}`);
+                          }}
+                          sx={{ ml: 'auto', fontSize: '0.7rem' }}
+                        >
+                          Debug
+                        </Button>
+                      )}
+                    </Stack>{/* Grid de imágenes */}
                     <Grid container spacing={{ xs: 2, sm: 3, md: 4 }}>
                       {images.map((img, index) => (
                         <Grid item xs={12} sm={6} lg={4} key={index}>

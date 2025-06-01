@@ -51,10 +51,12 @@ export const getImageUrl = (imagePath) => {
     }
   }
   
-  // Asegurar protocolo HTTPS en producción para móviles
-  if (!isDevelopmentEnvironment() && baseUrl.startsWith('http://')) {
-    baseUrl = baseUrl.replace('http://', 'https://');
-    console.log('ImageUtils: Forzando HTTPS para móvil:', baseUrl);
+  // CRÍTICO: Asegurar protocolo HTTPS en producción para móviles
+  if (!isDevelopmentEnvironment()) {
+    if (baseUrl.startsWith('http://')) {
+      baseUrl = baseUrl.replace('http://', 'https://');
+      console.log('🔒 ImageUtils: Forzando HTTPS para móvil:', baseUrl);
+    }
   }
   
   // Si la ruta ya incluye 'uploads/', usar directamente
@@ -63,9 +65,13 @@ export const getImageUrl = (imagePath) => {
   
   const finalUrl = `${baseUrl}/${fullPath}`;
   
-  // Log diferenciado para móviles
+  // Log diferenciado para móviles con más información
   if (isMobileDevice()) {
-    console.log('📱 ImageUtils (Móvil): URL generada:', finalUrl);
+    console.log('📱 ImageUtils (Móvil):');
+    console.log('  - Input:', imagePath);
+    console.log('  - Base URL:', baseUrl);
+    console.log('  - Final URL:', finalUrl);
+    console.log('  - Environment:', import.meta.env.MODE);
   } else {
     console.log('💻 ImageUtils (Desktop): URL generada:', finalUrl);
   }
@@ -239,4 +245,83 @@ export const getOptimizedImageUrl = (imagePath, quality = 'medium') => {
   // Aquí podrías agregar parámetros de query para optimización de imágenes
   // Por ejemplo: ?quality=low&format=webp
   return baseUrl;
+};
+
+/**
+ * Función de test para verificar conectividad de imágenes desde móviles
+ * @returns {Promise<Object>} Resultado del test
+ */
+export const testImageConnectivity = async () => {
+  const testResults = {
+    timestamp: new Date().toISOString(),
+    userAgent: navigator.userAgent,
+    isMobile: isMobileDevice(),
+    environment: import.meta.env.MODE,
+    baseUrl: import.meta.env.VITE_API_BASE_URL,
+    tests: {}
+  };
+  
+  console.log('🧪 Iniciando test de conectividad de imágenes...');
+  
+  // Test 1: Conectividad básica del backend
+  try {
+    const healthUrl = `${import.meta.env.VITE_API_BASE_URL || 'https://libro-resoluciones-backend.onrender.com'}/render-health`;
+    const healthResponse = await fetch(healthUrl);
+    testResults.tests.backendHealth = {
+      url: healthUrl,
+      status: healthResponse.status,
+      ok: healthResponse.ok
+    };
+    console.log('✅ Backend health check:', healthResponse.status);
+  } catch (error) {
+    testResults.tests.backendHealth = {
+      error: error.message
+    };
+    console.log('❌ Backend health check failed:', error.message);
+  }
+  
+  // Test 2: Test de imagen específica
+  try {
+    const testImagePath = '1746055049685-diagrama_ep.png';
+    const imageUrl = getImageUrl(testImagePath);
+    const imageResponse = await fetch(imageUrl, { method: 'HEAD' });
+    testResults.tests.imageAccess = {
+      url: imageUrl,
+      status: imageResponse.status,
+      ok: imageResponse.ok,
+      headers: Object.fromEntries(imageResponse.headers.entries())
+    };
+    console.log('✅ Image access test:', imageResponse.status);
+  } catch (error) {
+    testResults.tests.imageAccess = {
+      error: error.message
+    };
+    console.log('❌ Image access test failed:', error.message);
+  }
+  
+  // Test 3: CORS test
+  try {
+    const apiUrl = `${import.meta.env.VITE_API_BASE_URL || 'https://libro-resoluciones-backend.onrender.com'}/api/books`;
+    const corsResponse = await fetch(apiUrl, {
+      method: 'OPTIONS',
+      headers: {
+        'Origin': window.location.origin,
+        'Access-Control-Request-Method': 'GET'
+      }
+    });
+    testResults.tests.cors = {
+      url: apiUrl,
+      status: corsResponse.status,
+      ok: corsResponse.ok
+    };
+    console.log('✅ CORS test:', corsResponse.status);
+  } catch (error) {
+    testResults.tests.cors = {
+      error: error.message
+    };
+    console.log('❌ CORS test failed:', error.message);
+  }
+  
+  console.log('🧪 Test completado:', testResults);
+  return testResults;
 };
