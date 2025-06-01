@@ -21,8 +21,30 @@ async function createAdminUser() {
       filename: dbPath,
       driver: sqlite3.Database
     })
-
+    
     console.log('✅ Conexión exitosa a SQLite')
+
+    // Crear tablas si no existen
+    console.log('🔧 Verificando/creando estructura de base de datos...')
+    await db.exec(`
+      CREATE TABLE IF NOT EXISTS users (
+        ID INTEGER PRIMARY KEY AUTOINCREMENT,
+        Nombre TEXT UNIQUE NOT NULL,
+        Contrasena TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      );
+      
+      CREATE TABLE IF NOT EXISTS books (
+        ID INTEGER PRIMARY KEY AUTOINCREMENT,
+        NumeroResolucion TEXT UNIQUE NOT NULL,
+        Fecha TEXT NOT NULL,
+        Tema TEXT NOT NULL,
+        Descripcion TEXT,
+        Archivo TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      );
+    `)
+    console.log('✅ Estructura de base de datos verificada/creada')
 
     // Credenciales del administrador
     const adminUsername = process.env.ADMIN_USERNAME || 'admin'
