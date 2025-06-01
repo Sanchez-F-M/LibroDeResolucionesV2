@@ -33,22 +33,22 @@ import api from '../../api/api';
 import jsPDF from 'jspdf';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { getImageUrl, downloadImage, handleImageError } from '../../utils/imageUtils';
+import { getImageUrl, downloadImage, handleImageError, preloadImage, getOptimizedImageUrl } from '../../utils/imageUtils';
 
 const MostrarLibro = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
-  const [resolutionData, setResolutionData] = useState(null);
+  const navigate = useNavigate();  const [resolutionData, setResolutionData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [imageDialogOpen, setImageDialogOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [imageLoadingStates, setImageLoadingStates] = useState({});
+  const [preloadedImages, setPreloadedImages] = useState({});
 
   // Responsive breakpoints
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
-
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -57,7 +57,27 @@ const MostrarLibro = () => {
         const response = await api.get(`/api/books/${id}`);
         const resolution = response.data && response.data.length > 0 ? response.data[0] : null; 
         if (resolution) {
-          setResolutionData(resolution); 
+          setResolutionData(resolution);
+          
+          // Precargar imágenes para móviles
+          const images = resolution.images || resolution.Images || [];
+          if (images.length > 0 && isMobile) {
+            console.log('📱 Precargando imágenes para móvil...');
+            const preloadPromises = images.map(async (img, index) => {
+              setImageLoadingStates(prev => ({ ...prev, [index]: true }));
+              try {
+                const preloadedUrl = await preloadImage(img);
+                setPreloadedImages(prev => ({ ...prev, [index]: preloadedUrl }));
+                setImageLoadingStates(prev => ({ ...prev, [index]: false }));
+              } catch (error) {
+                console.error(`Error precargando imagen ${index}:`, error);
+                setImageLoadingStates(prev => ({ ...prev, [index]: false }));
+              }
+            });
+            
+            // No bloquear la UI esperando todas las imágenes
+            Promise.all(preloadPromises).catch(console.error);
+          }
         } else {
           setError('No se encontró la resolución especificada.');
         }
@@ -69,7 +89,7 @@ const MostrarLibro = () => {
       }
     };
     fetchData();
-  }, [id]);
+  }, [id, isMobile]);
   const handleDownload = async (imageUrl, index) => {
     await downloadImage(imageUrl, `resolucion-${index + 1}`);
   };
@@ -382,9 +402,7 @@ const MostrarLibro = () => {
                       >
                         Documentos Adjuntos ({images.length})
                       </Typography>
-                    </Stack>
-
-                    {/* Grid de imágenes */}
+                    </Stack>                    {/* Grid de imágenes */}
                     <Grid container spacing={{ xs: 2, sm: 3, md: 4 }}>
                       {images.map((img, index) => (
                         <Grid item xs={12} sm={6} lg={4} key={index}>
@@ -416,16 +434,39 @@ const MostrarLibro = () => {
                               }}
                               onClick={() => handleImageClick(img)}
                             >
-                              <img
-                                src={getImageUrl(img)}
-                                alt={`Documento ${index + 1}`}
-                                style={{ 
-                                  display: 'block',
-                                  maxWidth: '100%',
-                                  maxHeight: '100%',
-                                  objectFit: 'contain'
-                                }}                                onError={handleImageError}
-                              />
+                              {/* Loading state para móviles */}
+                              {imageLoadingStates[index] && isMobile ? (
+                                <Box sx={{
+                                  display: 'flex',
+                                  flexDirection: 'column',
+                                  alignItems: 'center',
+                                  gap: 2
+                                }}>
+                                  <CircularProgress size={40} />
+                                  <Typography variant="body2" color="text.secondary">
+                                    Cargando imagen...
+                                  </Typography>
+                                </Box>
+                              ) : (
+                                <img
+                                  src={isMobile && preloadedImages[index] ? preloadedImages[index] : getOptimizedImageUrl(img, isMobile ? 'low' : 'medium')}
+                                  alt={`Documento ${index + 1}`}
+                                  className={isMobile ? 'pinch-zoom-image' : ''}
+                                  style={{ 
+                                    display: 'block',
+                                    maxWidth: '100%',
+                                    maxHeight: '100%',
+                                    objectFit: 'contain',
+                                    // Optimizaciones para móviles
+                                    imageRendering: isMobile ? '-webkit-optimize-contrast' : 'auto',
+                                    backfaceVisibility: 'hidden',
+                                    WebkitBackfaceVisibility: 'hidden'
+                                  }}
+                                  onError={handleImageError}
+                                  loading={isMobile ? "eager" : "lazy"}
+                                />
+                              )}
+                              
                               {/* Overlay con icono de zoom */}
                               <Box sx={{
                                 position: 'absolute',
@@ -454,10 +495,12 @@ const MostrarLibro = () => {
                               onClick={() => handleDownload(getImageUrl(img), index)}
                               fullWidth
                               size={isMobile ? "medium" : "large"}
+                              className={isMobile ? "image-action-button" : ""}
                               sx={{ 
                                 borderRadius: 2,
                                 textTransform: 'none',
-                                fontWeight: 600
+                                fontWeight: 600,
+                                minHeight: isMobile ? 44 : 'auto'
                               }}
                             >
                               Descargar Documento {index + 1}
@@ -511,19 +554,19 @@ const MostrarLibro = () => {
             </Stack>
           </CardContent>
         </Card>
-      </Container>
-
-      {/* Dialog para vista ampliada de imágenes */}
+      </Container>      {/* Dialog para vista ampliada de imágenes */}
       <Dialog
         open={imageDialogOpen}
         onClose={handleCloseImageDialog}
         maxWidth="lg"
         fullWidth
         fullScreen={isMobile}
+        className={isMobile ? 'mobile-image-modal' : ''}
         sx={{
           '& .MuiDialog-paper': {
             borderRadius: isMobile ? 0 : 2,
-            m: isMobile ? 0 : 2
+            m: isMobile ? 0 : 2,
+            bgcolor: 'black'
           }
         }}
       >
@@ -541,22 +584,40 @@ const MostrarLibro = () => {
               color: 'white',
               '&:hover': {
                 bgcolor: 'rgba(0,0,0,0.7)'
-              }
+              },
+              minHeight: isMobile ? 44 : 'auto',
+              minWidth: isMobile ? 44 : 'auto'
             }}
           >
             <CloseIcon />
           </IconButton>
         </DialogActions>
-        <DialogContent sx={{ p: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <DialogContent sx={{ 
+          p: 0, 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center',
+          bgcolor: 'black',
+          position: 'relative',
+          overflow: 'hidden'
+        }}>
           {selectedImage && (
             <img
               src={getImageUrl(selectedImage)}
               alt="Vista ampliada"
+              className={isMobile ? 'pinch-zoom-image' : ''}
               style={{
                 maxWidth: '100%',
                 maxHeight: '100%',
-                objectFit: 'contain'
+                objectFit: 'contain',
+                display: 'block',
+                margin: 'auto',
+                // Optimizaciones para móviles
+                imageRendering: isMobile ? '-webkit-optimize-contrast' : 'auto',
+                backfaceVisibility: 'hidden',
+                WebkitBackfaceVisibility: 'hidden'
               }}
+              onError={handleImageError}
             />
           )}
         </DialogContent>

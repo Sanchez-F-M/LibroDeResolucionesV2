@@ -28,11 +28,14 @@ const allowedOrigins = [
   'https://libro-de-resoluciones-v2-9izd-fe0i5ihfg.vercel.app' // producción Vercel
 ].filter(Boolean) // Elimina valores falsy
 
-// Configuración de CORS
+// Configuración de CORS con optimizaciones para móviles
 const corsOptions = {
   origin: function (origin, callback) {
-    // Permitir requests sin origin (ej: aplicaciones móviles, Postman)
-    if (!origin) return callback(null, true)
+    // Permitir requests sin origin (ej: aplicaciones móviles, Postman, WebView)
+    if (!origin) {
+      console.log('✅ Request sin origin permitido (posible móvil/app)')
+      return callback(null, true)
+    }
     
     // Permitir orígenes en la lista
     if (allowedOrigins.includes(origin)) {
@@ -46,27 +49,61 @@ const corsOptions = {
       return callback(null, true)
     }
 
+    // Permitir localhost con diferentes puertos (para desarrollo móvil)
+    if (origin.includes('localhost') || origin.includes('127.0.0.1') || origin.includes('192.168.')) {
+      console.log('✅ Permitiendo desarrollo local/móvil:', origin)
+      return callback(null, true)
+    }
+
     console.log('❌ Origen rechazado:', origin)
     callback(new Error(`No permitido por CORS: ${origin}`))
   },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD'],
+  allowedHeaders: [
+    'Content-Type', 
+    'Authorization', 
+    'Accept', 
+    'Origin', 
+    'X-Requested-With',
+    'Cache-Control',
+    'User-Agent'
+  ],
   credentials: true,
-  optionsSuccessStatus: 200
+  optionsSuccessStatus: 200,
+  // Configuraciones adicionales para móviles
+  preflightContinue: false,
+  maxAge: 86400 // Cache preflight por 24 horas
 }
 
 app.use(cors(corsOptions))
 
-// Middleware adicional para manejar preflight requests
+// Middleware adicional para manejar preflight requests y móviles
 app.options('*', (req, res) => {
   console.log('🔄 OPTIONS request recibido para:', req.url)
   const origin = req.headers.origin
+  const userAgent = req.headers['user-agent'] || ''
   
-  if (!origin || allowedOrigins.includes(origin) || origin.includes('vercel.app') || origin.includes('render.com')) {
+  // Detectar si es una request móvil
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent)
+  if (isMobile) {
+    console.log('📱 Request móvil detectado:', userAgent.substring(0, 50))
+  }
+  
+  if (!origin || allowedOrigins.includes(origin) || 
+      origin.includes('vercel.app') || origin.includes('render.com') ||
+      origin.includes('localhost') || origin.includes('127.0.0.1') || origin.includes('192.168.')) {
     res.header('Access-Control-Allow-Origin', origin || '*')
     res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS')
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, Origin, X-Requested-With')
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, Origin, X-Requested-With, Cache-Control, User-Agent')
     res.header('Access-Control-Allow-Credentials', 'true')
+    res.header('Access-Control-Max-Age', '86400') // Cache por 24 horas
+    
+    // Headers adicionales para móviles
+    if (isMobile) {
+      res.header('Vary', 'Origin, User-Agent')
+      res.header('Cache-Control', 'public, max-age=3600')
+    }
+    
     res.status(200).send()
   } else {
     res.status(403).send('CORS no permitido')
@@ -84,14 +121,32 @@ app.use((req, res, next) => {
 app.use(express.json({ limit: '50mb' }))
 app.use(express.urlencoded({ extended: true, limit: '50mb' }))
 
-// Configurar directorio de archivos estáticos con headers CORS
+// Configurar directorio de archivos estáticos con headers CORS optimizados para móviles
 app.use('/uploads', (req, res, next) => {
+  const userAgent = req.headers['user-agent'] || ''
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent)
+  
   res.header('Access-Control-Allow-Origin', '*')
-  res.header('Access-Control-Allow-Methods', 'GET')
-  res.header('Access-Control-Allow-Headers', 'Content-Type')
+  res.header('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS')
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Accept, Cache-Control')
+  
+  // Headers específicos para móviles
+  if (isMobile) {
+    res.header('Cache-Control', 'public, max-age=31536000, immutable') // Cache por 1 año en móviles
+    res.header('Vary', 'Accept-Encoding, User-Agent')
+  } else {
+    res.header('Cache-Control', 'public, max-age=3600') // Cache por 1 hora en desktop
+  }
+  
+  console.log(isMobile ? '📱 Sirviendo imagen para móvil:' : '💻 Sirviendo imagen para desktop:', req.path)
   next()
 })
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
+  // Configuraciones adicionales para mejor rendimiento
+  etag: true,
+  lastModified: true,
+  maxAge: '1d'
+}))
 
 // Health check específico para Render
 app.get('/render-health', (req, res) => {

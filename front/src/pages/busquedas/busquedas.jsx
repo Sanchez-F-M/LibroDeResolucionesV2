@@ -37,7 +37,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useTheme } from '@mui/material/styles';
 import api from '../../api/api';
-import { getImageUrl, handleImageError } from '../../utils/imageUtils';
+import { getImageUrl, handleImageError, preloadImage, getOptimizedImageUrl } from '../../utils/imageUtils';
 import { useNavigate } from 'react-router-dom';
 
 const Busquedas = () => {
@@ -491,12 +491,17 @@ const Busquedas = () => {
                         >                          <CardMedia
                             component="img"
                             height={isMobile ? "200" : "180"}
-                            image={getImageUrl(img)}
+                            image={getOptimizedImageUrl(img, isMobile ? 'low' : 'medium')}
                             alt={`Imagen ${idx + 1}`}
                             onError={handleImageError}
+                            loading={isMobile ? "eager" : "lazy"}
                             sx={{ 
                               objectFit: 'contain',
                               backgroundColor: theme.palette.grey[50],
+                              // Optimizaciones para móviles
+                              imageRendering: isMobile ? '-webkit-optimize-contrast' : 'auto',
+                              backfaceVisibility: 'hidden',
+                              WebkitBackfaceVisibility: 'hidden'
                             }}
                           />
                         </Card>
