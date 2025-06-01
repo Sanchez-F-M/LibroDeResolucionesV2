@@ -37,6 +37,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useTheme } from '@mui/material/styles';
 import api from '../../api/api';
+import { getImageUrl, handleImageError } from '../../utils/imageUtils';
 import { useNavigate } from 'react-router-dom';
 
 const Busquedas = () => {
@@ -85,16 +86,6 @@ const Busquedas = () => {
       console.error('Error al obtener la resolución:', error);
       alert('Error al obtener la información de la resolución');
     }
-  };
-
-  
-  const getImageUrl = (imagePath) => {
-    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
-      return imagePath;
-    }
-  
-    
-    return `http://localhost:3000/${imagePath}`;
   };
 
   
@@ -497,12 +488,12 @@ const Busquedas = () => {
                             borderRadius: { xs: 1, sm: 2 },
                             overflow: 'hidden',
                           }}
-                        >
-                          <CardMedia
+                        >                          <CardMedia
                             component="img"
                             height={isMobile ? "200" : "180"}
                             image={getImageUrl(img)}
                             alt={`Imagen ${idx + 1}`}
+                            onError={handleImageError}
                             sx={{ 
                               objectFit: 'contain',
                               backgroundColor: theme.palette.grey[50],

@@ -33,6 +33,7 @@ import api from '../../api/api';
 import jsPDF from 'jspdf';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { getImageUrl, downloadImage, handleImageError } from '../../utils/imageUtils';
 
 const MostrarLibro = () => {
   const { id } = useParams();
@@ -69,42 +70,8 @@ const MostrarLibro = () => {
     };
     fetchData();
   }, [id]);
-
-  const getImageUrl = (imagePath) => {
-    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
-      return imagePath;
-    }
-    return `http://localhost:3000/${imagePath}`;
-  };
-
   const handleDownload = async (imageUrl, index) => {
-    try {
-      const response = await fetch(imageUrl, {
-        method: 'GET',
-        mode: 'cors',
-        credentials: 'same-origin',
-        headers: {
-          'Accept': 'image/*'
-        }
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `resolucion-${index + 1}.${blob.type.split('/')[1]}`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error('Error al descargar la imagen:', error);
-      alert('Hubo un error al descargar la imagen. Por favor intente nuevamente.');
-    }
+    await downloadImage(imageUrl, `resolucion-${index + 1}`);
   };
 
   const handleDownloadAllAsPDF = async () => {
@@ -457,13 +424,7 @@ const MostrarLibro = () => {
                                   maxWidth: '100%',
                                   maxHeight: '100%',
                                   objectFit: 'contain'
-                                }}
-                                onError={(e) => { 
-                                  console.error(`Error al cargar la imagen: ${img}`);
-                                  e.target.onerror = null; 
-                                  e.target.src="/placeholder-image.png"; 
-                                  e.target.alt="Imagen no disponible";
-                                }}
+                                }}                                onError={handleImageError}
                               />
                               {/* Overlay con icono de zoom */}
                               <Box sx={{

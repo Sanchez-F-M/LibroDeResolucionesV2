@@ -73,26 +73,25 @@ app.options('*', (req, res) => {
   }
 })
 
-// Body parsers
-app.use(bodyParser.json({ limit: '50mb' }))
-app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }))
-app.use(express.json({ limit: '50mb' }))
-
-// Configurar directorio de archivos estáticos
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
-
 // Middleware de logging para todas las requests
 app.use((req, res, next) => {
   const timestamp = new Date().toISOString()
   console.log(`📋 [${timestamp}] ${req.method} ${req.path} - Origin: ${req.headers.origin || 'No origin'}`)
   next()
-}, express.static(path.join(__dirname, 'uploads')))
+})
 
-// Middlewares para parseo de datos
-app.use(compression())
+// Body parsers (sin duplicados)
 app.use(express.json({ limit: '50mb' }))
 app.use(express.urlencoded({ extended: true, limit: '50mb' }))
-app.use(bodyParser.json({ limit: '50mb' }))
+
+// Configurar directorio de archivos estáticos con headers CORS
+app.use('/uploads', (req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Access-Control-Allow-Methods', 'GET')
+  res.header('Access-Control-Allow-Headers', 'Content-Type')
+  next()
+})
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 
 // Health check específico para Render
 app.get('/render-health', (req, res) => {
