@@ -30,6 +30,9 @@ import {
   IconButton,
   Stack,
   Chip,
+  CircularProgress,
+  Alert,
+  Divider,
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CloseIcon from '@mui/icons-material/Close';
@@ -46,27 +49,71 @@ const Busquedas = () => {
   const [results, setResults] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedResolution, setSelectedResolution] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
   
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isTablet = useMediaQuery(theme.breakpoints.down('md'));
 
-  const handleSearch = async () => {
+  // Cargar todas las resoluciones al inicio
+  const loadAllResolutions = async () => {
     try {
+      setLoading(true);
+      setError(null);
+      console.log('📚 Cargando todas las resoluciones...');
+      
+      const response = await api.get('/api/books/all');
+      console.log('✅ Resoluciones obtenidas:', response.data.length);
+      
+      setResults(response.data);
+    } catch (err) {
+      console.error('❌ Error al cargar resoluciones:', err);
+      setError('Error al cargar las resoluciones. Verifique la conexión.');
+      setResults([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Función de búsqueda específica
+  const handleSearch = async () => {
+    if (!searchValue.trim()) {
+      // Si no hay criterio de búsqueda, mostrar todas las resoluciones
+      await loadAllResolutions();
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+      console.log(`🔍 Buscando: "${searchValue}" en ${criterion}`);
+      
       const response = await api.post('/api/search', {
         criterion,
         value: searchValue,
       });
+      
+      console.log('📋 Resultados de búsqueda:', response.data.length);
       setResults(response.data);
+      
       if (response.data.length === 0) {
-        alert('No se encontraron resultados');
+        setError('No se encontraron resoluciones que coincidan con la búsqueda.');
       }
     } catch (err) {
-      console.error('Error en la búsqueda:', err);
-      alert('Error al realizar la búsqueda.');
+      console.error('❌ Error en la búsqueda:', err);
+      setError('Error al realizar la búsqueda.');
+      setResults([]);
+    } finally {
+      setLoading(false);
     }
   };
+
+  // Cargar todas las resoluciones al montar el componente
+  React.useEffect(() => {
+    loadAllResolutions();
+  }, []);
 
   const handleRowClick = async (id) => {
     try {
@@ -157,12 +204,12 @@ const Busquedas = () => {
                     borderRadius: { xs: 1, sm: 2 },
                   },
                 }}
-              />
-              <Button 
+              />              <Button 
                 variant="contained" 
                 color="primary" 
                 onClick={handleSearch} 
                 size={isMobile ? 'medium' : 'large'}
+                disabled={loading}
                 sx={{
                   minWidth: { xs: '100%', sm: '120px' },
                   py: { xs: 1.5, sm: 1.8 },
@@ -170,7 +217,22 @@ const Busquedas = () => {
                   fontWeight: 'bold',
                 }}
               >
-                Buscar
+                {loading ? 'Buscando...' : 'Buscar'}
+              </Button>
+              <Button 
+                variant="outlined" 
+                color="secondary" 
+                onClick={loadAllResolutions} 
+                size={isMobile ? 'medium' : 'large'}
+                disabled={loading}
+                sx={{
+                  minWidth: { xs: '100%', sm: '140px' },
+                  py: { xs: 1.5, sm: 1.8 },
+                  borderRadius: { xs: 1, sm: 2 },
+                  fontWeight: 'bold',
+                }}
+              >
+                {loading ? 'Cargando...' : 'Mostrar Todas'}
               </Button>
             </Stack>
           </Box>
@@ -202,12 +264,65 @@ const Busquedas = () => {
                 <FormControlLabel value="Referencia" control={<Radio size={isMobile ? 'small' : 'medium'} />} label="Referencia" />
                 <FormControlLabel value="NumdeResolucion" control={<Radio size={isMobile ? 'small' : 'medium'} />} label="Nro Resolución" />
               </RadioGroup>
-            </FormControl>
-          </Box>
+            </FormControl>          </Box>
+
+          {/* Estado de carga y errores */}
+          {loading && (
+            <Box sx={{ 
+              display: 'flex', 
+              justifyContent: 'center', 
+              alignItems: 'center',
+              py: 4,
+              gap: 2 
+            }}>
+              <CircularProgress size={40} />
+              <Typography variant="h6" color="text.secondary">
+                Cargando resoluciones...
+              </Typography>
+            </Box>
+          )}
+
+          {error && (
+            <Alert 
+              severity="error" 
+              sx={{ 
+                mb: 3,
+                borderRadius: { xs: 1, sm: 2 }
+              }}
+            >
+              {error}
+            </Alert>
+          )}
 
           {/* Resultados de la búsqueda */}
-          {results.length > 0 && (
+          {!loading && !error && results.length > 0 && (
             <Box sx={{ mt: { xs: 2, sm: 3 } }}>
+              {/* Contador de resultados */}
+              <Box sx={{ mb: 2 }}>
+                <Divider />
+                <Box sx={{ 
+                  display: 'flex', 
+                  justifyContent: 'space-between', 
+                  alignItems: 'center',
+                  py: 2 
+                }}>
+                  <Typography 
+                    variant={isMobile ? "h6" : "h5"} 
+                    color="primary" 
+                    fontWeight="bold"
+                  >
+                    Resoluciones Encontradas
+                  </Typography>
+                  <Chip 
+                    label={`${results.length} resultado${results.length !== 1 ? 's' : ''}`}
+                    color="primary" 
+                    variant="outlined"
+                    size={isMobile ? "small" : "medium"}
+                  />
+                </Box>
+                <Divider />
+              </Box>
+
               {isMobile ? (
                 // Vista de cards para móviles
                 <Stack spacing={2}>
@@ -352,8 +467,60 @@ const Busquedas = () => {
                       ))}
                     </TableBody>
                   </Table>
-                </TableContainer>
-              )}
+                </TableContainer>              )}
+            </Box>
+          )}
+
+          {/* Mensaje cuando no hay resoluciones */}
+          {!loading && !error && results.length === 0 && (
+            <Box sx={{ 
+              textAlign: 'center', 
+              py: 6,
+              mt: 3
+            }}>
+              <Alert 
+                severity="info" 
+                sx={{ 
+                  mb: 3,
+                  borderRadius: { xs: 1, sm: 2 }
+                }}
+              >
+                <Typography variant="h6" sx={{ mb: 1 }}>
+                  No hay resoluciones disponibles
+                </Typography>
+                <Typography variant="body2">
+                  {searchValue.trim() 
+                    ? 'No se encontraron resoluciones que coincidan con su búsqueda. Intente con otros términos.'
+                    : 'No hay resoluciones cargadas en el sistema. Vaya a la sección "Cargas" para agregar nuevas resoluciones.'
+                  }
+                </Typography>
+              </Alert>
+              <Stack 
+                direction={{ xs: 'column', sm: 'row' }}
+                spacing={2}
+                justifyContent="center"
+              >
+                <Button
+                  component={Link}
+                  to="/cargas"
+                  variant="contained"
+                  color="primary"
+                  size={isMobile ? 'medium' : 'large'}
+                >
+                  Ir a Cargas
+                </Button>
+                <Button
+                  onClick={() => {
+                    setSearchValue('');
+                    loadAllResolutions();
+                  }}
+                  variant="outlined"
+                  color="secondary"
+                  size={isMobile ? 'medium' : 'large'}
+                >
+                  Recargar
+                </Button>
+              </Stack>
             </Box>
           )}
         </CardContent>
