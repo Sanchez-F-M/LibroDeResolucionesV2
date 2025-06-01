@@ -399,12 +399,122 @@ app.post('/create-admin', async (req, res) => {
       message: 'Usuario admin creado exitosamente',
       username: adminUsername
     })
-    
-  } catch (error) {
+      } catch (error) {
     console.error('❌ Error creando admin:', error)
     res.status(500).json({
       success: false,
       error: 'Error creando admin',
+      message: error.message
+    })
+  }
+})
+
+// Endpoint temporal para cargar datos de prueba en producción
+app.post('/load-test-data', async (req, res) => {
+  try {
+    console.log('📚 Cargando datos de prueba en producción...')
+    
+    const sqlite3 = (await import('sqlite3')).default
+    const { open } = await import('sqlite')
+    const path = await import('path')
+    const { fileURLToPath } = await import('url')
+    
+    const __filename = fileURLToPath(import.meta.url)
+    const __dirname = path.dirname(__filename)
+    const dbPath = path.join(__dirname, 'database.sqlite')
+    
+    const db = await open({
+      filename: dbPath,
+      driver: sqlite3.Database
+    })
+    
+    // Resoluciones de prueba
+    const resolucionesPrueba = [
+      {
+        NumdeResolucion: 'PROD-001-2025',
+        Asunto: 'Implementación de Sistema Digital de Resoluciones',
+        Referencia: 'Decreto N° 001/2025 - Modernización Tecnológica',
+        FechaCreacion: '2025-06-01'
+      },
+      {
+        NumdeResolucion: 'PROD-002-2025',
+        Asunto: 'Protocolo de Seguridad de Datos y Persistencia',
+        Referencia: 'Circular Técnica N° 002/2025 - Área de Informática',
+        FechaCreacion: '2025-06-01'
+      },
+      {
+        NumdeResolucion: 'PROD-003-2025',
+        Asunto: 'Configuración de Entorno de Producción',
+        Referencia: 'Nota Técnica N° 003/2025 - Departamento de Sistemas',
+        FechaCreacion: '2025-06-01'
+      },
+      {
+        NumdeResolucion: 'PROD-004-2025',
+        Asunto: 'Verificación de Persistencia de Datos',
+        Referencia: 'Test de Funcionalidad N° 004/2025 - Control de Calidad',
+        FechaCreacion: '2025-06-01'
+      },
+      {
+        NumdeResolucion: 'PROD-005-2025',
+        Asunto: 'Puesta en Marcha del Sistema en Producción',
+        Referencia: 'Acta de Entrega N° 005/2025 - Proyecto Finalizado',
+        FechaCreacion: '2025-06-01'
+      }
+    ]
+    
+    // Verificar cuántas resoluciones existen actualmente
+    const currentCount = await db.get('SELECT COUNT(*) as count FROM resolution')
+    console.log(`📊 Resoluciones actuales: ${currentCount.count}`)
+    
+    let agregadas = 0
+    
+    // Insertar cada resolución de prueba
+    for (const resolucion of resolucionesPrueba) {
+      try {
+        // Verificar si ya existe
+        const existing = await db.get(
+          'SELECT NumdeResolucion FROM resolution WHERE NumdeResolucion = ?',
+          [resolucion.NumdeResolucion]
+        )
+        
+        if (existing) {
+          console.log(`⚠️  Resolución ${resolucion.NumdeResolucion} ya existe`)
+          continue
+        }
+        
+        // Insertar nueva resolución
+        await db.run(
+          'INSERT INTO resolution (NumdeResolucion, Asunto, Referencia, FechaCreacion) VALUES (?, ?, ?, ?)',
+          [resolucion.NumdeResolucion, resolucion.Asunto, resolucion.Referencia, resolucion.FechaCreacion]
+        )
+        
+        agregadas++
+        console.log(`✅ Resolución ${resolucion.NumdeResolucion} creada`)
+        
+      } catch (error) {
+        console.error(`❌ Error creando ${resolucion.NumdeResolucion}:`, error.message)
+      }
+    }
+    
+    // Verificar el resultado final
+    const finalCount = await db.get('SELECT COUNT(*) as count FROM resolution')
+    
+    await db.close()
+    
+    res.json({
+      success: true,
+      message: 'Datos de prueba cargados exitosamente',
+      antes: currentCount.count,
+      despues: finalCount.count,
+      agregadas: agregadas,
+      resoluciones: resolucionesPrueba.map(r => r.NumdeResolucion)
+    })
+    
+  } catch (error) {
+    console.error('❌ Error cargando datos de prueba:', error)
+    res.status(500).json({
+      success: false,
+      error: 'Error cargando datos de prueba',
       message: error.message
     })
   }
