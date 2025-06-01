@@ -127,7 +127,10 @@ app.get('/health', (req, res) => {
     memory: process.memoryUsage(),
     env: process.env.NODE_ENV || 'development',
     corsOrigins: allowedOrigins.length,
-    port: process.env.PORT || 3000
+    port: process.env.PORT || 3000,
+    version: '2.1.0', // Versión actualizada con diagnóstico
+    diagnosticEndpoint: '/diagnose',
+    adminCreationEndpoint: '/create-admin'
   })
 })
 
