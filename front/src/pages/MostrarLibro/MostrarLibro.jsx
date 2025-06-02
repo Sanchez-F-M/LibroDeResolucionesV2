@@ -33,6 +33,7 @@ import api from '../../api/api';
 import jsPDF from 'jspdf';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { formatearFechaLarga, debugFecha } from '../../utils/fechaUtils';
 import { getImageUrl, downloadImage, handleImageError, preloadImage, getOptimizedImageUrl, testImageConnectivity } from '../../utils/imageUtils';
 
 const MostrarLibro = () => {
@@ -391,11 +392,8 @@ const MostrarLibro = () => {
                   >
                     Fecha de Creación
                   </Typography>
-                </Stack>
-                <Chip 
-                  label={resolutionData?.fetcha_creacion ? 
-                    format(new Date(resolutionData.fetcha_creacion), 'dd \'de\' MMMM \'de\' yyyy', { locale: es }) 
-                    : 'No disponible'}
+                </Stack>                <Chip 
+                  label={formatearFechaLarga(resolutionData?.fetcha_creacion)}
                   variant="outlined"
                   color="primary"
                   size={isMobile ? "medium" : "large"}

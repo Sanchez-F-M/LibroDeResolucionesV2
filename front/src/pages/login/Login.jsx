@@ -53,11 +53,12 @@ const Login = () => {
     <Container 
       maxWidth="sm" 
       sx={{ 
-        minHeight: 'calc(110vh - 1000px)',
+        minHeight: 'calc(110vh - 900px)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        py: { xs: 2, sm: 4, md: 6 },
+        mt: { xs: 2, sm: 3, md: 6 },
+        py: { xs: 1, sm: 2, md: 3 },
         px: { xs: 2, sm: 3 },
       }}
     >

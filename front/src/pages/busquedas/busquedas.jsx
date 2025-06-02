@@ -45,32 +45,44 @@ import { getImageUrl, handleImageError, preloadImage, getOptimizedImageUrl } fro
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { formatearFechaCorta, formatearFechaLarga, debugFecha } from '../../utils/fechaUtils';
 
 const Busquedas = () => {
   const [searchValue, setSearchValue] = useState('');
   const [criterion, setCriterion] = useState('Asunto');
   const [results, setResults] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
-  const [selectedResolution, setSelectedResolution] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [selectedResolution, setSelectedResolution] = useState(null);  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isShowingAll, setIsShowingAll] = useState(false);
   const navigate = useNavigate();
   
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const isTablet = useMediaQuery(theme.breakpoints.down('md'));
-
-  // Cargar todas las resoluciones al inicio
+  const isTablet = useMediaQuery(theme.breakpoints.down('md'));  // Cargar todas las resoluciones al inicio
   const loadAllResolutions = async () => {
     try {
       setLoading(true);
       setError(null);
+      setIsShowingAll(true);
       console.log('📚 Cargando todas las resoluciones...');
-      
-      const response = await api.get('/api/books/all');
+        const response = await api.get('/api/books/all');
       console.log('✅ Resoluciones obtenidas:', response.data.length);
       
-      setResults(response.data);
+      // Debug de fechas
+      if (response.data.length > 0) {
+        console.log('🐛 Debuggeando primera resolución:');
+        debugFecha(response.data[0].fetcha_creacion, 'primera resolución');
+      }
+      
+      // Ordenar las resoluciones por fecha de creación (más recientes primero)
+      const sortedResults = response.data.sort((a, b) => {
+        const dateA = a.fetcha_creacion ? new Date(a.fetcha_creacion) : new Date(0);
+        const dateB = b.fetcha_creacion ? new Date(b.fetcha_creacion) : new Date(0);
+        return dateB - dateA; // Orden descendente (más recientes primero)
+      });
+      
+      setResults(sortedResults);
     } catch (err) {
       console.error('❌ Error al cargar resoluciones:', err);
       setError('Error al cargar las resoluciones. Verifique la conexión.');
@@ -79,7 +91,6 @@ const Busquedas = () => {
       setLoading(false);
     }
   };
-
   // Función de búsqueda específica
   const handleSearch = async () => {
     if (!searchValue.trim()) {
@@ -91,6 +102,7 @@ const Busquedas = () => {
     try {
       setLoading(true);
       setError(null);
+      setIsShowingAll(false);
       console.log(`🔍 Buscando: "${searchValue}" en ${criterion}`);
       
       const response = await api.post('/api/search', {
@@ -112,10 +124,11 @@ const Busquedas = () => {
       setLoading(false);
     }
   };
-
   // Cargar todas las resoluciones al montar el componente
   React.useEffect(() => {
-    loadAllResolutions();
+    // Inicialmente no cargar nada, esperar a que el usuario haga una acción
+    setResults([]);
+    setLoading(false);
   }, []);
 
   const handleRowClick = async (id) => {
@@ -158,9 +171,11 @@ const Busquedas = () => {
     <Container 
       maxWidth="xl" 
       sx={{ 
-        py: { xs: 2, sm: 3, md: 4 },
+        py: { xs: 1, sm: 2, md: 1 }, // Reducido el padding vertical
         px: { xs: 1, sm: 2, md: 3 },
-        minHeight: 'calc(100vh - 200px)',
+        minHeight: 'calc(100vh - 250px)', // Aumentado para alejar el navbar
+        mt: { xs: 3, sm: 4, md: 5 }, // Agregado margen superior para alejar del navbar
+        mb: { xs: 1, sm: 1.5, md: -20 }, // Reducido margen inferior para acercar al footer
       }}
     > 
       <Card 
@@ -224,7 +239,7 @@ const Busquedas = () => {
               </Button>
               <Button 
                 variant="outlined" 
-                color="secondary" 
+                color="primary" 
                 onClick={loadAllResolutions} 
                 size={isMobile ? 'medium' : 'large'}
                 disabled={loading}
@@ -308,13 +323,12 @@ const Busquedas = () => {
                   justifyContent: 'space-between', 
                   alignItems: 'center',
                   py: 2 
-                }}>
-                  <Typography 
+                }}>                  <Typography 
                     variant={isMobile ? "h6" : "h5"} 
                     color="primary" 
                     fontWeight="bold"
                   >
-                    Resoluciones Encontradas
+                    {isShowingAll ? 'Resoluciones Encontradas' : 'Resultados de Búsqueda'}
                   </Typography>
                   <Chip 
                     label={`${results.length} resultado${results.length !== 1 ? 's' : ''}`}
@@ -351,13 +365,10 @@ const Busquedas = () => {
                           <strong>Asunto:</strong> {resolution.Asunto}
                         </Typography>                        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
                           <strong>Referencia:</strong> {resolution.Referencia}
-                        </Typography>
-                        <Box sx={{ mb: 2 }}>
+                        </Typography>                        <Box sx={{ mb: 2 }}>
                           <Chip 
                             icon={<CalendarTodayIcon />}
-                            label={resolution.fetcha_creacion ? 
-                              format(new Date(resolution.fetcha_creacion), 'dd/MM/yyyy', { locale: es }) 
-                              : 'No disponible'}
+                            label={formatearFechaCorta(resolution.fetcha_creacion)}
                             variant="outlined"
                             color="info"
                             size="small"
@@ -448,13 +459,10 @@ const Busquedas = () => {
                               }}
                             >
                               {resolution.Referencia}
-                            </Typography>                          </TableCell>
-                          <TableCell>
+                            </Typography>                          </TableCell>                          <TableCell>
                             <Chip 
                               icon={<CalendarTodayIcon />}
-                              label={resolution.fetcha_creacion ? 
-                                format(new Date(resolution.fetcha_creacion), 'dd/MM/yyyy', { locale: es }) 
-                                : 'No disponible'}
+                              label={formatearFechaCorta(resolution.fetcha_creacion)}
                               variant="outlined"
                               color="info"
                               size="small"
@@ -494,58 +502,7 @@ const Busquedas = () => {
             </Box>
           )}
 
-          {/* Mensaje cuando no hay resoluciones */}
-          {!loading && !error && results.length === 0 && (
-            <Box sx={{ 
-              textAlign: 'center', 
-              py: 6,
-              mt: 3
-            }}>
-              <Alert 
-                severity="info" 
-                sx={{ 
-                  mb: 3,
-                  borderRadius: { xs: 1, sm: 2 }
-                }}
-              >
-                <Typography variant="h6" sx={{ mb: 1 }}>
-                  No hay resoluciones disponibles
-                </Typography>
-                <Typography variant="body2">
-                  {searchValue.trim() 
-                    ? 'No se encontraron resoluciones que coincidan con su búsqueda. Intente con otros términos.'
-                    : 'No hay resoluciones cargadas en el sistema. Vaya a la sección "Cargas" para agregar nuevas resoluciones.'
-                  }
-                </Typography>
-              </Alert>
-              <Stack 
-                direction={{ xs: 'column', sm: 'row' }}
-                spacing={2}
-                justifyContent="center"
-              >
-                <Button
-                  component={Link}
-                  to="/cargas"
-                  variant="contained"
-                  color="primary"
-                  size={isMobile ? 'medium' : 'large'}
-                >
-                  Ir a Cargas
-                </Button>
-                <Button
-                  onClick={() => {
-                    setSearchValue('');
-                    loadAllResolutions();
-                  }}
-                  variant="outlined"
-                  color="secondary"
-                  size={isMobile ? 'medium' : 'large'}
-                >
-                  Recargar
-                </Button>
-              </Stack>
-            </Box>
-          )}
+          
         </CardContent>
       </Card>      {/* Modal de detalles responsive */}
       <Dialog 
@@ -666,12 +623,9 @@ const Busquedas = () => {
                   }}
                 >
                   <strong>Fecha de Creación:</strong>
-                </Typography>
-                <Chip 
+                </Typography>                <Chip 
                   icon={<CalendarTodayIcon />}
-                  label={selectedResolution.fetcha_creacion ? 
-                    format(new Date(selectedResolution.fetcha_creacion), 'dd \'de\' MMMM \'de\' yyyy', { locale: es }) 
-                    : 'No disponible'}
+                  label={formatearFechaLarga(selectedResolution.fetcha_creacion)}
                   variant="outlined"
                   color="info"
                   size={isMobile ? 'small' : 'medium'}
@@ -789,8 +743,8 @@ const Busquedas = () => {
         sx={{ 
           display: 'flex', 
           justifyContent: { xs: 'center', sm: 'flex-start' },
-          mt: { xs: 3, sm: 4 },
-          pt: 2,
+          mt: { xs: 2, sm: 3 }, // Reducido el margen superior
+          pt: 1, // Reducido el padding superior
         }}
       >
         <Button

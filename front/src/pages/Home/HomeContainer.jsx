@@ -13,11 +13,11 @@ const HomeContainer = () => {
     <Container maxWidth="lg">
       <Box
         sx={{
-          minHeight: 'calc(100vh - 200px)',
+          minHeight: 'calc(150vh - 900px)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          py: { xs: 4, sm: 6, md: 8 },
+          py: { xs: 2, sm: 3, md: 4 },
         }}
       >
         <Stack
