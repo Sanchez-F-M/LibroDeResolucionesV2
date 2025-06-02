@@ -206,7 +206,7 @@ export const getAllBooks = async (req, res) => {
         r.Referencia, 
         r.FechaCreacion as fetcha_creacion 
       FROM resolution r 
-      ORDER BY r.NumdeResolucion DESC
+      ORDER BY r.FechaCreacion DESC, r.NumdeResolucion DESC
     `)
 
     // Para cada resolución, obtener sus imágenes

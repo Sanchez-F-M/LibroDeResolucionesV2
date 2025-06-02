@@ -53,7 +53,7 @@ const Login = () => {
     <Container 
       maxWidth="sm" 
       sx={{ 
-        minHeight: 'calc(100vh - 200px)',
+        minHeight: 'calc(110vh - 1000px)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -65,7 +65,7 @@ const Login = () => {
         <Paper 
           elevation={8} 
           sx={{ 
-            p: { xs: 3, sm: 4, md: 5 },
+            p: { xs: 4, sm: 6, md: 8 },
             borderRadius: { xs: 2, sm: 3 },
             boxShadow: theme.shadows[8],
           }}
@@ -75,7 +75,7 @@ const Login = () => {
             align="center" 
             gutterBottom
             sx={{
-              mb: { xs: 3, sm: 4 },
+              mb: { xs: 4, sm: 5 },
               fontWeight: 'bold',
               color: theme.palette.primary.main,
             }}
@@ -87,7 +87,7 @@ const Login = () => {
             <Alert 
               severity="error" 
               sx={{ 
-                mb: { xs: 2, sm: 3 },
+                mb: { xs: 3, sm: 4 },
                 borderRadius: 1,
               }}
             >
@@ -103,7 +103,7 @@ const Login = () => {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               sx={{ 
-                mb: { xs: 2, sm: 3 },
+                mb: { xs: 3, sm: 4 },
                 '& .MuiOutlinedInput-root': {
                   borderRadius: { xs: 1, sm: 2 },
                 },
@@ -119,7 +119,7 @@ const Login = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               sx={{ 
-                mb: { xs: 3, sm: 4 },
+                mb: { xs: 4, sm: 5 },
                 '& .MuiOutlinedInput-root': {
                   borderRadius: { xs: 1, sm: 2 },
                 },
@@ -133,7 +133,7 @@ const Login = () => {
               fullWidth 
               size={isMobile ? 'medium' : 'large'}
               sx={{
-                py: { xs: 1.5, sm: 2 },
+                py: { xs: 2, sm: 2.5 },
                 fontSize: { xs: '1rem', sm: '1.1rem' },
                 borderRadius: { xs: 1, sm: 2 },
                 fontWeight: 'bold',

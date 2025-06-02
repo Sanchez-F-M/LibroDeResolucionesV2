@@ -38,10 +38,13 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CloseIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import { useTheme } from '@mui/material/styles';
 import api from '../../api/api';
 import { getImageUrl, handleImageError, preloadImage, getOptimizedImageUrl } from '../../utils/imageUtils';
 import { useNavigate } from 'react-router-dom';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
 
 const Busquedas = () => {
   const [searchValue, setSearchValue] = useState('');
@@ -346,10 +349,20 @@ const Busquedas = () => {
                         </Typography>
                         <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
                           <strong>Asunto:</strong> {resolution.Asunto}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                        </Typography>                        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
                           <strong>Referencia:</strong> {resolution.Referencia}
                         </Typography>
+                        <Box sx={{ mb: 2 }}>
+                          <Chip 
+                            icon={<CalendarTodayIcon />}
+                            label={resolution.fetcha_creacion ? 
+                              format(new Date(resolution.fetcha_creacion), 'dd/MM/yyyy', { locale: es }) 
+                              : 'No disponible'}
+                            variant="outlined"
+                            color="info"
+                            size="small"
+                          />
+                        </Box>
                         <Stack direction="row" spacing={1}>
                           <Button
                             variant="contained"
@@ -384,11 +397,11 @@ const Busquedas = () => {
                 // Vista de tabla para tablets y desktop
                 <TableContainer component={Paper} elevation={2}>
                   <Table stickyHeader>
-                    <TableHead>
-                      <TableRow>
+                    <TableHead>                      <TableRow>
                         <TableCell sx={{ fontWeight: 'bold' }}>N° Resolución</TableCell>
                         <TableCell sx={{ fontWeight: 'bold' }}>Asunto</TableCell>
                         <TableCell sx={{ fontWeight: 'bold' }}>Referencia</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>Fecha</TableCell>
                         <TableCell align="center" sx={{ fontWeight: 'bold' }}>Acciones</TableCell>
                       </TableRow>
                     </TableHead>
@@ -435,7 +448,17 @@ const Busquedas = () => {
                               }}
                             >
                               {resolution.Referencia}
-                            </Typography>
+                            </Typography>                          </TableCell>
+                          <TableCell>
+                            <Chip 
+                              icon={<CalendarTodayIcon />}
+                              label={resolution.fetcha_creacion ? 
+                                format(new Date(resolution.fetcha_creacion), 'dd/MM/yyyy', { locale: es }) 
+                                : 'No disponible'}
+                              variant="outlined"
+                              color="info"
+                              size="small"
+                            />
                           </TableCell>
                           <TableCell align="center">
                             <Stack direction="row" spacing={1} justifyContent="center">
@@ -632,7 +655,27 @@ const Busquedas = () => {
                   }}
                 >
                   {selectedResolution.Referencia || selectedResolution.referencia || 'No disponible'}
+                </Typography>              </Box>
+
+              <Box>
+                <Typography 
+                  variant="body1" 
+                  sx={{ 
+                    mb: 1,
+                    fontSize: { xs: '0.9rem', sm: '1rem' },
+                  }}
+                >
+                  <strong>Fecha de Creación:</strong>
                 </Typography>
+                <Chip 
+                  icon={<CalendarTodayIcon />}
+                  label={selectedResolution.fetcha_creacion ? 
+                    format(new Date(selectedResolution.fetcha_creacion), 'dd \'de\' MMMM \'de\' yyyy', { locale: es }) 
+                    : 'No disponible'}
+                  variant="outlined"
+                  color="info"
+                  size={isMobile ? 'small' : 'medium'}
+                />
               </Box>
               
               {(selectedResolution.images?.length > 0 || selectedResolution.Images?.length > 0) && (

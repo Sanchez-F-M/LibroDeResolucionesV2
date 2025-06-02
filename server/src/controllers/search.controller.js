@@ -7,20 +7,19 @@ export const search = async (req, res) => {
   if (!validCriteria.includes(criterion)) {
     return res.status(400).json({ error: 'Criterio de búsqueda inválido' })
   }
-
   let query = ''
   let params = []
   switch (criterion) {
     case 'NumdeResolucion':
-      query = 'SELECT * FROM resolution WHERE NumdeResolucion = ?'
+      query = 'SELECT * FROM resolution WHERE NumdeResolucion = ? ORDER BY FechaCreacion DESC, NumdeResolucion DESC'
       params = [value]
       break
     case 'Asunto':
-      query = 'SELECT * FROM resolution WHERE Asunto LIKE ?'
+      query = 'SELECT * FROM resolution WHERE Asunto LIKE ? ORDER BY FechaCreacion DESC, NumdeResolucion DESC'
       params = [`%${value}%`]
       break
     case 'Referencia':
-      query = 'SELECT * FROM resolution WHERE Referencia LIKE ?'
+      query = 'SELECT * FROM resolution WHERE Referencia LIKE ? ORDER BY FechaCreacion DESC, NumdeResolucion DESC'
       params = [`%${value}%`]
       break
   }

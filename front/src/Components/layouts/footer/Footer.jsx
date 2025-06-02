@@ -20,9 +20,7 @@ const Footer = ({ darkMode }) => {
     <Box
       component="footer"
       sx={{
-        backgroundColor: darkMode 
-          ? theme.palette.primary.dark 
-          : theme.palette.grey[800],
+        backgroundColor: darkMode ? '#1976d2' : '#34495e',
         color: '#fff',
         marginTop: 'auto',
         width: '100%',
@@ -34,12 +32,12 @@ const Footer = ({ darkMode }) => {
       <Container maxWidth="xl">
         <Box
           sx={{
-            py: { xs: 3, sm: 4, md: 5 },
+            py: { xs: 1.5, sm: 2, md: 2.5 },
             px: { xs: 2, sm: 3 },
           }}
         >
           <Stack 
-            spacing={{ xs: 2, sm: 3 }} 
+            spacing={{ xs: 1, sm: 1.5 }} 
             alignItems="center"
             textAlign="center"
           >
@@ -118,7 +116,7 @@ const Footer = ({ darkMode }) => {
               sx={{
                 fontSize: { xs: '0.75rem', sm: '0.8rem' },
                 opacity: 0.7,
-                mt: 1,
+                mt: 0.5,
                 textAlign: 'center'
               }}
             >
