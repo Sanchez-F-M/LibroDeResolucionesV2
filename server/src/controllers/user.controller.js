@@ -13,8 +13,8 @@ export const createUser = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(Contrasena, 10)
 
-    await db.run(
-      `INSERT INTO users (Nombre, Contrasena) VALUES (?, ?)`,
+    await db.query(
+      `INSERT INTO users ("Nombre", "Contrasena") VALUES ($1, $2)`,
       [Nombre, hashedPassword]
     )
 
@@ -24,7 +24,7 @@ export const createUser = async (req, res) => {
     })
   } catch (err) {
     console.error('❌ Error en createUser:', err)
-    if (err.code === 'SQLITE_CONSTRAINT_UNIQUE') {
+    if (err.code === '23505') { // PostgreSQL unique constraint violation
       return res.status(400).json({ error: 'El usuario ya existe' })
     }
     res.status(500).json({ error: 'Error interno del servidor' })
@@ -37,15 +37,14 @@ export const loginUser = async (req, res) => {
 
     if (!Nombre || !Contrasena) {
       return res.status(400).json({ error: 'Nombre y Contrasena son requeridos' })
-    }
+    }    const user = await db.query('SELECT * FROM users WHERE "Nombre" = $1', [Nombre])
 
-    const user = await db.get('SELECT * FROM users WHERE Nombre = ?', [Nombre])
-
-    if (!user) {
+    if (user.rows.length === 0) {
       return res.status(400).json({ error: 'Usuario no encontrado' })
     }
 
-    const validPassword = await bcrypt.compare(Contrasena, user.Contrasena)
+    const userData = user.rows[0]
+    const validPassword = await bcrypt.compare(Contrasena, userData.Contrasena)
 
     if (!validPassword) {
       return res.status(400).json({ error: 'Contraseña incorrecta' })
@@ -72,8 +71,8 @@ export const loginUser = async (req, res) => {
 
 export const getAllUsers = async (req, res) => {
   try {
-    const users = await db.all('SELECT ID, Nombre, created_at FROM users')
-    res.status(200).json(users)
+    const users = await db.query('SELECT "ID", "Nombre", "created_at" FROM users')
+    res.status(200).json(users.rows)
   } catch (err) {
     console.error('❌ Error en getAllUsers:', err)
     res.status(500).json({ error: 'Error interno del servidor' })
@@ -84,13 +83,13 @@ export const getUserById = async (req, res) => {
   try {
     const { id } = req.params
 
-    const user = await db.get('SELECT ID, Nombre, created_at FROM users WHERE ID = ?', [id])
+    const user = await db.query('SELECT "ID", "Nombre", "created_at" FROM users WHERE "ID" = $1', [id])
 
-    if (!user) {
+    if (user.rows.length === 0) {
       return res.status(404).json({ error: 'Usuario no encontrado' })
     }
 
-    res.status(200).json(user)
+    res.status(200).json(user.rows[0])
   } catch (err) {
     console.error('❌ Error en getUserById:', err)
     res.status(500).json({ error: 'Error interno del servidor' })
