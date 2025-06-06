@@ -1,5 +1,5 @@
-// Validación de variables de entorno requeridas para SQLite
-const requiredEnvVars = ['JWT_SECRET_KEY', 'FRONTEND_URL'];
+// Validación de variables de entorno requeridas para PostgreSQL
+const requiredEnvVars = ['JWT_SECRET_KEY', 'FRONTEND_URL', 'DATABASE_URL'];
 
 export function validateEnvironment() {
   const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
