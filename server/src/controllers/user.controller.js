@@ -5,22 +5,28 @@ import bcrypt from 'bcrypt'
 
 export const createUser = async (req, res) => {
   try {
-    const { Nombre, Contrasena } = req.body
+    const { Nombre, Contrasena, Rol = 'usuario' } = req.body
 
     if (!Nombre || !Contrasena) {
       return res.status(400).json({ error: 'Nombre y Contrasena son requeridos' })
     }
 
+    // Validar rol
+    const rolesPermitidos = ['usuario', 'secretaria', 'admin']
+    if (!rolesPermitidos.includes(Rol)) {
+      return res.status(400).json({ error: 'Rol no válido' })
+    }
+
     const hashedPassword = await bcrypt.hash(Contrasena, 10)
 
     await db.query(
-      `INSERT INTO users ("Nombre", "Contrasena") VALUES ($1, $2)`,
-      [Nombre, hashedPassword]
+      `INSERT INTO users ("Nombre", "Contrasena", "Rol") VALUES ($1, $2, $3)`,
+      [Nombre, hashedPassword, Rol]
     )
 
     res.status(201).json({
       message: 'Usuario creado exitosamente',
-      user: { Nombre }
+      user: { Nombre, Rol }
     })
   } catch (err) {
     console.error('❌ Error en createUser:', err)
@@ -43,20 +49,28 @@ export const loginUser = async (req, res) => {
       return res.status(400).json({ error: 'Usuario no encontrado' })
     }
 
+    console.log('🔍 Debug - Usuario encontrado:', user.rows[0]) // Debug temporal
+
     const userData = user.rows[0]
     const validPassword = await bcrypt.compare(Contrasena, userData.Contrasena)
 
     if (!validPassword) {
       return res.status(400).json({ error: 'Contraseña incorrecta' })
-    }
-
-    try {
-      const tokenPayload = { Nombre }
+    }    try {
+      const tokenPayload = { 
+        Nombre: userData.Nombre,
+        Rol: userData.Rol || 'usuario',
+        ID: userData.ID
+      }
       const token = generateToken(tokenPayload)
 
       return res.status(200).json({
         message: 'Usuario logueado correctamente',
-        user: { Nombre },
+        user: { 
+          Nombre: userData.Nombre, 
+          Rol: userData.Rol || 'usuario',
+          ID: userData.ID
+        },
         token
       })
     } catch (tokenError) {
@@ -71,7 +85,7 @@ export const loginUser = async (req, res) => {
 
 export const getAllUsers = async (req, res) => {
   try {
-    const users = await db.query('SELECT "ID", "Nombre", "created_at" FROM users')
+    const users = await db.query('SELECT "ID", "Nombre", "Rol", "created_at" FROM users')
     res.status(200).json(users.rows)
   } catch (err) {
     console.error('❌ Error en getAllUsers:', err)

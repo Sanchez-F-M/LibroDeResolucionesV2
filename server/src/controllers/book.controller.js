@@ -1,4 +1,5 @@
 import db from '../../db/connection.js'
+import { getImageUrl } from '../../config/cloudinary.js'
 
 export const getByIdBook = async (req, res) => {
   const { id } = req.params
@@ -8,9 +9,7 @@ export const getByIdBook = async (req, res) => {
 
     if (resolutionResult.rows.length === 0) {
       return res.status(404).json({ error: 'Resolución no encontrada' })
-    }
-
-    const resolution = resolutionResult.rows[0]
+    }    const resolution = resolutionResult.rows[0]
     const imagesResult = await db.query('SELECT * FROM images WHERE "NumdeResolucion" = $1', [id])
 
     const result = {
@@ -18,7 +17,7 @@ export const getByIdBook = async (req, res) => {
       asunto: resolution.Asunto,
       referencia: resolution.Referencia,
       fetcha_creacion: resolution.fetcha_creacion,
-      images: imagesResult.rows.map(image => image.ImagePath)
+      images: imagesResult.rows.map(image => getImageUrl(image.ImagePath))
     }
 
     res.status(200).json([result]) // Mantener formato array para compatibilidad
@@ -139,16 +138,36 @@ export const createBook = async (req, res) => {
 
     // Insertar imágenes
     for (const file of ImagePath) {
+      // Determinar la ruta de la imagen según si viene de Cloudinary o almacenamiento local
+      let imagePath
+      
+      if (file.path) {
+        // Cloudinary: usar la URL completa
+        imagePath = file.path
+      } else if (file.filename) {
+        // Almacenamiento local: usar el path relativo
+        imagePath = `uploads/${file.filename}`
+      } else {
+        // Fallback: usar el path original
+        imagePath = file.originalname
+      }
+
+      console.log(`📁 Guardando imagen: ${imagePath}`)
+      
       await client.query(
         'INSERT INTO images ("NumdeResolucion", "ImagePath") VALUES ($1, $2)',
-        [NumdeResolucion, `uploads/${file.filename}`]
+        [NumdeResolucion, imagePath]
       )
     }
 
     // Confirmar transacción
     await client.query('COMMIT')
 
-    res.status(201).json({ message: 'Resolución creada exitosamente' })
+    res.status(201).json({ 
+      message: 'Resolución creada exitosamente',
+      NumdeResolucion,
+      imagenes_guardadas: ImagePath.length
+    })
   } catch (error) {
     // Revertir en caso de error
     await client.query('ROLLBACK')
@@ -230,7 +249,7 @@ export const getAllBooks = async (req, res) => {
           asunto: resolution.Asunto,
           referencia: resolution.Referencia,
           fetcha_creacion: resolution.fetcha_creacion,
-          images: images.rows.map(image => image.ImagePath)
+          images: images.rows.map(image => getImageUrl(image.ImagePath))
         }
       })
     )

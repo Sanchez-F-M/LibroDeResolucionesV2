@@ -4,7 +4,7 @@ const apiUrl = import.meta.env.VITE_API_URL;
 const maxUploadSize = import.meta.env.VITE_UPLOAD_MAX_SIZE;
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000',
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:10000',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json'
@@ -12,7 +12,7 @@ const api = axios.create({
 });
 
 // Log de debugging para desarrollo - siempre activo en desarrollo
-console.log('🔧 API configurada con baseURL:', import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000');
+console.log('🔧 API configurada con baseURL:', import.meta.env.VITE_API_BASE_URL || 'http://localhost:10000');
 console.log('🔧 Entorno:', import.meta.env.MODE);
 
 api.interceptors.request.use(config => {

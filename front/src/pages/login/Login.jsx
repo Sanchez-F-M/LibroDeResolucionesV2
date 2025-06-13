@@ -11,6 +11,7 @@ import {
   useTheme,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import api from '../../api/api';
 
 const Login = () => {
@@ -18,6 +19,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -30,14 +32,21 @@ const Login = () => {
       return;
     }
 
-    try {
-      console.log('Intentando login con:', { Nombre: username, Contrasena: '***' });
+    try {      console.log('Intentando login con:', { Nombre: username, Contrasena: '***' });
       const response = await api.post('/api/user/login', {
         Nombre: username,
         Contrasena: password,
       });
       console.log('Login exitoso:', response.data);
-      localStorage.setItem('token', response.data.token);
+      
+      // Usar el contexto de autenticación
+      const userData = {
+        id: response.data.user.id,
+        name: response.data.user.name,
+        role: response.data.user.role
+      };
+      
+      login(userData, response.data.token);
       setError('');
       navigate('/home');
     } catch (err) {
@@ -150,10 +159,26 @@ const Login = () => {
                   transform: 'translateY(-1px)',
                 },
                 transition: 'all 0.3s ease',
-              }}
-            >
+              }}            >
               Iniciar Sesión
             </Button>
+
+            <Box sx={{ mt: 3, textAlign: 'center' }}>
+              <Typography variant="body2" color="text.secondary">
+                ¿No tienes una cuenta?{' '}
+                <Button 
+                  onClick={() => navigate('/register')}
+                  variant="text"
+                  size="small"
+                  sx={{ 
+                    fontWeight: 'bold',
+                    color: theme.palette.primary.main 
+                  }}
+                >
+                  Regístrate aquí
+                </Button>
+              </Typography>
+            </Box>
           </Box>
         </Paper>
       </Box>
