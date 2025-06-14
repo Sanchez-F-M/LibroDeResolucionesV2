@@ -7,7 +7,14 @@ export default defineConfig({
   base: '/',
   build: {
     outDir: 'dist',
-    assetsDir: 'assets'
+    assetsDir: 'assets',
+    sourcemap: false,
+    chunkSizeWarningLimit: 1000,
+    rollupOptions: {
+      output: {
+        manualChunks: undefined
+      }
+    }
   },
   optimizeDeps: {
     include: ['axios']
