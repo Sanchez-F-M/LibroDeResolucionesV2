@@ -68,17 +68,26 @@ async function initDatabase() {
     // Crear índice para imágenes
     await client.query(`
       CREATE INDEX IF NOT EXISTS idx_images_resolucion ON images("NumdeResolucion");
-    `);
-
-    // Crear tabla de usuarios
+    `);    // Crear tabla de usuarios
     await client.query(`
       CREATE TABLE IF NOT EXISTS users (
         "ID" SERIAL PRIMARY KEY,
         "Nombre" VARCHAR(255) UNIQUE NOT NULL,
         "Contrasena" VARCHAR(255) NOT NULL,
+        "Rol" VARCHAR(50) DEFAULT 'usuario' NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
+
+    // Agregar columna Rol si no existe (para bases de datos existentes)
+    try {
+      await client.query(`
+        ALTER TABLE users ADD COLUMN IF NOT EXISTS "Rol" VARCHAR(50) DEFAULT 'usuario' NOT NULL
+      `);
+    } catch (error) {
+      // La columna ya existe, continúa
+      console.log('📝 Columna Rol ya existe en la tabla users');
+    }
 
     // Crear índice para usuarios
     await client.query(`
