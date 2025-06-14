@@ -7,19 +7,51 @@ dotenv.config();
 const { Pool } = pkg;
 
 // Configuración de la conexión a PostgreSQL
-const poolConfig = {  user: process.env.DB_USER || 'postgres',
-  host: process.env.DB_HOST || 'localhost',
-  database: process.env.DB_NAME || 'libro_resoluciones',
-  password: process.env.DB_PASSWORD || 'admin123',
-  port: parseInt(process.env.DB_PORT) || 5433,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-  max: 20, // máximo número de conexiones en el pool
-  idleTimeoutMillis: 30000, // tiempo antes de cerrar conexiones inactivas
-  connectionTimeoutMillis: 2000, // tiempo límite para obtener conexión
-};
+let poolConfig;
+
+// Soporte para DATABASE_URL (estándar de Render) o variables individuales
+if (process.env.DATABASE_URL) {
+  // Usar DATABASE_URL directamente (recomendado para Render)
+  poolConfig = {
+    connectionString: process.env.DATABASE_URL,
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+    max: 20,
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 2000,
+  };
+  console.log('🔗 Usando DATABASE_URL para conexión PostgreSQL');
+} else {
+  // Usar variables individuales (desarrollo local)
+  poolConfig = {
+    user: process.env.DB_USER || 'postgres',
+    host: process.env.DB_HOST || 'localhost',
+    database: process.env.DB_NAME || 'libro_resoluciones',
+    password: process.env.DB_PASSWORD || 'admin123',
+    port: parseInt(process.env.DB_PORT) || 5433,
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+    max: 20,
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 2000,
+  };
+  console.log('🔧 Usando variables individuales para PostgreSQL');
+}
 
 // Crear el pool de conexiones
 const pool = new Pool(poolConfig);
+
+// Logging para debugging
+console.log('🏁 PostgreSQL Pool configurado:', {
+  usingDatabaseUrl: !!process.env.DATABASE_URL,
+  host: poolConfig.host || 'DATABASE_URL',
+  database: poolConfig.database || 'en DATABASE_URL',
+  ssl: !!poolConfig.ssl,
+  environment: process.env.NODE_ENV
+});
+
+// Manejo de errores del pool
+pool.on('error', (err) => {
+  console.error('❌ Error inesperado en pool PostgreSQL:', err);
+});
 
 // Función para inicializar la base de datos
 async function initDatabase() {
