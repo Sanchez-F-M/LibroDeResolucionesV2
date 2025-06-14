@@ -37,8 +37,7 @@ export const getImageUrl = (imagePath) => {
   if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
     return imagePath;
   }
-  
-  // Obtener la URL base del backend desde variables de entorno
+    // Obtener la URL base del backend desde variables de entorno
   let baseUrl = import.meta.env.VITE_API_BASE_URL;
   
   // Fallbacks mejorados para diferentes entornos y dispositivos
@@ -46,8 +45,8 @@ export const getImageUrl = (imagePath) => {
     if (isDevelopmentEnvironment()) {
       baseUrl = 'http://localhost:10000';
     } else {
-      // URL de producción con protocolo seguro para móviles
-      baseUrl = 'https://libro-resoluciones-backend.onrender.com';
+      // URL de producción corregida
+      baseUrl = 'https://libroderesoluciones-api.onrender.com';
     }
   }
   
