@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-ro
 import { ThemeProvider, CssBaseline, useMediaQuery, useTheme, Box } from '@mui/material';
 import { customTheme } from './themeConfig';
 import { AuthProvider } from './context/AuthContext';
-import ProtectedRoute from './components/ProtectedRoute';
+import ProtectedRoute from './Components/ProtectedRoute';
 import Navbar from './Components/layouts/navbar/Navbar';
 import Login from './pages/login/Login';
 import Register from './pages/register/Register';
