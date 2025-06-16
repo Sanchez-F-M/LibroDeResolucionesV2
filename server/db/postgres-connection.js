@@ -27,7 +27,7 @@ if (process.env.DATABASE_URL) {
     host: process.env.DB_HOST || 'localhost',
     database: process.env.DB_NAME || 'libro_resoluciones',
     password: process.env.DB_PASSWORD || 'admin123',
-    port: parseInt(process.env.DB_PORT) || 5433,
+    port: parseInt(process.env.DB_PORT) || (process.env.NODE_ENV === 'production' ? 5432 : 5433),
     ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
     max: 20,
     idleTimeoutMillis: 30000,
