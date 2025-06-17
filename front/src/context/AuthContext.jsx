@@ -46,9 +46,11 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     setIsAuthenticated(false);
   };
-
   const hasRole = (requiredRole) => {
-    if (!user || !user.role) return false;
+    if (!user || (!user.role && !user.Rol)) return false;
+    
+    // Compatibilidad: usar Rol (backend) o role (frontend)
+    const userRole = user.Rol || user.role;
     
     const roleHierarchy = {
       'admin': ['admin', 'secretaria', 'usuario'],
@@ -56,7 +58,7 @@ export const AuthProvider = ({ children }) => {
       'usuario': ['usuario']
     };
     
-    return roleHierarchy[user.role]?.includes(requiredRole) || false;
+    return roleHierarchy[userRole]?.includes(requiredRole) || false;
   };
 
   const canView = () => hasRole('usuario');

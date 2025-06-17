@@ -45,9 +45,8 @@ const ProtectedRoute = ({ children, requiredRole, requireAuth = true }) => {
         </Typography>
         <Typography variant="body1" color="text.secondary">
           No tienes permisos para acceder a esta página.
-        </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-          Rol requerido: {requiredRole} | Tu rol: {user?.role || 'Sin rol'}
+        </Typography>        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+          Rol requerido: {requiredRole} | Tu rol: {user?.Rol || user?.role || 'Sin rol'}
         </Typography>
       </Box>
     );
