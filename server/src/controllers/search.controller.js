@@ -38,14 +38,13 @@ export const search = async (req, res) => {
 
     // Para cada resolución, obtener sus imágenes y formatear igual que getAllBooks
     const resolutionsWithImages = await Promise.all(
-      resolutions.map(async (resolution) => {
-        const images = await db.query('SELECT "ImagePath" FROM images WHERE "NumdeResolucion" = $1', [resolution.NumdeResolucion])
+      resolutions.map(async (resolution) => {        const images = await db.query('SELECT "ImagePath" FROM images WHERE "NumdeResolucion" = $1', [resolution.NumdeResolucion])
         
         return {
           NumdeResolucion: resolution.NumdeResolucion,
           asunto: resolution.Asunto,
           referencia: resolution.Referencia,
-          fetcha_creacion: resolution.fetcha_creacion,
+          fetcha_creacion: resolution.fetcha_creacion || resolution.FechaCreacion,  // Manejar ambos casos
           images: images.rows.map(image => getImageUrl(image.ImagePath))
         }
       })
