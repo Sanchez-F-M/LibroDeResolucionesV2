@@ -36,16 +36,16 @@ const Login = () => {
       const response = await api.post('/api/user/login', {
         Nombre: username,
         Contrasena: password,
-      });
-      console.log('Login exitoso:', response.data);
+      });      console.log('Login exitoso:', response.data);
       
-      // Usar el contexto de autenticación
+      // Usar los datos exactos que envía el backend
       const userData = {
-        id: response.data.user.id,
-        name: response.data.user.name,
-        role: response.data.user.role
+        ID: response.data.user.ID,
+        Nombre: response.data.user.Nombre,
+        Rol: response.data.user.Rol
       };
       
+      console.log('Datos de usuario procesados:', userData);
       login(userData, response.data.token);
       setError('');
       navigate('/home');
