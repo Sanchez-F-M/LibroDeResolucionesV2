@@ -17,9 +17,12 @@ const upload = getUploadConfig()
 
 const bookRouter = express.Router()
 
-// Estas rutas deben ir primero para evitar conflictos con el parámetro :id
+// Ruta principal que apunta a getAllBooks (para compatibilidad con el frontend que espera GET /api/books)
+bookRouter.get('/', requireAnyUser, getAllBooks)                          // Cualquier usuario logueado
+
+// Estas rutas deben ir después para evitar conflictos con la ruta raíz
 bookRouter.get('/last-number', requireAnyUser, getLastResolutionNumber)   // Cualquier usuario logueado
-bookRouter.get('/all', requireAnyUser, getAllBooks)                       // Cualquier usuario logueado
+bookRouter.get('/all', requireAnyUser, getAllBooks)                       // Cualquier usuario logueado (duplicada para compatibilidad)
 
 // Ruta especial para insertar resoluciones de prueba (solo administradores)
 bookRouter.post('/insert-test', requireAdmin, insertTestResolution)
