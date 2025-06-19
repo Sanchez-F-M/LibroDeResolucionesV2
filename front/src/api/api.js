@@ -5,7 +5,7 @@ const maxUploadSize = import.meta.env.VITE_UPLOAD_MAX_SIZE;
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:10000',
-  timeout: 10000,
+  timeout: 30000, // 30 segundos para evitar timeouts cuando el backend está dormido
   headers: {
     'Content-Type': 'application/json'
   }
