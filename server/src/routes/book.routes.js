@@ -8,7 +8,6 @@ import {
   getLastResolutionNumber,
   insertTestResolution
 } from '../controllers/book.controller.js'
-import { verifyToken } from '../../config/verifyToken.js'
 import { requireAnyUser, requireSecretariaOrAdmin, requireAdmin } from '../middleware/auth.js'
 import { getUploadConfig } from '../../config/cloudinary.js'
 
