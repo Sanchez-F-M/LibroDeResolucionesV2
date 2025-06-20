@@ -1,7 +1,10 @@
 import db from '../../db/connection.js'
 import { generateToken } from '../../config/generateToken.js'
-
+import SecurityLogger from '../middleware/securityLogger.js'
 import bcrypt from 'bcrypt'
+
+// Instancia del logger de seguridad
+const securityLogger = new SecurityLogger();
 
 export const createUser = async (req, res) => {
   try {
@@ -9,15 +12,15 @@ export const createUser = async (req, res) => {
 
     if (!Nombre || !Contrasena) {
       return res.status(400).json({ error: 'Nombre y Contrasena son requeridos' })
-    }
-
-    // Validación de contraseña fuerte
+    }    // Validación de contraseña fuerte
     if (Contrasena.length < 6) {
+      securityLogger.passwordPolicyViolation(Nombre, 'Contraseña muy corta', req.ip, req.get('User-Agent'));
       return res.status(400).json({ error: 'La contraseña debe tener al menos 6 caracteres' })
     }
 
     const weakPasswords = ['123', 'password', 'test', '12345', 'admin', 'qwerty']
     if (weakPasswords.includes(Contrasena.toLowerCase())) {
+      securityLogger.passwordPolicyViolation(Nombre, 'Contraseña débil detectada', req.ip, req.get('User-Agent'));
       return res.status(400).json({ error: 'La contraseña es demasiado débil. Use una contraseña más segura' })
     }
 
@@ -25,14 +28,14 @@ export const createUser = async (req, res) => {
     const rolesPermitidos = ['usuario', 'secretaria', 'admin']
     if (!rolesPermitidos.includes(Rol)) {
       return res.status(400).json({ error: 'Rol no válido' })
-    }
-
-    const hashedPassword = await bcrypt.hash(Contrasena, 10)
-
+    }    const hashedPassword = await bcrypt.hash(Contrasena, 10)
+    
     await db.query(
       `INSERT INTO users ("Nombre", "Contrasena", "Rol") VALUES ($1, $2, $3)`,
       [Nombre, hashedPassword, Rol]
     )
+
+    securityLogger.registrationAttempt(true, Nombre, 'Exitoso', req.ip, req.get('User-Agent'));
 
     res.status(201).json({
       message: 'Usuario creado exitosamente',
@@ -40,6 +43,8 @@ export const createUser = async (req, res) => {
     })
   } catch (err) {
     console.error('❌ Error en createUser:', err)
+    securityLogger.registrationAttempt(false, Nombre, err.message, req.ip, req.get('User-Agent'));
+    
     if (err.code === '23505') { // PostgreSQL unique constraint violation
       return res.status(400).json({ error: 'El usuario ya existe' })
     }
@@ -55,9 +60,9 @@ export const loginUser = async (req, res) => {
       return res.status(400).json({ error: 'Nombre y Contrasena son requeridos' })
     }
     
-    const user = await db.query('SELECT * FROM users WHERE "Nombre" = $1', [Nombre])
-    
+    const user = await db.query('SELECT * FROM users WHERE "Nombre" = $1', [Nombre])    
     if (user.rows.length === 0) {
+      securityLogger.loginAttempt(false, Nombre, req.ip, req.get('User-Agent'));
       return res.status(401).json({ error: 'Credenciales inválidas' })
     }
 
@@ -65,6 +70,7 @@ export const loginUser = async (req, res) => {
     const validPassword = await bcrypt.compare(Contrasena, userData.Contrasena)
 
     if (!validPassword) {
+      securityLogger.loginAttempt(false, Nombre, req.ip, req.get('User-Agent'));
       return res.status(401).json({ error: 'Credenciales inválidas' })
     }
     
@@ -72,9 +78,10 @@ export const loginUser = async (req, res) => {
       const tokenPayload = { 
         Nombre: userData.Nombre,
         Rol: userData.Rol || 'usuario',
-        ID: userData.ID
-      }
+        ID: userData.ID      }
       const token = generateToken(tokenPayload)
+
+      securityLogger.loginAttempt(true, userData.Nombre, req.ip, req.get('User-Agent'));
 
       return res.status(200).json({
         message: 'Usuario logueado correctamente',

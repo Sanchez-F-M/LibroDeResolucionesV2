@@ -1,0 +1,202 @@
+{
+  "timestamp": "2025-06-20T01:08:04.177Z",
+  "urls": {
+    "backend": "https://libroderesoluciones-api.onrender.com",
+    "frontend": "https://libro-de-resoluciones-v2-9izd-fe0i5ihfg.vercel.app"
+  },
+  "config": {
+    "timeout": 30000,
+    "retries": 3,
+    "performanceThreshold": {
+      "fast": 1000,
+      "acceptable": 3000,
+      "slow": 5000
+    }
+  },
+  "results": {
+    "summary": {
+      "passed": 8,
+      "failed": 1,
+      "warnings": 0,
+      "total": 9,
+      "tests": [
+        {
+          "name": "Backend Health Check",
+          "category": "Infraestructura",
+          "status": "PASSED",
+          "duration": 453,
+          "result": {
+            "status": "healthy",
+            "uptime": 2708.913274897,
+            "version": "2.1.0"
+          },
+          "timestamp": "2025-06-20T01:07:58.500Z"
+        },
+        {
+          "name": "Backend Diagnose",
+          "category": "Infraestructura",
+          "status": "PASSED",
+          "duration": 214,
+          "result": {
+            "database": {
+              "status": "connected",
+              "tables": [
+                "users",
+                "books"
+              ],
+              "users": 1,
+              "books": 0
+            },
+            "environment": {
+              "NODE_ENV": "production",
+              "PORT": "10000",
+              "JWT_SECRET_KEY": "SET",
+              "FRONTEND_URL": "https://libro-de-resoluciones-v2-9izd.vercel.app/",
+              "ADMIN_USERNAME": "NOT SET",
+              "ADMIN_PASSWORD": "NOT SET"
+            },
+            "tables": [
+              "users",
+              "books"
+            ]
+          },
+          "timestamp": "2025-06-20T01:07:58.715Z"
+        },
+        {
+          "name": "Frontend Availability",
+          "category": "Infraestructura",
+          "status": "PASSED",
+          "duration": 313,
+          "result": {
+            "status": 200,
+            "isReactApp": true,
+            "contentLength": 530,
+            "hasRoot": true,
+            "hasModule": true
+          },
+          "timestamp": "2025-06-20T01:07:59.029Z"
+        },
+        {
+          "name": "User Login",
+          "category": "Autenticación",
+          "status": "PASSED",
+          "duration": 558,
+          "result": {
+            "userId": 20,
+            "username": "admin",
+            "role": "admin",
+            "hasToken": true,
+            "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJOb21icmUiOiJhZG1pbiIsIlJvbCI6ImFkbWluIiwiSUQiOjIwLCJpYXQiOjE3NTAzODE2NzksImV4cCI6MTc1MDQ2ODA3OX0.MBoHdcrxlYRKdew6jvpa3RvszcLjSJlf-dLpVuHXmqs"
+          },
+          "timestamp": "2025-06-20T01:07:59.587Z"
+        },
+        {
+          "name": "User Registration",
+          "category": "Autenticación",
+          "status": "PASSED",
+          "duration": 582,
+          "result": {
+            "username": "TestUser_1750381679587",
+            "role": "usuario",
+            "message": "Usuario creado exitosamente"
+          },
+          "timestamp": "2025-06-20T01:08:00.169Z"
+        },
+        {
+          "name": "Invalid Login Rejection",
+          "category": "Autenticación",
+          "status": "FAILED",
+          "duration": 271,
+          "error": "Request failed with status code 400",
+          "timestamp": "2025-06-20T01:08:00.440Z"
+        },
+        {
+          "name": "Get Books API",
+          "category": "API",
+          "status": "PASSED",
+          "duration": 1571,
+          "result": {
+            "count": 2,
+            "hasBooks": true,
+            "sampleBook": {
+              "NumdeResolucion": "2",
+              "asunto": "violencia",
+              "referencia": "de genero",
+              "fetcha_creacion": "2025-06-16T00:00:00.000Z",
+              "images": [
+                "https://res.cloudinary.com/dzbmurddh/image/upload/v1750376309/libro-resoluciones/1750376309091-Captura%20de%20pantalla%202024-04-22%20200023.jpg"
+              ]
+            }
+          },
+          "timestamp": "2025-06-20T01:08:02.011Z"
+        },
+        {
+          "name": "Search Functionality",
+          "category": "API",
+          "status": "PASSED",
+          "duration": 1837,
+          "result": {
+            "searchResults": [
+              {
+                "criterion": "NumdeResolucion",
+                "value": "1",
+                "status": 200,
+                "results": 1,
+                "hasDate": true
+              },
+              {
+                "criterion": "Asunto",
+                "value": "violencia",
+                "status": 200,
+                "results": 1,
+                "hasDate": true
+              },
+              {
+                "criterion": "Referencia",
+                "value": "genero",
+                "status": 200,
+                "results": 1,
+                "hasDate": true
+              }
+            ]
+          },
+          "timestamp": "2025-06-20T01:08:03.849Z"
+        },
+        {
+          "name": "Cloudinary Status",
+          "category": "Cloudinary",
+          "status": "PASSED",
+          "duration": 327,
+          "result": {
+            "connected": true,
+            "cloudName": true
+          },
+          "timestamp": "2025-06-20T01:08:04.176Z"
+        }
+      ]
+    },
+    "successRate": 88.9,
+    "categories": {
+      "Infraestructura": {
+        "passed": 3,
+        "failed": 0,
+        "total": 3
+      },
+      "Autenticación": {
+        "passed": 2,
+        "failed": 1,
+        "total": 3
+      },
+      "API": {
+        "passed": 2,
+        "failed": 0,
+        "total": 2
+      },
+      "Cloudinary": {
+        "passed": 1,
+        "failed": 0,
+        "total": 1
+      }
+    }
+  }
+}

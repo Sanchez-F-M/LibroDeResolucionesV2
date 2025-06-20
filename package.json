@@ -10,6 +10,7 @@
     "test:cloudinary": "node test-cloudinary-node.js"
   },
   "dependencies": {
+    "axios": "^1.10.0",
     "concurrently": "^8.2.2",
     "form-data": "^4.0.3",
     "node-fetch": "^3.3.2"

@@ -1,0 +1,56 @@
+{
+  "timestamp": "2025-06-20T01:10:54.775Z",
+  "config": {
+    "concurrent_users": [
+      1,
+      3,
+      5
+    ],
+    "duration_seconds": 30,
+    "request_interval_ms": 2000,
+    "timeout": 15000
+  },
+  "urls": {
+    "backend": "https://libroderesoluciones-api.onrender.com",
+    "frontend": "https://libro-de-resoluciones-v2-9izd-fe0i5ihfg.vercel.app"
+  },
+  "loadTestResults": {
+    "results": [
+      {
+        "userCount": 1,
+        "duration": 31649,
+        "totalRequests": 14,
+        "successfulRequests": 14,
+        "failedRequests": 0,
+        "successRate": "100.00",
+        "avgResponseTime": 254,
+        "requestsPerSecond": "0.44"
+      },
+      {
+        "userCount": 3,
+        "duration": 32192,
+        "totalRequests": 42,
+        "successfulRequests": 42,
+        "failedRequests": 0,
+        "successRate": "100.00",
+        "avgResponseTime": 254,
+        "requestsPerSecond": "1.30"
+      },
+      {
+        "userCount": 5,
+        "duration": 31547,
+        "totalRequests": 70,
+        "successfulRequests": 70,
+        "failedRequests": 0,
+        "successRate": "100.00",
+        "avgResponseTime": 231,
+        "requestsPerSecond": "2.22"
+      }
+    ],
+    "summary": {
+      "avgSuccessRate": "100.00",
+      "bestRPS": "2.22",
+      "worstSuccessRate": "100.00"
+    }
+  }
+}
