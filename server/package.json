@@ -7,15 +7,10 @@
   "engines": {
     "node": ">=20.0.0",
     "npm": ">=9.0.0"
-  },
-  "scripts": {
+  },  "scripts": {
     "dev": "nodemon index.js",
     "start": "node index.js",
-    "verify-admin": "node scripts/verify-admin.js",
-    "create-admin": "node scripts/create-admin.js",
-    "setup-postgres": "node scripts/setup-postgres.js",
-    "migrate-data": "node scripts/migrate-to-postgres.js",
-    "postinstall": "node scripts/create-admin.js"
+    "create-admin": "node scripts/create-admin.js"
   },
   "keywords": [],
   "author": "",
