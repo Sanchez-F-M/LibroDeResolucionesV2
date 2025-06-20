@@ -11,6 +11,16 @@ export const createUser = async (req, res) => {
       return res.status(400).json({ error: 'Nombre y Contrasena son requeridos' })
     }
 
+    // Validación de contraseña fuerte
+    if (Contrasena.length < 6) {
+      return res.status(400).json({ error: 'La contraseña debe tener al menos 6 caracteres' })
+    }
+
+    const weakPasswords = ['123', 'password', 'test', '12345', 'admin', 'qwerty']
+    if (weakPasswords.includes(Contrasena.toLowerCase())) {
+      return res.status(400).json({ error: 'La contraseña es demasiado débil. Use una contraseña más segura' })
+    }
+
     // Validar rol
     const rolesPermitidos = ['usuario', 'secretaria', 'admin']
     if (!rolesPermitidos.includes(Rol)) {
@@ -40,23 +50,25 @@ export const createUser = async (req, res) => {
 export const loginUser = async (req, res) => {
   try {
     const { Nombre, Contrasena } = req.body
-
+    
     if (!Nombre || !Contrasena) {
       return res.status(400).json({ error: 'Nombre y Contrasena son requeridos' })
-    }    const user = await db.query('SELECT * FROM users WHERE "Nombre" = $1', [Nombre])
-
-    if (user.rows.length === 0) {
-      return res.status(400).json({ error: 'Usuario no encontrado' })
     }
-
-    console.log('🔍 Debug - Usuario encontrado:', user.rows[0]) // Debug temporal
+    
+    const user = await db.query('SELECT * FROM users WHERE "Nombre" = $1', [Nombre])
+    
+    if (user.rows.length === 0) {
+      return res.status(401).json({ error: 'Credenciales inválidas' })
+    }
 
     const userData = user.rows[0]
     const validPassword = await bcrypt.compare(Contrasena, userData.Contrasena)
 
     if (!validPassword) {
-      return res.status(400).json({ error: 'Contraseña incorrecta' })
-    }    try {
+      return res.status(401).json({ error: 'Credenciales inválidas' })
+    }
+    
+    try {
       const tokenPayload = { 
         Nombre: userData.Nombre,
         Rol: userData.Rol || 'usuario',

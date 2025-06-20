@@ -19,6 +19,26 @@ const __dirname = path.dirname(__filename)
 // Middleware de compresión para mejorar rendimiento
 app.use(compression())
 
+// Headers de seguridad
+app.use((req, res, next) => {
+  // Prevenir MIME type sniffing
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  
+  // Prevenir clickjacking
+  res.setHeader('X-Frame-Options', 'DENY');
+  
+  // Habilitar filtro XSS del navegador
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  
+  // Control de referrer
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  
+  // Política de permisos
+  res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
+  
+  next();
+});
+
 // Definir orígenes permitidos globalmente
 const allowedOrigins = [
   process.env.FRONTEND_URL,
