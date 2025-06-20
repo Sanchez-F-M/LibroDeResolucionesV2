@@ -1,8 +1,8 @@
 {
-  "timestamp": "2025-06-20T01:12:00.410Z",
+  "timestamp": "2025-06-20T01:33:57.828Z",
   "testingSummary": {
     "executionDate": "19/6/2025",
-    "executionTime": "10:12:00",
+    "executionTime": "10:33:57",
     "urls": {
       "backend": "https://libroderesoluciones-api.onrender.com",
       "frontend": "https://libro-de-resoluciones-v2-9izd-fe0i5ihfg.vercel.app"
@@ -10,7 +10,7 @@
   },
   "results": {
     "production": {
-      "timestamp": "2025-06-20T01:08:04.177Z",
+      "timestamp": "2025-06-20T01:30:02.052Z",
       "urls": {
         "backend": "https://libroderesoluciones-api.onrender.com",
         "frontend": "https://libro-de-resoluciones-v2-9izd-fe0i5ihfg.vercel.app"
@@ -35,19 +35,19 @@
               "name": "Backend Health Check",
               "category": "Infraestructura",
               "status": "PASSED",
-              "duration": 453,
+              "duration": 684,
               "result": {
                 "status": "healthy",
-                "uptime": 2708.913274897,
+                "uptime": 4027.127642096,
                 "version": "2.1.0"
               },
-              "timestamp": "2025-06-20T01:07:58.500Z"
+              "timestamp": "2025-06-20T01:29:56.727Z"
             },
             {
               "name": "Backend Diagnose",
               "category": "Infraestructura",
               "status": "PASSED",
-              "duration": 214,
+              "duration": 256,
               "result": {
                 "database": {
                   "status": "connected",
@@ -71,13 +71,13 @@
                   "books"
                 ]
               },
-              "timestamp": "2025-06-20T01:07:58.715Z"
+              "timestamp": "2025-06-20T01:29:56.985Z"
             },
             {
               "name": "Frontend Availability",
               "category": "Infraestructura",
               "status": "PASSED",
-              "duration": 313,
+              "duration": 323,
               "result": {
                 "status": 200,
                 "isReactApp": true,
@@ -85,47 +85,47 @@
                 "hasRoot": true,
                 "hasModule": true
               },
-              "timestamp": "2025-06-20T01:07:59.029Z"
+              "timestamp": "2025-06-20T01:29:57.308Z"
             },
             {
               "name": "User Login",
               "category": "Autenticación",
               "status": "PASSED",
-              "duration": 558,
+              "duration": 583,
               "result": {
                 "userId": 20,
                 "username": "admin",
                 "role": "admin",
                 "hasToken": true,
-                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJOb21icmUiOiJhZG1pbiIsIlJvbCI6ImFkbWluIiwiSUQiOjIwLCJpYXQiOjE3NTAzODE2NzksImV4cCI6MTc1MDQ2ODA3OX0.MBoHdcrxlYRKdew6jvpa3RvszcLjSJlf-dLpVuHXmqs"
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJOb21icmUiOiJhZG1pbiIsIlJvbCI6ImFkbWluIiwiSUQiOjIwLCJpYXQiOjE3NTAzODI5OTgsImV4cCI6MTc1MDQ2OTM5OH0.A9w5yeZY4dPPWhXdk1MQdiBMTeE3wTbCdJo_gY6kMB0"
               },
-              "timestamp": "2025-06-20T01:07:59.587Z"
+              "timestamp": "2025-06-20T01:29:57.890Z"
             },
             {
               "name": "User Registration",
               "category": "Autenticación",
               "status": "PASSED",
-              "duration": 582,
+              "duration": 581,
               "result": {
-                "username": "TestUser_1750381679587",
+                "username": "TestUser_1750382997891",
                 "role": "usuario",
                 "message": "Usuario creado exitosamente"
               },
-              "timestamp": "2025-06-20T01:08:00.169Z"
+              "timestamp": "2025-06-20T01:29:58.472Z"
             },
             {
               "name": "Invalid Login Rejection",
               "category": "Autenticación",
               "status": "FAILED",
-              "duration": 271,
+              "duration": 283,
               "error": "Request failed with status code 400",
-              "timestamp": "2025-06-20T01:08:00.440Z"
+              "timestamp": "2025-06-20T01:29:58.754Z"
             },
             {
               "name": "Get Books API",
               "category": "API",
               "status": "PASSED",
-              "duration": 1571,
+              "duration": 1316,
               "result": {
                 "count": 2,
                 "hasBooks": true,
@@ -139,13 +139,13 @@
                   ]
                 }
               },
-              "timestamp": "2025-06-20T01:08:02.011Z"
+              "timestamp": "2025-06-20T01:30:00.070Z"
             },
             {
               "name": "Search Functionality",
               "category": "API",
               "status": "PASSED",
-              "duration": 1837,
+              "duration": 1661,
               "result": {
                 "searchResults": [
                   {
@@ -171,18 +171,18 @@
                   }
                 ]
               },
-              "timestamp": "2025-06-20T01:08:03.849Z"
+              "timestamp": "2025-06-20T01:30:01.731Z"
             },
             {
               "name": "Cloudinary Status",
               "category": "Cloudinary",
               "status": "PASSED",
-              "duration": 327,
+              "duration": 321,
               "result": {
                 "connected": true,
                 "cloudName": true
               },
-              "timestamp": "2025-06-20T01:08:04.176Z"
+              "timestamp": "2025-06-20T01:30:02.052Z"
             }
           ]
         },
@@ -212,7 +212,7 @@
       }
     },
     "load": {
-      "timestamp": "2025-06-20T01:10:54.775Z",
+      "timestamp": "2025-06-20T01:32:52.451Z",
       "config": {
         "concurrent_users": [
           1,
@@ -231,44 +231,44 @@
         "results": [
           {
             "userCount": 1,
-            "duration": 31649,
+            "duration": 31764,
             "totalRequests": 14,
             "successfulRequests": 14,
             "failedRequests": 0,
             "successRate": "100.00",
-            "avgResponseTime": 254,
+            "avgResponseTime": 262,
             "requestsPerSecond": "0.44"
           },
           {
             "userCount": 3,
-            "duration": 32192,
-            "totalRequests": 42,
-            "successfulRequests": 42,
+            "duration": 31676,
+            "totalRequests": 41,
+            "successfulRequests": 41,
             "failedRequests": 0,
             "successRate": "100.00",
-            "avgResponseTime": 254,
-            "requestsPerSecond": "1.30"
+            "avgResponseTime": 264,
+            "requestsPerSecond": "1.29"
           },
           {
             "userCount": 5,
-            "duration": 31547,
+            "duration": 31723,
             "totalRequests": 70,
             "successfulRequests": 70,
             "failedRequests": 0,
             "successRate": "100.00",
-            "avgResponseTime": 231,
-            "requestsPerSecond": "2.22"
+            "avgResponseTime": 239,
+            "requestsPerSecond": "2.21"
           }
         ],
         "summary": {
           "avgSuccessRate": "100.00",
-          "bestRPS": "2.22",
+          "bestRPS": "2.21",
           "worstSuccessRate": "100.00"
         }
       }
     },
     "security": {
-      "timestamp": "2025-06-20T01:12:00.327Z",
+      "timestamp": "2025-06-20T01:33:57.749Z",
       "urls": {
         "backend": "https://libroderesoluciones-api.onrender.com",
         "frontend": "https://libro-de-resoluciones-v2-9izd-fe0i5ihfg.vercel.app"
@@ -313,8 +313,8 @@
     "successRate": "88.9",
     "vulnerabilities": 3,
     "performance": {
-      "avgResponseTime": 246,
-      "throughput": "2.22",
+      "avgResponseTime": 255,
+      "throughput": "2.21",
       "stability": "Excelente"
     }
   },

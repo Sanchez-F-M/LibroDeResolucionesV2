@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-06-20T01:10:54.775Z",
+  "timestamp": "2025-06-20T01:32:52.451Z",
   "config": {
     "concurrent_users": [
       1,
@@ -18,38 +18,38 @@
     "results": [
       {
         "userCount": 1,
-        "duration": 31649,
+        "duration": 31764,
         "totalRequests": 14,
         "successfulRequests": 14,
         "failedRequests": 0,
         "successRate": "100.00",
-        "avgResponseTime": 254,
+        "avgResponseTime": 262,
         "requestsPerSecond": "0.44"
       },
       {
         "userCount": 3,
-        "duration": 32192,
-        "totalRequests": 42,
-        "successfulRequests": 42,
+        "duration": 31676,
+        "totalRequests": 41,
+        "successfulRequests": 41,
         "failedRequests": 0,
         "successRate": "100.00",
-        "avgResponseTime": 254,
-        "requestsPerSecond": "1.30"
+        "avgResponseTime": 264,
+        "requestsPerSecond": "1.29"
       },
       {
         "userCount": 5,
-        "duration": 31547,
+        "duration": 31723,
         "totalRequests": 70,
         "successfulRequests": 70,
         "failedRequests": 0,
         "successRate": "100.00",
-        "avgResponseTime": 231,
-        "requestsPerSecond": "2.22"
+        "avgResponseTime": 239,
+        "requestsPerSecond": "2.21"
       }
     ],
     "summary": {
       "avgSuccessRate": "100.00",
-      "bestRPS": "2.22",
+      "bestRPS": "2.21",
       "worstSuccessRate": "100.00"
     }
   }
