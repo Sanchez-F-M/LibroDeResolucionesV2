@@ -1,0 +1,24 @@
+# Render Configuration
+# Este archivo puede ser usado como referencia para configurar el servicio en Render
+
+# Service Configuration
+name: libroderesolucionesv2-backend
+type: web
+env: node
+region: oregon
+branch: main
+rootDir: server
+buildCommand: npm install
+startCommand: npm start
+
+# Health Check
+healthCheckPath: /health
+
+# Environment Variables Template
+environment:
+  NODE_ENV: production
+  PORT: 10000
+  # DATABASE_URL será proporcionada por Render PostgreSQL
+  # JWT_SECRET debe ser configurado manualmente
+  # CLOUDINARY_* deben ser configurados si se usa Cloudinary
+  # FRONTEND_URL debe apuntar al frontend en Vercel

@@ -8,6 +8,7 @@ import { fileURLToPath } from 'url'
 
 import routes from './src/routes/routes.js'
 import { validateEnvironment } from './config/validateEnv.js'
+import db from './db/connection.js'
 
 // Validar variables de entorno al inicio
 validateEnvironment()
@@ -232,35 +233,23 @@ app.get('/diagnose', async (req, res) => {
       },
       recommendations: []
     }
-    
-    // Verificar base de datos
+      // Verificar base de datos PostgreSQL
     try {
-      const sqlite3 = (await import('sqlite3')).default
-      const { open } = await import('sqlite')
-      const path = await import('path')
-      const { fileURLToPath } = await import('url')
-      
-      const __filename = fileURLToPath(import.meta.url)
-      const __dirname = path.dirname(__filename)
-      const dbPath = path.join(__dirname, 'database.sqlite')
-      
-      const db = await open({
-        filename: dbPath,
-        driver: sqlite3.Database
-      })
-      
+      // Probar la conexión
+      await db.query('SELECT NOW() as server_time');
       diagnosis.database.status = 'connected'
       
-      // Verificar tablas
-      const tables = await db.all(`
-        SELECT name FROM sqlite_master 
-        WHERE type='table' AND name NOT LIKE 'sqlite_%'
-      `)
-      diagnosis.database.tables = tables.map(t => t.name)
+      // Verificar tablas existentes
+      const tables = await db.query(`
+        SELECT table_name 
+        FROM information_schema.tables 
+        WHERE table_schema = 'public'
+      `);
+      diagnosis.database.tables = tables.map(t => t.table_name)
       
       // Verificar usuarios
       try {
-        const users = await db.all('SELECT COUNT(*) as count FROM users')
+        const users = await db.query('SELECT COUNT(*) as count FROM users')
         diagnosis.database.users = users[0].count
       } catch (err) {
         diagnosis.database.users = 'table_not_exists'
@@ -268,13 +257,11 @@ app.get('/diagnose', async (req, res) => {
       
       // Verificar libros
       try {
-        const books = await db.all('SELECT COUNT(*) as count FROM books')
+        const books = await db.query('SELECT COUNT(*) as count FROM book')
         diagnosis.database.books = books[0].count
       } catch (err) {
         diagnosis.database.books = 'table_not_exists'
       }
-      
-      await db.close()
       
     } catch (error) {
       diagnosis.database.status = 'error'
@@ -312,54 +299,27 @@ app.get('/diagnose', async (req, res) => {
 // Endpoint temporal para inicializar base de datos
 app.post('/init-db', async (req, res) => {
   try {
-    console.log('🗄️ Inicializando base de datos')
+    console.log('🗄️ Inicializando base de datos PostgreSQL')
     
-    const sqlite3 = (await import('sqlite3')).default
-    const { open } = await import('sqlite')
-    const path = await import('path')
-    const { fileURLToPath } = await import('url')
-    
-    const __filename = fileURLToPath(import.meta.url)
-    const __dirname = path.dirname(__filename)
-    const dbPath = path.join(__dirname, 'database.sqlite')
-    
-    const db = await open({
-      filename: dbPath,
-      driver: sqlite3.Database
-    })
-    
-    // Crear tablas si no existen
-    await db.exec(`
-      CREATE TABLE IF NOT EXISTS users (
-        ID INTEGER PRIMARY KEY AUTOINCREMENT,
-        Nombre TEXT UNIQUE NOT NULL,
-        Contrasena TEXT NOT NULL
-      );
-      
-      CREATE TABLE IF NOT EXISTS books (
-        ID INTEGER PRIMARY KEY AUTOINCREMENT,
-        NumeroResolucion TEXT UNIQUE NOT NULL,
-        Fecha TEXT NOT NULL,
-        Tema TEXT NOT NULL,
-        Descripcion TEXT,
-        Archivo TEXT,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-      );
-    `)
-    
-    await db.close()
+    // La inicialización de PostgreSQL ya se maneja en db/connection.js
+    // Solo verificamos que las tablas estén creadas
+    const tables = await db.query(`
+      SELECT table_name 
+      FROM information_schema.tables 
+      WHERE table_schema = 'public'
+    `);
     
     res.json({
       success: true,
-      message: 'Base de datos inicializada exitosamente',
-      tables: ['users', 'books']
+      message: 'Base de datos PostgreSQL inicializada exitosamente',
+      tables: tables.map(t => t.table_name)
     })
     
   } catch (error) {
     console.error('❌ Error inicializando DB:', error)
     res.status(500).json({
       success: false,
-      error: 'Error inicializando base de datos',
+      error: 'Error inicializando base de datos PostgreSQL',
       message: error.message
     })
   }
@@ -373,29 +333,15 @@ app.post('/create-admin', async (req, res) => {
     const adminUsername = process.env.ADMIN_USERNAME || 'admin'
     const adminPassword = process.env.ADMIN_PASSWORD || 'admin123'
     
-    const sqlite3 = (await import('sqlite3')).default
-    const { open } = await import('sqlite')
     const bcrypt = await import('bcrypt')
-    const path = await import('path')
-    const { fileURLToPath } = await import('url')
-    
-    const __filename = fileURLToPath(import.meta.url)
-    const __dirname = path.dirname(__filename)
-    const dbPath = path.join(__dirname, 'database.sqlite')
-    
-    const db = await open({
-      filename: dbPath,
-      driver: sqlite3.Database
-    })
     
     // Verificar si el usuario ya existe
     const existingUser = await db.get(
-      'SELECT ID FROM users WHERE Nombre = ?',
+      'SELECT id FROM users WHERE nombre = $1',
       [adminUsername]
     )
     
     if (existingUser) {
-      await db.close()
       return res.json({
         success: true,
         message: 'Usuario admin ya existe',
@@ -407,12 +353,10 @@ app.post('/create-admin', async (req, res) => {
     const hashedPassword = await bcrypt.hash(adminPassword, 10)
     
     // Insertar el usuario administrador
-    await db.run(
-      'INSERT INTO users (Nombre, Contrasena) VALUES (?, ?)',
+    await db.query(
+      'INSERT INTO users (nombre, contrasena) VALUES ($1, $2)',
       [adminUsername, hashedPassword]
     )
-    
-    await db.close()
     
     res.json({
       success: true,
@@ -432,21 +376,7 @@ app.post('/create-admin', async (req, res) => {
 // Endpoint temporal para cargar datos de prueba en producción
 app.post('/load-test-data', async (req, res) => {
   try {
-    console.log('📚 Cargando datos de prueba en producción...')
-    
-    const sqlite3 = (await import('sqlite3')).default
-    const { open } = await import('sqlite')
-    const path = await import('path')
-    const { fileURLToPath } = await import('url')
-    
-    const __filename = fileURLToPath(import.meta.url)
-    const __dirname = path.dirname(__filename)
-    const dbPath = path.join(__dirname, 'database.sqlite')
-    
-    const db = await open({
-      filename: dbPath,
-      driver: sqlite3.Database
-    })
+    console.log('📚 Cargando datos de prueba en producción PostgreSQL...')
     
     // Resoluciones de prueba
     const resolucionesPrueba = [
@@ -483,7 +413,7 @@ app.post('/load-test-data', async (req, res) => {
     ]
     
     // Verificar cuántas resoluciones existen actualmente
-    const currentCount = await db.get('SELECT COUNT(*) as count FROM resolution')
+    const currentCount = await db.get('SELECT COUNT(*) as count FROM book')
     console.log(`📊 Resoluciones actuales: ${currentCount.count}`)
     
     let agregadas = 0
@@ -493,7 +423,7 @@ app.post('/load-test-data', async (req, res) => {
       try {
         // Verificar si ya existe
         const existing = await db.get(
-          'SELECT NumdeResolucion FROM resolution WHERE NumdeResolucion = ?',
+          'SELECT numeroresolucion FROM book WHERE numeroresolucion = $1',
           [resolucion.NumdeResolucion]
         )
         
@@ -503,8 +433,8 @@ app.post('/load-test-data', async (req, res) => {
         }
         
         // Insertar nueva resolución
-        await db.run(
-          'INSERT INTO resolution (NumdeResolucion, Asunto, Referencia, FechaCreacion) VALUES (?, ?, ?, ?)',
+        await db.query(
+          'INSERT INTO book (numeroresolucion, tema, descripcion, fecha) VALUES ($1, $2, $3, $4)',
           [resolucion.NumdeResolucion, resolucion.Asunto, resolucion.Referencia, resolucion.FechaCreacion]
         )
         
@@ -517,13 +447,11 @@ app.post('/load-test-data', async (req, res) => {
     }
     
     // Verificar el resultado final
-    const finalCount = await db.get('SELECT COUNT(*) as count FROM resolution')
-    
-    await db.close()
+    const finalCount = await db.get('SELECT COUNT(*) as count FROM book')
     
     res.json({
       success: true,
-      message: 'Datos de prueba cargados exitosamente',
+      message: 'Datos de prueba cargados exitosamente en PostgreSQL',
       antes: currentCount.count,
       despues: finalCount.count,
       agregadas: agregadas,
