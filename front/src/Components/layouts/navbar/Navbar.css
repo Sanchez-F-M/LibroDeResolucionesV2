@@ -1,3 +1,17 @@
 .navbar-container {
-  height: 200%;
+  height: auto;
+  min-height: 64px;
+}
+
+/* Asegurar que el navbar tenga espacio adecuado en diferentes dispositivos */
+@media (max-width: 600px) {
+  .navbar-container {
+    min-height: 56px;
+  }
+}
+
+@media (min-width: 960px) {
+  .navbar-container {
+    min-height: 72px;
+  }
 }

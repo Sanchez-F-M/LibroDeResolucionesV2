@@ -1,3 +1,15 @@
 .mb-5 {
-  gap: 100px;
+  gap: 20px;
+}
+
+@media (min-width: 768px) {
+  .mb-5 {
+    gap: 50px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .mb-5 {
+    gap: 100px;
+  }
 }
