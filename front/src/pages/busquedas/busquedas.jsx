@@ -175,7 +175,7 @@ const Busquedas = () => {
         px: { xs: 1, sm: 2, md: 3 },
         minHeight: 'calc(100vh - 200px)',
         mt: { xs: 3, sm: 4, md: 5 },
-        mb: { xs: 2, sm: 3, md: 4 }, // Reducido margen inferior
+        mb: { xs: 2, sm: 3, md: 3 }, // Reducido margen inferior
       }}
     > 
       <Card 
