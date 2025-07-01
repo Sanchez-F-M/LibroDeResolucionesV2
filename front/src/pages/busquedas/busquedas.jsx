@@ -175,7 +175,7 @@ const Busquedas = () => {
         px: { xs: 1, sm: 2, md: 3 },
         minHeight: 'calc(100vh - 200px)',
         mt: { xs: 3, sm: 4, md: 5 },
-        mb: { xs: 8, sm: 10, md: 12 }, // Margen inferior positivo para evitar solapamiento con footer
+        mb: { xs: 2, sm: 3, md: 4 }, // Reducido margen inferior
       }}
     > 
       <Card 
@@ -743,8 +743,8 @@ const Busquedas = () => {
         sx={{ 
           display: 'flex', 
           justifyContent: { xs: 'center', sm: 'flex-start' },
-          mt: { xs: 4, sm: 5, md: 6 },
-          mb: { xs: 4, sm: 6, md: 8 }, // Margen inferior adicional
+          mt: { xs: 3, sm: 4, md: 4 }, // Reducido margen superior
+          mb: { xs: 2, sm: 3, md: 3 }, // Reducido margen inferior
           pt: 2,
         }}
       >
