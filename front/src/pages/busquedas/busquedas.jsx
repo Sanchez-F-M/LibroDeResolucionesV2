@@ -72,6 +72,8 @@ const Busquedas = () => {
       // Debug de fechas
       if (response.data.length > 0) {
         console.log('🐛 Debuggeando primera resolución:');
+        console.log('🔍 Ejemplo de resolución:', response.data[0]);
+        console.log('🔍 Propiedades disponibles:', Object.keys(response.data[0]));
         debugFecha(response.data[0].fetcha_creacion, 'primera resolución');
       }
       
@@ -111,6 +113,10 @@ const Busquedas = () => {
       });
       
       console.log('📋 Resultados de búsqueda:', response.data.length);
+      if (response.data.length > 0) {
+        console.log('🔍 Ejemplo de resolución encontrada:', response.data[0]);
+        console.log('🔍 Propiedades disponibles:', Object.keys(response.data[0]));
+      }
       setResults(response.data);
       
       if (response.data.length === 0) {
@@ -362,9 +368,9 @@ const Busquedas = () => {
                           N° {resolution.NumdeResolucion}
                         </Typography>
                         <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                          <strong>Asunto:</strong> {resolution.Asunto}
+                          <strong>Asunto:</strong> {resolution.Asunto || resolution.asunto || 'No disponible'}
                         </Typography>                        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                          <strong>Referencia:</strong> {resolution.Referencia}
+                          <strong>Referencia:</strong> {resolution.Referencia || resolution.referencia || 'No disponible'}
                         </Typography>                        <Box sx={{ mb: 2 }}>
                           <Chip 
                             icon={<CalendarTodayIcon />}
@@ -446,7 +452,7 @@ const Busquedas = () => {
                                 whiteSpace: 'nowrap',
                               }}
                             >
-                              {resolution.Asunto}
+                              {resolution.Asunto || resolution.asunto || 'No disponible'}
                             </Typography>
                           </TableCell>
                           <TableCell sx={{ maxWidth: { md: '150px', lg: '200px' } }}>
@@ -458,7 +464,7 @@ const Busquedas = () => {
                                 whiteSpace: 'nowrap',
                               }}
                             >
-                              {resolution.Referencia}
+                              {resolution.Referencia || resolution.referencia || 'No disponible'}
                             </Typography>                          </TableCell>                          <TableCell>
                             <Chip 
                               icon={<CalendarTodayIcon />}
