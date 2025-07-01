@@ -171,11 +171,11 @@ const Busquedas = () => {
     <Container 
       maxWidth="xl" 
       sx={{ 
-        py: { xs: 1, sm: 2, md: 1 }, // Reducido el padding vertical
+        py: { xs: 2, sm: 3, md: 2 },
         px: { xs: 1, sm: 2, md: 3 },
-        minHeight: 'calc(100vh - 250px)', // Aumentado para alejar el navbar
-        mt: { xs: 3, sm: 4, md: 5 }, // Agregado margen superior para alejar del navbar
-        mb: { xs: 1, sm: 1.5, md: -20 }, // Reducido margen inferior para acercar al footer
+        minHeight: 'calc(100vh - 200px)',
+        mt: { xs: 3, sm: 4, md: 5 },
+        mb: { xs: 8, sm: 10, md: 12 }, // Margen inferior positivo para evitar solapamiento con footer
       }}
     > 
       <Card 
@@ -743,8 +743,9 @@ const Busquedas = () => {
         sx={{ 
           display: 'flex', 
           justifyContent: { xs: 'center', sm: 'flex-start' },
-          mt: { xs: 2, sm: 3 }, // Reducido el margen superior
-          pt: 1, // Reducido el padding superior
+          mt: { xs: 4, sm: 5, md: 6 },
+          mb: { xs: 4, sm: 6, md: 8 }, // Margen inferior adicional
+          pt: 2,
         }}
       >
         <Button
