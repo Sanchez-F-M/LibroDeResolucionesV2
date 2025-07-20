@@ -224,13 +224,20 @@ app.get('/diagnose', async (req, res) => {
         JWT_SECRET_KEY: process.env.JWT_SECRET_KEY ? 'SET' : 'NOT SET',
         FRONTEND_URL: process.env.FRONTEND_URL || 'NOT SET',
         ADMIN_USERNAME: process.env.ADMIN_USERNAME || 'NOT SET',
-        ADMIN_PASSWORD: process.env.ADMIN_PASSWORD ? 'SET' : 'NOT SET'
+        ADMIN_PASSWORD: process.env.ADMIN_PASSWORD ? 'SET' : 'NOT SET',
+        DATABASE_URL: process.env.DATABASE_URL ? 'SET' : 'NOT SET',
+        DB_HOST: process.env.DB_HOST || 'NOT SET',
+        DB_NAME: process.env.DB_NAME || 'NOT SET',
+        DB_USER: process.env.DB_USER || 'NOT SET',
+        DB_PASSWORD: process.env.DB_PASSWORD ? 'SET' : 'NOT SET',
+        DB_PORT: process.env.DB_PORT || 'NOT SET'
       },
       database: {
         status: 'unknown',
         tables: [],
         users: 0,
-        books: 0
+        books: 0,
+        connectionType: process.env.DATABASE_URL ? 'DATABASE_URL' : 'Individual Variables'
       },
       recommendations: []
     }
@@ -370,6 +377,56 @@ app.post('/create-admin', async (req, res) => {
       success: false,
       error: 'Error creando admin',
       message: error.message
+    })
+  }
+})
+
+// Endpoint para probar conectividad básica de PostgreSQL
+app.get('/test-db', async (req, res) => {
+  try {
+    console.log('🔧 Probando conectividad básica de PostgreSQL')
+    
+    // Importar directamente el pool para prueba básica
+    const { Pool } = await import('pg')
+    
+    let testPool
+    if (process.env.DATABASE_URL) {
+      testPool = new Pool({
+        connectionString: process.env.DATABASE_URL,
+        ssl: { rejectUnauthorized: false }
+      })
+    } else {
+      testPool = new Pool({
+        user: process.env.DB_USER || 'postgres',
+        host: process.env.DB_HOST || 'localhost',
+        database: process.env.DB_NAME || 'libro_resoluciones',
+        password: process.env.DB_PASSWORD || 'admin123',
+        port: parseInt(process.env.DB_PORT) || 5432,
+        ssl: { rejectUnauthorized: false }
+      })
+    }
+    
+    // Probar conexión básica
+    const client = await testPool.connect()
+    const result = await client.query('SELECT NOW() as current_time, version() as postgres_version')
+    client.release()
+    await testPool.end()
+    
+    res.json({
+      success: true,
+      message: 'Conectividad PostgreSQL exitosa',
+      serverTime: result.rows[0].current_time,
+      postgresVersion: result.rows[0].postgres_version.split(' ')[0],
+      connectionType: process.env.DATABASE_URL ? 'DATABASE_URL' : 'Individual Variables'
+    })
+    
+  } catch (error) {
+    console.error('❌ Error en test de conectividad:', error)
+    res.status(500).json({
+      success: false,
+      error: 'Error de conectividad PostgreSQL',
+      message: error.message,
+      code: error.code
     })
   }
 })
