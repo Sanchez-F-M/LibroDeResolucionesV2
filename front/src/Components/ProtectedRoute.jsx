@@ -6,6 +6,10 @@ import { Box, CircularProgress, Typography } from '@mui/material';
 const ProtectedRoute = ({ children, requiredRole, requireAuth = true }) => {
   const { isAuthenticated, user, loading, hasRole } = useAuth();
 
+  // TEMPORAL: Para desarrollo - deshabilitar protección
+  // Comentar estas líneas para volver a habilitar protección
+  return children;
+
   if (loading) {
     return (
       <Box 

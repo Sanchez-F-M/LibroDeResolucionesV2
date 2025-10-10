@@ -2,15 +2,32 @@
 
 Sistema de gestión de resoluciones con funcionalidades completas de autenticación, búsqueda e integración con Cloudinary.
 
-## 🚀 Tecnologías
+## � NUEVO: Sistema de Enlaces Móviles
+
+Esta aplicación ahora funciona **SOLO en red local** con control de acceso mediante enlaces temporales para dispositivos móviles.
+
+**📱 Inicio Rápido:** Ver [INICIO_RAPIDO_ENLACES.md](./INICIO_RAPIDO_ENLACES.md)
+
+**📖 Guía Completa:** Ver [GUIA_ENLACES_MOVILES.md](./GUIA_ENLACES_MOVILES.md)
+
+### Características:
+
+- ✅ Acceso solo desde red local (máxima seguridad)
+- ✅ Genera enlaces temporales con expiración configurable
+- ✅ Revoca acceso en cualquier momento
+- ✅ Interfaz de administración integrada
+
+## �🚀 Tecnologías
 
 ### Backend
+
 - **Node.js** + **Express.js**
 - **PostgreSQL** (Base de datos)
 - **JWT** (Autenticación)
 - **Cloudinary** (Gestión de imágenes)
 
 ### Frontend
+
 - **React** + **Vite**
 - **React Router** (Navegación)
 - **Axios** (Cliente HTTP)
@@ -35,17 +52,20 @@ LibroDeResolucionesV2/
 ## 🛠️ Instalación y Configuración
 
 ### Prerrequisitos
+
 - Node.js (v18+)
 - PostgreSQL
 - Cuenta de Cloudinary
 
 ### 1. Clonar el repositorio
+
 ```bash
 git clone <repository-url>
 cd LibroDeResolucionesV2
 ```
 
 ### 2. Instalar dependencias
+
 ```bash
 # Instalar dependencias del proyecto principal
 npm install
@@ -62,6 +82,7 @@ npm install
 ### 3. Configurar variables de entorno
 
 #### Backend (`server/.env`)
+
 ```env
 NODE_ENV=production
 PORT=10000
@@ -74,6 +95,7 @@ FRONTEND_URL=https://your-frontend-url.com
 ```
 
 #### Frontend (`front/.env.production`)
+
 ```env
 VITE_API_URL=https://your-backend-url.com
 ```
@@ -81,11 +103,13 @@ VITE_API_URL=https://your-backend-url.com
 ## 🚀 Despliegue
 
 ### Backend (Render)
+
 1. Conectar repositorio en Render
 2. Configurar variables de entorno
 3. Desplegar automáticamente
 
 ### Frontend (Vercel)
+
 1. Conectar repositorio en Vercel
 2. Configurar variables de entorno
 3. Desplegar automáticamente
@@ -113,6 +137,7 @@ VITE_API_URL=https://your-backend-url.com
 ## 📊 Estado del Sistema
 
 ✅ **Sistema completamente funcional**
+
 - Backend: Operativo en Render
 - Frontend: Desplegado en Vercel
 - Base de datos: PostgreSQL conectada
