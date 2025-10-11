@@ -14,12 +14,13 @@ import {
   Avatar,
   Chip,
 } from '@mui/material';
-import { 
-  Brightness4, 
-  Brightness7, 
-  AccountCircle, 
+import {
+  Brightness4,
+  Brightness7,
+  AccountCircle,
   Logout,
-  Person
+  Person,
+  Link as LinkIcon,
 } from '@mui/icons-material';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
@@ -32,11 +33,11 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { isAuthenticated, user, logout } = useAuth();
-  
+
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
-  const handleMenuClick = (event) => {
+  const handleMenuClick = event => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -50,21 +51,29 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
     handleMenuClose();
   };
 
-  const getRoleColor = (role) => {
+  const getRoleColor = role => {
     switch (role) {
-      case 'admin': return 'error';
-      case 'secretaria': return 'warning';
-      case 'usuario': return 'info';
-      default: return 'default';
+      case 'admin':
+        return 'error';
+      case 'secretaria':
+        return 'warning';
+      case 'usuario':
+        return 'info';
+      default:
+        return 'default';
     }
   };
 
-  const getRoleText = (role) => {
+  const getRoleText = role => {
     switch (role) {
-      case 'admin': return 'Administrador';
-      case 'secretaria': return 'Secretaría';
-      case 'usuario': return 'Usuario';
-      default: return role;
+      case 'admin':
+        return 'Administrador';
+      case 'secretaria':
+        return 'Secretaría';
+      case 'usuario':
+        return 'Usuario';
+      default:
+        return role;
     }
   };
 
@@ -80,7 +89,7 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
       }}
     >
       <Container maxWidth="xl">
-        <Toolbar 
+        <Toolbar
           sx={{
             height: '100%',
             padding: { xs: '0 8px', sm: '0 16px' },
@@ -97,9 +106,9 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
             }}
           >
             {/* Logo Section */}
-            <Box 
-              sx={{ 
-                display: 'flex', 
+            <Box
+              sx={{
+                display: 'flex',
                 alignItems: 'center',
                 minWidth: { xs: 60, sm: 80, md: 120 },
               }}
@@ -115,7 +124,10 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
                   }}
                 />
               ) : (
-                <Link to="/home" style={{ display: 'flex', alignItems: 'center' }}>
+                <Link
+                  to="/home"
+                  style={{ display: 'flex', alignItems: 'center' }}
+                >
                   <img
                     src={Logo}
                     alt="Logo"
@@ -128,17 +140,16 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
                 </Link>
               )}
             </Box>
-
             {/* Title Section */}
-            <Box 
-              sx={{ 
+            <Box
+              sx={{
                 flex: 1,
                 display: 'flex',
                 justifyContent: 'center',
                 px: { xs: 1, sm: 2 },
               }}
             >
-              <Typography 
+              <Typography
                 variant={isMobile ? 'h6' : isTablet ? 'h4' : 'h2'}
                 sx={{
                   fontWeight: 'bold',
@@ -157,9 +168,10 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
               >
                 {isMobile ? 'Resoluciones' : 'Libro de Resoluciones'}
               </Typography>
-            </Box>            {/* Right Section - User Menu and Dark Mode Toggle */}
-            <Box 
-              sx={{ 
+            </Box>{' '}
+            {/* Right Section - User Menu and Dark Mode Toggle */}
+            <Box
+              sx={{
                 display: 'flex',
                 justifyContent: 'flex-end',
                 alignItems: 'center',
@@ -170,25 +182,41 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
               {isAuthenticated && user && (
                 <>
                   {!isMobile && (
-                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', mr: 1 }}>
-                      <Typography variant="body2" sx={{ fontWeight: 'bold', fontSize: '0.8rem' }}>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'flex-end',
+                        mr: 1,
+                      }}
+                    >
+                      <Typography
+                        variant="body2"
+                        sx={{ fontWeight: 'bold', fontSize: '0.8rem' }}
+                      >
                         {user.name}
                       </Typography>
-                      <Chip 
-                        label={getRoleText(user.role)} 
+                      <Chip
+                        label={getRoleText(user.role)}
                         color={getRoleColor(user.role)}
                         size="small"
                         sx={{ height: 18, fontSize: '0.7rem' }}
                       />
                     </Box>
                   )}
-                  
-                  <IconButton 
+
+                  <IconButton
                     onClick={handleMenuClick}
                     color="inherit"
                     size="small"
                   >
-                    <Avatar sx={{ width: 28, height: 28, bgcolor: 'rgba(255,255,255,0.2)' }}>
+                    <Avatar
+                      sx={{
+                        width: 28,
+                        height: 28,
+                        bgcolor: 'rgba(255,255,255,0.2)',
+                      }}
+                    >
                       <Person fontSize="small" />
                     </Avatar>
                   </IconButton>
@@ -202,12 +230,21 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
                   >
                     {isMobile && (
                       <MenuItem disabled>
-                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                          <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <Typography
+                            variant="body2"
+                            sx={{ fontWeight: 'bold' }}
+                          >
                             {user.name}
                           </Typography>
-                          <Chip 
-                            label={getRoleText(user.role)} 
+                          <Chip
+                            label={getRoleText(user.role)}
                             color={getRoleColor(user.role)}
                             size="small"
                             sx={{ mt: 0.5 }}
@@ -215,6 +252,15 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
                         </Box>
                       </MenuItem>
                     )}
+                    <MenuItem
+                      onClick={() => {
+                        navigate('/admin/enlaces');
+                        handleMenuClose();
+                      }}
+                    >
+                      <LinkIcon fontSize="small" sx={{ mr: 1 }} />
+                      Enlaces Móviles
+                    </MenuItem>
                     <MenuItem onClick={handleLogout}>
                       <Logout fontSize="small" sx={{ mr: 1 }} />
                       Cerrar Sesión
@@ -222,9 +268,9 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
                   </Menu>
                 </>
               )}
-              
-              <IconButton 
-                onClick={toggleDarkMode} 
+
+              <IconButton
+                onClick={toggleDarkMode}
                 color="inherit"
                 size={isMobile ? 'small' : 'medium'}
                 sx={{
