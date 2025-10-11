@@ -1,8 +1,13 @@
-# Base de datos SQLite
+# Base de datos local (archivos SQLite antiguos si existieran)
 *.sqlite
 *.sqlite3
 *.db
 database.sqlite
+
+# Backups de PostgreSQL
+*.sql
+*.dump
+*.backup
 
 # Logs
 logs
