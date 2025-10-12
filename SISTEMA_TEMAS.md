@@ -3,22 +3,26 @@
 ## ✨ Características Implementadas
 
 ### 1. Tema Dinámico con Material-UI
+
 - **Función `createAppTheme(darkMode)`** en `themeConfig.js`
   - Crea temas completamente configurados basados en el parámetro `darkMode`
   - Paleta de colores adaptada para modo oscuro y claro
   - Transiciones suaves entre temas
 
 ### 2. Gestión de Estado en App.jsx
+
 - Estado `darkMode` centralizado en el componente raíz
 - Hook `useMemo` para regenerar el tema solo cuando cambia `darkMode`
 - Función `toggleDarkMode()` para alternar entre temas
 
 ### 3. Persistencia de Preferencia
+
 - **localStorage**: guarda la preferencia del usuario
 - **Detección del sistema**: lee la preferencia del SO si no hay guardada
 - La preferencia se mantiene entre sesiones
 
 ### 4. Aplicación Global
+
 - `ThemeProvider` de MUI aplicado a nivel raíz
 - Todos los componentes MUI responden automáticamente
 - `CssBaseline` aplica estilos base según el tema
@@ -26,6 +30,7 @@
 ## 🎨 Configuración de Colores
 
 ### Modo Claro
+
 ```javascript
 palette: {
   mode: 'light',
@@ -36,6 +41,7 @@ palette: {
 ```
 
 ### Modo Oscuro
+
 ```javascript
 palette: {
   mode: 'dark',
@@ -48,12 +54,14 @@ palette: {
 ## 🔧 Archivos Modificados
 
 ### 1. `themeConfig.js`
+
 - ✅ Creada función `createAppTheme(darkMode)`
 - ✅ Configuración completa de paleta para ambos modos
 - ✅ Transiciones CSS en componentes MUI
 - ✅ Exportación de `customTheme` por compatibilidad
 
 ### 2. `App.jsx`
+
 - ✅ Estado `darkMode` con carga desde localStorage
 - ✅ Detección de preferencia del sistema operativo
 - ✅ Tema dinámico con `useMemo`
@@ -61,10 +69,12 @@ palette: {
 - ✅ ThemeProvider con tema dinámico
 
 ### 3. `main.jsx`
+
 - ✅ Eliminado ThemeProvider duplicado
 - ✅ Simplificado a render básico de `<App />`
 
 ### 4. `Login.jsx`
+
 - ✅ Detecta `theme.palette.mode` para determinar tema actual
 - ✅ Gradiente de fondo adaptativo (más oscuro en dark mode)
 - ✅ Paper del formulario con colores dinámicos
@@ -74,11 +84,13 @@ palette: {
 ## 🚀 Cómo Funciona
 
 1. **Inicio de la App**:
+
    - App.jsx carga preferencia desde localStorage o detecta la del sistema
    - Crea el tema con `createAppTheme(darkMode)`
    - Envuelve toda la app con `ThemeProvider`
 
 2. **Usuario presiona botón toggle**:
+
    - Se ejecuta `toggleDarkMode()`
    - Cambia el estado `darkMode`
    - React regenera el tema con `useMemo`
@@ -96,6 +108,7 @@ palette: {
 Para verificar que funciona:
 
 1. **Iniciar el frontend**:
+
    ```bash
    cd front
    npm run dev
@@ -112,12 +125,14 @@ Para verificar que funciona:
 ## 🎯 Componentes Afectados
 
 ### Automáticamente (via MUI ThemeProvider):
+
 - ✅ Todos los componentes Material-UI (Button, Paper, TextField, etc.)
 - ✅ Backgrounds y colores de texto
 - ✅ Sombras y elevaciones
 - ✅ Borders y dividers
 
 ### Manualmente configurados con detección de tema:
+
 - ✅ Navbar (usa gradientes con darkMode prop)
 - ✅ Footer (usa gradientes con darkMode prop)
 - ✅ Login (detecta `theme.palette.mode` y adapta gradientes, Paper, inputs)
@@ -139,12 +154,13 @@ Si el tema no cambia en algún componente:
 3. Verificar que no haya ThemeProvider anidado sobreescribiendo
 
 Ejemplo correcto:
+
 ```jsx
 const MyComponent = () => {
   const theme = useTheme();
-  
+
   return (
-    <Box sx={{ 
+    <Box sx={{
       bgcolor: 'background.paper',  // ✅ Usa token de tema
       color: 'text.primary'          // ✅ Usa token de tema
     }}>
@@ -157,6 +173,7 @@ const MyComponent = () => {
 ## ✨ Resultado Final
 
 Ahora el botón de toggle oscuro/claro en el Navbar:
+
 - ✅ Cambia el tema en TODA la aplicación
 - ✅ Afecta todos los componentes MUI
 - ✅ Se guarda la preferencia del usuario
