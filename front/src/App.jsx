@@ -13,7 +13,7 @@ import {
   useTheme,
   Box,
 } from '@mui/material';
-import { customTheme } from './themeConfig';
+import { createAppTheme } from './themeConfig';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './Components/ProtectedRoute';
 import Navbar from './Components/layouts/navbar/Navbar';
@@ -29,7 +29,23 @@ import DiagnosticoApp from './pages/Diagnostico/DiagnosticoApp';
 import AdminEnlaces from './pages/AdminEnlaces/AdminEnlaces';
 
 const App = () => {
-  const [darkMode, setDarkMode] = useState(false);
+  // ✨ Cargar preferencia de tema desde localStorage o usar el del sistema
+  const [darkMode, setDarkMode] = useState(() => {
+    const saved = localStorage.getItem('darkMode');
+    if (saved !== null) {
+      return JSON.parse(saved);
+    }
+    // Detectar preferencia del sistema operativo
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  });
+
+  // ✨ Crear tema dinámicamente basado en darkMode
+  const theme = React.useMemo(() => createAppTheme(darkMode), [darkMode]);
+
+  // ✨ Guardar preferencia cuando cambie
+  useEffect(() => {
+    localStorage.setItem('darkMode', JSON.stringify(darkMode));
+  }, [darkMode]);
 
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
@@ -51,7 +67,7 @@ const App = () => {
     return null;
   };
   return (
-    <ThemeProvider theme={customTheme}>
+    <ThemeProvider theme={theme}>
       <CssBaseline />
       <AuthProvider>
         <BrowserRouter>
