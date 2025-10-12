@@ -7,10 +7,12 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import crypto from 'crypto';
 import os from 'os';
+import cron from 'node-cron';
 
 import routes from './src/routes/routes.js';
 import { validateEnvironment } from './config/validateEnv.js';
 import db from './db/connection.js';
+import yearResetService from './services/YearResetService.js';
 
 // Validar variables de entorno al inicio
 validateEnvironment();
@@ -807,7 +809,7 @@ app.use('*', (req, res) => {
 const PORT = process.env.PORT || 3000;
 
 // Iniciar servidor
-app.listen(PORT, '0.0.0.0', () => {
+app.listen(PORT, '0.0.0.0', async () => {
   console.log('🚀 ========================================');
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`🚀 Environment: ${process.env.NODE_ENV || 'development'}`);
@@ -815,6 +817,32 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log('🚀 Health check: / and /health');
   console.log('🚀 API endpoints: /api/*');
   console.log('🚀 ========================================');
+
+  // Inicializar servicio de reset anual
+  try {
+    await yearResetService.initialize();
+  } catch (error) {
+    console.error('❌ Error inicializando YearResetService:', error);
+  }
+
+  // Configurar job scheduler para verificación diaria de reset anual
+  // Se ejecuta todos los días a las 00:01 AM (zona horaria configurada)
+  cron.schedule(
+    '1 0 * * *',
+    async () => {
+      console.log('\n⏰ Ejecutando verificación programada de reset anual...');
+      try {
+        await yearResetService.periodicCheck();
+      } catch (error) {
+        console.error('❌ Error en verificación programada:', error);
+      }
+    },
+    {
+      timezone: process.env.TIMEZONE || 'America/Argentina/Buenos_Aires',
+    }
+  );
+
+  console.log('📅 Job scheduler de reset anual configurado (00:01 AM diario)');
 });
 
 // Manejo de errores no capturados

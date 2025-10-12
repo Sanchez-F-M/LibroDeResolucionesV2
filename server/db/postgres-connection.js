@@ -14,7 +14,10 @@ if (process.env.DATABASE_URL) {
   // Usar DATABASE_URL directamente (recomendado para Render)
   poolConfig = {
     connectionString: process.env.DATABASE_URL,
-    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+    ssl:
+      process.env.NODE_ENV === 'production'
+        ? { rejectUnauthorized: false }
+        : false,
     max: 20,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 2000,
@@ -27,8 +30,13 @@ if (process.env.DATABASE_URL) {
     host: process.env.DB_HOST || 'localhost',
     database: process.env.DB_NAME || 'libro_resoluciones',
     password: process.env.DB_PASSWORD || 'admin123',
-    port: parseInt(process.env.DB_PORT) || (process.env.NODE_ENV === 'production' ? 5432 : 5433),
-    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+    port:
+      parseInt(process.env.DB_PORT) ||
+      (process.env.NODE_ENV === 'production' ? 5432 : 5433),
+    ssl:
+      process.env.NODE_ENV === 'production'
+        ? { rejectUnauthorized: false }
+        : false,
     max: 20,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 2000,
@@ -45,21 +53,21 @@ console.log('🏁 PostgreSQL Pool configurado:', {
   host: poolConfig.host || 'DATABASE_URL',
   database: poolConfig.database || 'en DATABASE_URL',
   ssl: !!poolConfig.ssl,
-  environment: process.env.NODE_ENV
+  environment: process.env.NODE_ENV,
 });
 
 // Manejo de errores del pool
-pool.on('error', (err) => {
+pool.on('error', err => {
   console.error('❌ Error inesperado en pool PostgreSQL:', err);
 });
 
 // Función para inicializar la base de datos
 async function initDatabase() {
   const client = await pool.connect();
-  
+
   try {
     console.log('🔄 Inicializando base de datos PostgreSQL...');
-    
+
     // Crear tabla de resoluciones
     await client.query(`
       CREATE TABLE IF NOT EXISTS resolution (
@@ -77,11 +85,11 @@ async function initDatabase() {
     await client.query(`
       CREATE INDEX IF NOT EXISTS idx_resolution_numero ON resolution("NumdeResolucion");
     `);
-    
+
     await client.query(`
       CREATE INDEX IF NOT EXISTS idx_resolution_fecha ON resolution("FechaCreacion");
     `);
-    
+
     await client.query(`
       CREATE INDEX IF NOT EXISTS idx_resolution_asunto ON resolution("Asunto");
     `);
@@ -100,7 +108,43 @@ async function initDatabase() {
     // Crear índice para imágenes
     await client.query(`
       CREATE INDEX IF NOT EXISTS idx_images_resolucion ON images("NumdeResolucion");
-    `);    // Crear tabla de usuarios
+    `);
+
+    // Crear función para extraer el año del número de resolución
+    await client.query(`
+      CREATE OR REPLACE FUNCTION get_resolution_year(resolution_number VARCHAR) 
+      RETURNS INTEGER AS $$
+      BEGIN
+        -- Formato: "NNN-YYYY" -> extraer YYYY
+        IF resolution_number ~ '^[0-9]+-[0-9]{4}$' THEN
+          RETURN CAST(SUBSTRING(resolution_number FROM '[0-9]{4}$') AS INTEGER);
+        END IF;
+        
+        -- Formato: "RES-NNN-YYYY" -> extraer YYYY
+        IF resolution_number ~ '^RES-[0-9]+-[0-9]{4}$' THEN
+          RETURN CAST(SUBSTRING(resolution_number FROM '[0-9]{4}$') AS INTEGER);
+        END IF;
+        
+        -- Formato: "YYYYNNN" (7 dígitos) -> extraer YYYY
+        IF resolution_number ~ '^[0-9]{7}$' THEN
+          RETURN CAST(SUBSTRING(resolution_number FROM 1 FOR 4) AS INTEGER);
+        END IF;
+        
+        -- Formato sin año
+        RETURN NULL;
+      END;
+      $$ LANGUAGE plpgsql IMMUTABLE;
+    `);
+
+    // Crear índice funcional basado en el año extraído
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_resolution_year 
+      ON resolution(get_resolution_year("NumdeResolucion"));
+    `);
+
+    console.log('✅ Funciones SQL y índices para año creados');
+
+    // Crear tabla de usuarios
     await client.query(`
       CREATE TABLE IF NOT EXISTS users (
         "ID" SERIAL PRIMARY KEY,
@@ -124,11 +168,14 @@ async function initDatabase() {
     // Crear índice para usuarios
     await client.query(`
       CREATE INDEX IF NOT EXISTS idx_users_nombre ON users("Nombre");
-    `);    console.log('✅ Tablas PostgreSQL creadas exitosamente');
+    `);
+    console.log('✅ Tablas PostgreSQL creadas exitosamente');
     return dbProxy;
-    
   } catch (error) {
-    console.error('❌ Error al inicializar la base de datos PostgreSQL:', error);
+    console.error(
+      '❌ Error al inicializar la base de datos PostgreSQL:',
+      error
+    );
     throw error;
   } finally {
     client.release();
@@ -182,7 +229,7 @@ const dbProxy = {
       const result = await client.query(query, params);
       return {
         changes: result.rowCount,
-        lastInsertRowid: result.rows[0]?.id || null
+        lastInsertRowid: result.rows[0]?.id || null,
       };
     } finally {
       client.release();
@@ -195,13 +242,13 @@ const dbProxy = {
     try {
       await client.query('BEGIN');
       const queries = query.split(';').filter(q => q.trim());
-      
+
       for (const q of queries) {
         if (q.trim()) {
           await client.query(q);
         }
       }
-      
+
       await client.query('COMMIT');
       return { changes: 1 };
     } catch (error) {
@@ -215,7 +262,7 @@ const dbProxy = {
   // Obtener el pool directamente para operaciones más complejas
   getPool() {
     return pool;
-  }
+  },
 };
 
 // Verificar conexión al inicializar
@@ -223,7 +270,7 @@ pool.on('connect', () => {
   console.log('✅ Nueva conexión establecida con PostgreSQL');
 });
 
-pool.on('error', (err) => {
+pool.on('error', err => {
   console.error('❌ Error inesperado en el pool de PostgreSQL:', err);
   process.exit(-1);
 });
