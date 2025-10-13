@@ -148,8 +148,11 @@ const Login = () => {
   return (
     <Box
       sx={{
-        minHeight: '100vh',
+        // ✨ Ajustado para ocupar el espacio disponible sin agregar altura extra
         display: 'flex',
+        mt: { xs: -11.5, sm: -17, md: -17 },
+        mb: { xs: -6.5, sm: -7.5, md: -7.5 },
+        height: 1000,
         position: 'relative',
         overflow: 'hidden',
         // ✨ Gradiente adaptativo según modo oscuro/claro
@@ -178,7 +181,8 @@ const Login = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          py: { xs: 4, sm: 6 },
+          // ✨ Reducido padding vertical al mínimo
+          py: { xs: 2, sm: 2.5, md: 3 },
           px: { xs: 2, sm: 3 },
           position: 'relative',
           zIndex: 1,
