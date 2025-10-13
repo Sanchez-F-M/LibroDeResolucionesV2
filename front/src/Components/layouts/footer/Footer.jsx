@@ -349,7 +349,8 @@ const Footer = ({ darkMode }) => {
                 fontStyle: 'italic',
               }}
             >
-              Uso exclusivo institucional - Todos los derechos reservados
+              Uso exclusivo institucional - SANZTECH - Todos los derechos
+              reservados
             </Typography>
           </Stack>
 
