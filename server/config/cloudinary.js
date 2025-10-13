@@ -1,6 +1,12 @@
 import { v2 as cloudinary } from 'cloudinary'
 import { CloudinaryStorage } from 'multer-storage-cloudinary'
 import multer from 'multer'
+import fs from 'fs'
+import path from 'path'
+import { fileURLToPath } from 'url'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 // Configuración de Cloudinary
 cloudinary.config({
@@ -46,13 +52,30 @@ export const uploadToCloudinary = multer({
   }
 })
 
+// Crear directorio uploads si no existe
+const uploadsDir = path.join(__dirname, '..', 'uploads')
+if (!fs.existsSync(uploadsDir)) {
+  try {
+    fs.mkdirSync(uploadsDir, { recursive: true })
+    console.log('📁 Directorio uploads/ creado automáticamente')
+  } catch (error) {
+    console.error('❌ Error creando directorio uploads:', error)
+  }
+}
+
 // Configuración de multer local (fallback para desarrollo)
 const localStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/')
+    // Asegurar que el directorio existe antes de guardar
+    if (!fs.existsSync(uploadsDir)) {
+      fs.mkdirSync(uploadsDir, { recursive: true })
+    }
+    cb(null, uploadsDir)
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + '-' + file.originalname)
+    // Sanitizar el nombre del archivo
+    const sanitizedName = file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_')
+    cb(null, Date.now() + '-' + sanitizedName)
   }
 })
 

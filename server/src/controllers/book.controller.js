@@ -1,6 +1,7 @@
 import db from '../../db/connection.js';
 import { getImageUrl } from '../../config/cloudinary.js';
 import yearResetService from '../../services/YearResetService.js';
+import path from 'path';
 
 export const getByIdBook = async (req, res) => {
   const { id } = req.params;
@@ -163,18 +164,24 @@ export const createBook = async (req, res) => {
       // Determinar la ruta de la imagen según si viene de Cloudinary o almacenamiento local
       let imagePath;
 
-      if (file.path) {
-        // Cloudinary: usar la URL completa
+      if (file.path && (file.path.startsWith('http://') || file.path.startsWith('https://'))) {
+        // Cloudinary: usar la URL completa (solo si es una URL válida)
         imagePath = file.path;
+        console.log(`☁️ Guardando imagen de Cloudinary: ${imagePath}`);
       } else if (file.filename) {
-        // Almacenamiento local: usar el path relativo
+        // Almacenamiento local: usar solo el nombre del archivo (no el path completo)
         imagePath = `uploads/${file.filename}`;
+        console.log(`💾 Guardando imagen local: ${imagePath}`);
+      } else if (file.path) {
+        // Path local: extraer solo el nombre del archivo
+        const fileName = path.basename(file.path);
+        imagePath = `uploads/${fileName}`;
+        console.log(`💾 Guardando imagen local (desde path): ${imagePath}`);
       } else {
         // Fallback: usar el path original
         imagePath = file.originalname;
+        console.log(`⚠️ Usando nombre original como fallback: ${imagePath}`);
       }
-
-      console.log(`📁 Guardando imagen: ${imagePath}`);
 
       await client.query(
         'INSERT INTO images ("NumdeResolucion", "ImagePath") VALUES ($1, $2)',
