@@ -164,7 +164,10 @@ export const createBook = async (req, res) => {
       // Determinar la ruta de la imagen según si viene de Cloudinary o almacenamiento local
       let imagePath;
 
-      if (file.path && (file.path.startsWith('http://') || file.path.startsWith('https://'))) {
+      if (
+        file.path &&
+        (file.path.startsWith('http://') || file.path.startsWith('https://'))
+      ) {
         // Cloudinary: usar la URL completa (solo si es una URL válida)
         imagePath = file.path;
         console.log(`☁️ Guardando imagen de Cloudinary: ${imagePath}`);
