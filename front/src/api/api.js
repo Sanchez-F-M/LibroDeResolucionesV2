@@ -1,10 +1,15 @@
 import axios from 'axios';
 
 // Configuración de la URL base con fallback
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+// Prioridad: VITE_API_URL (para red local) > VITE_API_BASE_URL > localhost
+const BASE_URL =
+  import.meta.env.VITE_API_URL ||
+  import.meta.env.VITE_API_BASE_URL ||
+  `${window.location.protocol}//${window.location.hostname}:3000`;
 
 console.log('🔧 API configurada con baseURL:', BASE_URL);
 console.log('🔧 Entorno:', import.meta.env.MODE || 'development');
+console.log('🔧 Hostname:', window.location.hostname);
 
 // Crear instancia de axios con configuración mejorada
 const api = axios.create({

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Card,
@@ -19,6 +19,11 @@ import {
   DialogActions,
   Grid,
   Paper,
+  Divider,
+  Snackbar,
+  AlertTitle,
+  useTheme,
+  useMediaQuery,
 } from '@mui/material';
 import {
   PhoneAndroid,
@@ -29,10 +34,17 @@ import {
   QrCode2,
   CheckCircle,
   Cancel,
+  Warning,
+  Info,
+  OpenInNew,
+  SmartphoneOutlined,
 } from '@mui/icons-material';
 import api from '../../api/api';
 
 const AdminEnlaces = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState(null);
   const [mobileLinks, setMobileLinks] = useState([]);
@@ -40,57 +52,129 @@ const AdminEnlaces = () => {
   const [message, setMessage] = useState({ type: '', text: '' });
   const [showQRDialog, setShowQRDialog] = useState(false);
   const [selectedLink, setSelectedLink] = useState('');
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'info',
+  });
 
-  // Cargar estado al montar
+  // ✅ Cargar estado al montar
   useEffect(() => {
     loadStatus();
   }, []);
 
-  // Cargar estado del acceso móvil
-  const loadStatus = async () => {
+  // ✅ Cargar estado del acceso móvil (MEJORADO)
+  const loadStatus = useCallback(async () => {
     try {
       setLoading(true);
+      console.log('🔄 Cargando estado del acceso móvil...');
+
       const response = await api.get('/admin/mobile-access/status');
+      console.log('✅ Estado recibido:', response.data);
+
       setStatus(response.data);
+
+      // Si hay token activo, regenerar los enlaces para visualización
+      if (
+        response.data.enabled &&
+        response.data.hasToken &&
+        response.data.localIPs
+      ) {
+        const frontendPort = window.location.port || '5173'; // Usar el puerto actual del frontend
+        const links = response.data.localIPs.map(ip => ({
+          ip,
+          url: `http://${ip}:${frontendPort}?token=***`, // Ocultamos el token por seguridad
+          fullUrl: `http://${ip}:${frontendPort}`, // URL base para testing
+        }));
+        setMobileLinks(links);
+        console.log('📱 Enlaces regenerados:', links.length);
+      } else {
+        setMobileLinks([]);
+      }
+
       setMessage({ type: '', text: '' });
     } catch (error) {
-      console.error('Error cargando estado:', error);
+      console.error('❌ Error cargando estado:', error);
+      const errorMsg =
+        error.response?.data?.message || error.message || 'Error desconocido';
       setMessage({
         type: 'error',
-        text: 'Error al cargar el estado del acceso móvil',
+        text: `Error al cargar el estado: ${errorMsg}`,
+      });
+      setSnackbar({
+        open: true,
+        message: `Error: ${errorMsg}`,
+        severity: 'error',
       });
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  // Generar nuevo enlace
+  // ✅ Generar nuevo enlace (MEJORADO CON VALIDACIONES)
   const handleGenerate = async () => {
+    // Validar input
+    const hours = parseInt(expiryHours);
+    if (isNaN(hours) || hours < 1 || hours > 168) {
+      setSnackbar({
+        open: true,
+        message: '⚠️ Las horas deben estar entre 1 y 168',
+        severity: 'warning',
+      });
+      return;
+    }
+
     try {
       setLoading(true);
+      console.log('🔄 Generando nuevo enlace...');
+
       const response = await api.post('/admin/mobile-access/generate', {
-        expiryHours: parseInt(expiryHours),
+        expiryHours: hours,
       });
 
+      console.log('✅ Respuesta del servidor:', response.data);
+
       if (response.data.success) {
-        setMobileLinks(response.data.links);
+        // Actualizar enlaces con el token real
+        const linksWithToken = response.data.links.map(link => ({
+          ...link,
+          url: link.url, // Ya viene con el token
+        }));
+
+        setMobileLinks(linksWithToken);
+
         setStatus({
           enabled: true,
           hasToken: true,
           expiresAt: response.data.expiresAt,
           isExpired: false,
           localIPs: response.data.links.map(l => l.ip),
+          port: window.location.port || '5173', // Usar puerto actual
         });
+
         setMessage({
           type: 'success',
-          text: `✅ Enlace generado exitosamente. Expira en ${expiryHours} horas.`,
+          text: `✅ ${linksWithToken.length} enlace(s) generado(s) exitosamente. Expira en ${hours} horas.`,
+        });
+
+        setSnackbar({
+          open: true,
+          message: `🎉 Enlaces listos para compartir!`,
+          severity: 'success',
         });
       }
     } catch (error) {
-      console.error('Error generando enlace:', error);
+      console.error('❌ Error generando enlace:', error);
+      const errorMsg =
+        error.response?.data?.message || error.message || 'Error desconocido';
       setMessage({
         type: 'error',
-        text: 'Error al generar el enlace móvil',
+        text: `❌ Error: ${errorMsg}`,
+      });
+      setSnackbar({
+        open: true,
+        message: `Error generando enlaces: ${errorMsg}`,
+        severity: 'error',
       });
     } finally {
       setLoading(false);
@@ -136,44 +220,72 @@ const AdminEnlaces = () => {
     }
   };
 
-  // Copiar enlace al portapapeles
-  const handleCopy = url => {
-    navigator.clipboard.writeText(url);
-    setMessage({
-      type: 'success',
-      text: '📋 Enlace copiado al portapapeles',
-    });
-  };
+  // ✅ Copiar enlace al portapapeles (MEJORADO)
+  const handleCopy = useCallback(url => {
+    navigator.clipboard
+      .writeText(url)
+      .then(() => {
+        setSnackbar({
+          open: true,
+          message: '📋 Enlace copiado al portapapeles',
+          severity: 'success',
+        });
+      })
+      .catch(err => {
+        console.error('Error copiando:', err);
+        setSnackbar({
+          open: true,
+          message: '❌ Error al copiar',
+          severity: 'error',
+        });
+      });
+  }, []);
 
-  // Mostrar QR (placeholder - requiere librería adicional)
+  // ✅ Mostrar QR
   const handleShowQR = url => {
     setSelectedLink(url);
     setShowQRDialog(true);
   };
 
-  // Formatear fecha de expiración
+  // ✅ Formatear fecha de expiración
   const formatExpiry = dateString => {
     if (!dateString) return 'N/A';
-    const date = new Date(dateString);
-    return date.toLocaleString('es-AR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleString('es-AR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+    } catch (error) {
+      return 'Formato inválido';
+    }
   };
 
-  return (
-    <Box sx={{ p: 3 }}>
-      <Typography variant="h4" gutterBottom>
-        📱 Administración de Enlaces Móviles
-      </Typography>
+  // ✅ Función para testear un enlace
+  const handleTestLink = useCallback(url => {
+    window.open(url, '_blank');
+  }, []);
 
-      <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-        Genera enlaces temporales para que dispositivos móviles puedan acceder a
-        la aplicación en tu red local.
-      </Typography>
+  return (
+    <Box sx={{ p: 3, maxWidth: 1400, mx: 'auto' }}>
+      {/* Header */}
+      <Box sx={{ mb: 4 }}>
+        <Typography
+          variant="h4"
+          gutterBottom
+          sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+        >
+          <PhoneAndroid color="primary" />
+          Administración de Enlaces Móviles
+        </Typography>
+        <Typography variant="body1" color="text.secondary">
+          Genera enlaces temporales para que dispositivos móviles puedan acceder
+          a la aplicación en tu red local.
+        </Typography>
+      </Box>
 
       {/* Mensajes */}
       {message.text && (
@@ -329,15 +441,24 @@ const AdminEnlaces = () => {
 
       {/* Enlaces generados */}
       {mobileLinks.length > 0 && (
-        <Card>
+        <Card sx={{ boxShadow: 3 }}>
           <CardContent>
-            <Typography variant="h6" gutterBottom>
-              📱 Enlaces Generados
+            <Typography
+              variant="h6"
+              gutterBottom
+              sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+            >
+              <CheckCircle color="success" />
+              Enlaces Generados ({mobileLinks.length})
             </Typography>
 
-            <Alert severity="success" sx={{ mb: 2 }}>
+            <Divider sx={{ my: 2 }} />
+
+            <Alert severity="success" sx={{ mb: 3 }}>
+              <AlertTitle>¡Enlaces listos!</AlertTitle>
               Comparte estos enlaces con los dispositivos móviles que necesiten
-              acceder
+              acceder. Los enlaces son válidos hasta:{' '}
+              <strong>{formatExpiry(status?.expiresAt)}</strong>
             </Alert>
 
             <List>
@@ -345,26 +466,44 @@ const AdminEnlaces = () => {
                 <ListItem
                   key={index}
                   sx={{
-                    border: '1px solid',
-                    borderColor: 'divider',
-                    borderRadius: 1,
-                    mb: 1,
+                    border: '2px solid',
+                    borderColor: 'primary.main',
+                    borderRadius: 2,
+                    mb: 2,
                     bgcolor: 'background.paper',
+                    boxShadow: 2,
+                    '&:hover': {
+                      boxShadow: 4,
+                      transform: 'translateY(-2px)',
+                      transition: 'all 0.2s',
+                    },
                   }}
                   secondaryAction={
-                    <Box>
+                    <Box sx={{ display: 'flex', gap: 1 }}>
                       <IconButton
                         edge="end"
                         aria-label="copiar"
                         onClick={() => handleCopy(link.url)}
-                        sx={{ mr: 1 }}
+                        color="primary"
+                        title="Copiar enlace"
                       >
                         <ContentCopy />
                       </IconButton>
                       <IconButton
                         edge="end"
+                        aria-label="probar"
+                        onClick={() => handleTestLink(link.url)}
+                        color="success"
+                        title="Abrir en nueva pestaña"
+                      >
+                        <OpenInNew />
+                      </IconButton>
+                      <IconButton
+                        edge="end"
                         aria-label="qr"
                         onClick={() => handleShowQR(link.url)}
+                        color="secondary"
+                        title="Ver código QR"
                       >
                         <QrCode2 />
                       </IconButton>
@@ -372,19 +511,49 @@ const AdminEnlaces = () => {
                   }
                 >
                   <ListItemText
-                    primary={`IP: ${link.ip}`}
-                    secondary={
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          wordBreak: 'break-all',
-                          fontFamily: 'monospace',
-                          fontSize: '0.85rem',
-                        }}
-                      >
-                        {link.url}
-                      </Typography>
+                    primary={
+                      <Chip
+                        label={`IP: ${link.ip}`}
+                        color="primary"
+                        variant="outlined"
+                        icon={<SmartphoneOutlined />}
+                        sx={{ fontFamily: 'monospace', fontWeight: 'bold' }}
+                      />
                     }
+                    secondary={
+                      <Box component="span" sx={{ display: 'block', mt: 1 }}>
+                        <Typography
+                          component="span"
+                          variant="caption"
+                          display="block"
+                          color="text.secondary"
+                          gutterBottom
+                        >
+                          Enlace completo:
+                        </Typography>
+                        <Typography
+                          component="span"
+                          variant="body2"
+                          display="block"
+                          sx={{
+                            wordBreak: 'break-all',
+                            fontFamily: 'monospace',
+                            fontSize: '0.85rem',
+                            bgcolor: 'grey.100',
+                            p: 1,
+                            borderRadius: 1,
+                            border: '1px solid',
+                            borderColor: 'grey.300',
+                          }}
+                        >
+                          {link.url}
+                        </Typography>
+                      </Box>
+                    }
+                    secondaryTypographyProps={{
+                      component: 'div',
+                    }}
+                    sx={{ pr: 15 }}
                   />
                 </ListItem>
               ))}
@@ -392,6 +561,22 @@ const AdminEnlaces = () => {
           </CardContent>
         </Card>
       )}
+
+      {/* Snackbar para notificaciones */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+      >
+        <Alert
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          severity={snackbar.severity}
+          sx={{ width: '100%' }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
 
       {/* Dialog de QR Code */}
       <Dialog open={showQRDialog} onClose={() => setShowQRDialog(false)}>

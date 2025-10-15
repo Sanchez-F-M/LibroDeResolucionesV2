@@ -459,7 +459,7 @@ app.post('/admin/mobile-access/generate', (req, res) => {
 
     // Obtener IPs locales para construir URLs
     const localIPs = getLocalIPs();
-    const frontendPort = process.env.FRONTEND_PORT || 5174;
+    const frontendPort = process.env.FRONTEND_PORT || 5173; // CORREGIDO: Usar 5173 (puerto por defecto de Vite)
 
     const mobileLinks = localIPs.map(ip => ({
       ip: ip,
