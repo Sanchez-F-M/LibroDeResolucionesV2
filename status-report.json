@@ -1,0 +1,338 @@
+{
+  "generatedAt": "2025-06-20T15:01:44.842Z",
+  "systemMetrics": {
+    "totalChecks": 35,
+    "successfulChecks": 31,
+    "averageResponseTime": 432,
+    "consecutiveFailures": 3,
+    "lastSuccessfulCheck": "2025-06-20T03:47:19.145Z",
+    "alerts": [
+      {
+        "type": "MISSING_SECURITY_HEADERS",
+        "message": "Missing headers: x-content-type-options, x-frame-options, x-xss-protection",
+        "timestamp": "2025-06-20T01:17:19.691Z",
+        "severity": "MEDIUM"
+      },
+      {
+        "type": "ENDPOINT_ERROR",
+        "message": "Books API failed: Request failed with status code 401",
+        "timestamp": "2025-06-20T01:17:19.903Z",
+        "severity": "HIGH"
+      },
+      {
+        "type": "MISSING_SECURITY_HEADERS",
+        "message": "Missing headers: x-content-type-options, x-frame-options, x-xss-protection",
+        "timestamp": "2025-06-20T01:22:19.547Z",
+        "severity": "MEDIUM"
+      },
+      {
+        "type": "ENDPOINT_ERROR",
+        "message": "Books API failed: Request failed with status code 401",
+        "timestamp": "2025-06-20T01:22:19.783Z",
+        "severity": "HIGH"
+      },
+      {
+        "type": "MISSING_SECURITY_HEADERS",
+        "message": "Missing headers: x-content-type-options, x-frame-options, x-xss-protection",
+        "timestamp": "2025-06-20T01:27:19.877Z",
+        "severity": "MEDIUM"
+      },
+      {
+        "type": "ENDPOINT_ERROR",
+        "message": "Books API failed: Request failed with status code 401",
+        "timestamp": "2025-06-20T01:27:20.105Z",
+        "severity": "HIGH"
+      },
+      {
+        "type": "MISSING_SECURITY_HEADERS",
+        "message": "Missing headers: x-content-type-options, x-frame-options, x-xss-protection",
+        "timestamp": "2025-06-20T01:32:19.476Z",
+        "severity": "MEDIUM"
+      },
+      {
+        "type": "ENDPOINT_ERROR",
+        "message": "Books API failed: Request failed with status code 401",
+        "timestamp": "2025-06-20T01:32:19.697Z",
+        "severity": "HIGH"
+      },
+      {
+        "type": "MISSING_SECURITY_HEADERS",
+        "message": "Missing headers: x-content-type-options, x-frame-options, x-xss-protection",
+        "timestamp": "2025-06-20T01:37:19.606Z",
+        "severity": "MEDIUM"
+      },
+      {
+        "type": "ENDPOINT_ERROR",
+        "message": "Books API failed: Request failed with status code 401",
+        "timestamp": "2025-06-20T01:37:19.846Z",
+        "severity": "HIGH"
+      },
+      {
+        "type": "MISSING_SECURITY_HEADERS",
+        "message": "Missing headers: x-content-type-options, x-frame-options, x-xss-protection",
+        "timestamp": "2025-06-20T01:42:19.491Z",
+        "severity": "MEDIUM"
+      },
+      {
+        "type": "ENDPOINT_ERROR",
+        "message": "Books API failed: Request failed with status code 401",
+        "timestamp": "2025-06-20T01:42:19.749Z",
+        "severity": "HIGH"
+      },
+      {
+        "type": "MISSING_SECURITY_HEADERS",
+        "message": "Missing headers: x-content-type-options, x-frame-options, x-xss-protection",
+        "timestamp": "2025-06-20T01:47:19.636Z",
+        "severity": "MEDIUM"
+      },
+      {
+        "type": "ENDPOINT_ERROR",
+        "message": "Books API failed: Request failed with status code 401",
+        "timestamp": "2025-06-20T01:47:19.839Z",
+        "severity": "HIGH"
+      },
+      {
+        "type": "MISSING_SECURITY_HEADERS",
+        "message": "Missing headers: x-content-type-options, x-frame-options, x-xss-protection",
+        "timestamp": "2025-06-20T01:52:19.891Z",
+        "severity": "MEDIUM"
+      },
+      {
+        "type": "ENDPOINT_ERROR",
+        "message": "Books API failed: Request failed with status code 401",
+        "timestamp": "2025-06-20T01:52:20.103Z",
+        "severity": "HIGH"
+      },
+      {
+        "type": "MISSING_SECURITY_HEADERS",
+        "message": "Missing headers: x-content-type-options, x-frame-options, x-xss-protection",
+        "timestamp": "2025-06-20T01:57:19.521Z",
+        "severity": "MEDIUM"
+      },
+      {
+        "type": "ENDPOINT_ERROR",
+        "message": "Books API failed: Request failed with status code 401",
+        "timestamp": "2025-06-20T01:57:19.996Z",
+        "severity": "HIGH"
+      },
+      {
+        "type": "MISSING_SECURITY_HEADERS",
+        "message": "Missing headers: x-content-type-options, x-frame-options, x-xss-protection",
+        "timestamp": "2025-06-20T02:02:19.794Z",
+        "severity": "MEDIUM"
+      },
+      {
+        "type": "ENDPOINT_ERROR",
+        "message": "Books API failed: Request failed with status code 401",
+        "timestamp": "2025-06-20T02:02:20.149Z",
+        "severity": "HIGH"
+      },
+      {
+        "type": "ENDPOINT_ERROR",
+        "message": "Books API failed: Request failed with status code 401",
+        "timestamp": "2025-06-20T02:07:20.608Z",
+        "severity": "HIGH"
+      },
+      {
+        "type": "ENDPOINT_ERROR",
+        "message": "Books API failed: Request failed with status code 401",
+        "timestamp": "2025-06-20T02:12:19.929Z",
+        "severity": "HIGH"
+      },
+      {
+        "type": "ENDPOINT_ERROR",
+        "message": "Books API failed: Request failed with status code 401",
+        "timestamp": "2025-06-20T02:17:19.746Z",
+        "severity": "HIGH"
+      },
+      {
+        "type": "ENDPOINT_ERROR",
+        "message": "Books API failed: Request failed with status code 401",
+        "timestamp": "2025-06-20T02:22:19.826Z",
+        "severity": "HIGH"
+      },
+      {
+        "type": "ENDPOINT_ERROR",
+        "message": "Books API failed: Request failed with status code 401",
+        "timestamp": "2025-06-20T02:27:20.010Z",
+        "severity": "HIGH"
+      },
+      {
+        "type": "ENDPOINT_ERROR",
+        "message": "Books API failed: Request failed with status code 401",
+        "timestamp": "2025-06-20T02:32:19.798Z",
+        "severity": "HIGH"
+      },
+      {
+        "type": "ENDPOINT_ERROR",
+        "message": "Books API failed: Request failed with status code 401",
+        "timestamp": "2025-06-20T02:37:20.114Z",
+        "severity": "HIGH"
+      },
+      {
+        "type": "ENDPOINT_ERROR",
+        "message": "Books API failed: Request failed with status code 401",
+        "timestamp": "2025-06-20T02:42:19.797Z",
+        "severity": "HIGH"
+      },
+      {
+        "type": "ENDPOINT_ERROR",
+        "message": "Books API failed: Request failed with status code 401",
+        "timestamp": "2025-06-20T02:47:20.001Z",
+        "severity": "HIGH"
+      },
+      {
+        "type": "ENDPOINT_ERROR",
+        "message": "Books API failed: Request failed with status code 401",
+        "timestamp": "2025-06-20T02:52:19.809Z",
+        "severity": "HIGH"
+      },
+      {
+        "type": "ENDPOINT_ERROR",
+        "message": "Books API failed: Request failed with status code 401",
+        "timestamp": "2025-06-20T02:57:20.048Z",
+        "severity": "HIGH"
+      },
+      {
+        "type": "ENDPOINT_ERROR",
+        "message": "Books API failed: Request failed with status code 401",
+        "timestamp": "2025-06-20T03:02:19.904Z",
+        "severity": "HIGH"
+      },
+      {
+        "type": "ENDPOINT_ERROR",
+        "message": "Books API failed: Request failed with status code 401",
+        "timestamp": "2025-06-20T03:07:19.813Z",
+        "severity": "HIGH"
+      },
+      {
+        "type": "ENDPOINT_ERROR",
+        "message": "Books API failed: Request failed with status code 401",
+        "timestamp": "2025-06-20T03:12:20.213Z",
+        "severity": "HIGH"
+      },
+      {
+        "type": "ENDPOINT_ERROR",
+        "message": "Books API failed: Request failed with status code 401",
+        "timestamp": "2025-06-20T03:17:20.268Z",
+        "severity": "HIGH"
+      },
+      {
+        "type": "ENDPOINT_ERROR",
+        "message": "Books API failed: Request failed with status code 401",
+        "timestamp": "2025-06-20T03:22:19.987Z",
+        "severity": "HIGH"
+      },
+      {
+        "type": "ENDPOINT_ERROR",
+        "message": "Books API failed: Request failed with status code 401",
+        "timestamp": "2025-06-20T03:27:20.065Z",
+        "severity": "HIGH"
+      },
+      {
+        "type": "ENDPOINT_ERROR",
+        "message": "Books API failed: Request failed with status code 401",
+        "timestamp": "2025-06-20T03:32:20.306Z",
+        "severity": "HIGH"
+      },
+      {
+        "type": "ENDPOINT_ERROR",
+        "message": "Books API failed: Request failed with status code 401",
+        "timestamp": "2025-06-20T03:37:19.962Z",
+        "severity": "HIGH"
+      },
+      {
+        "type": "ENDPOINT_ERROR",
+        "message": "Books API failed: Request failed with status code 401",
+        "timestamp": "2025-06-20T03:42:19.937Z",
+        "severity": "HIGH"
+      },
+      {
+        "type": "ENDPOINT_ERROR",
+        "message": "Books API failed: Request failed with status code 401",
+        "timestamp": "2025-06-20T03:47:19.988Z",
+        "severity": "HIGH"
+      },
+      {
+        "type": "ENDPOINT_ERROR",
+        "message": "Books API failed: timeout of 10000ms exceeded",
+        "timestamp": "2025-06-20T10:34:28.747Z",
+        "severity": "HIGH"
+      },
+      {
+        "type": "BACKEND_DOWN",
+        "message": "Backend unreachable for 3 consecutive checks",
+        "timestamp": "2025-06-20T10:34:28.756Z",
+        "severity": "CRITICAL"
+      }
+    ]
+  },
+  "recentAlerts": [
+    {
+      "type": "ENDPOINT_ERROR",
+      "message": "Books API failed: Request failed with status code 401",
+      "timestamp": "2025-06-20T03:12:20.213Z",
+      "severity": "HIGH"
+    },
+    {
+      "type": "ENDPOINT_ERROR",
+      "message": "Books API failed: Request failed with status code 401",
+      "timestamp": "2025-06-20T03:17:20.268Z",
+      "severity": "HIGH"
+    },
+    {
+      "type": "ENDPOINT_ERROR",
+      "message": "Books API failed: Request failed with status code 401",
+      "timestamp": "2025-06-20T03:22:19.987Z",
+      "severity": "HIGH"
+    },
+    {
+      "type": "ENDPOINT_ERROR",
+      "message": "Books API failed: Request failed with status code 401",
+      "timestamp": "2025-06-20T03:27:20.065Z",
+      "severity": "HIGH"
+    },
+    {
+      "type": "ENDPOINT_ERROR",
+      "message": "Books API failed: Request failed with status code 401",
+      "timestamp": "2025-06-20T03:32:20.306Z",
+      "severity": "HIGH"
+    },
+    {
+      "type": "ENDPOINT_ERROR",
+      "message": "Books API failed: Request failed with status code 401",
+      "timestamp": "2025-06-20T03:37:19.962Z",
+      "severity": "HIGH"
+    },
+    {
+      "type": "ENDPOINT_ERROR",
+      "message": "Books API failed: Request failed with status code 401",
+      "timestamp": "2025-06-20T03:42:19.937Z",
+      "severity": "HIGH"
+    },
+    {
+      "type": "ENDPOINT_ERROR",
+      "message": "Books API failed: Request failed with status code 401",
+      "timestamp": "2025-06-20T03:47:19.988Z",
+      "severity": "HIGH"
+    },
+    {
+      "type": "ENDPOINT_ERROR",
+      "message": "Books API failed: timeout of 10000ms exceeded",
+      "timestamp": "2025-06-20T10:34:28.747Z",
+      "severity": "HIGH"
+    },
+    {
+      "type": "BACKEND_DOWN",
+      "message": "Backend unreachable for 3 consecutive checks",
+      "timestamp": "2025-06-20T10:34:28.756Z",
+      "severity": "CRITICAL"
+    }
+  ],
+  "healthStatus": {
+    "errorRate": 11.428571428571429,
+    "averageResponseTime": 432,
+    "uptime": 88.57142857142857,
+    "lastCheck": "2025-06-20T03:47:19.145Z"
+  }
+}

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test CORS</title>
+</head>
+<body>
+    <h1>Test de conexión CORS</h1>
+    <button onclick="testCors()">Probar conexión al backend</button>
+    <div id="result"></div>
+
+    <script>
+        async function testCors() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Probando conexión...';
+
+            try {
+                const response = await fetch('https://libroderesoluciones-api.onrender.com/render-health', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    resultDiv.innerHTML = `
+                        <h3 style="color: green;">✅ Conexión exitosa!</h3>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<h3 style="color: red;">❌ Error: ${response.status}</h3>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<h3 style="color: red;">❌ Error de conexión: ${error.message}</h3>`;
+            }
+        }
+    </script>
+</body>
+</html>

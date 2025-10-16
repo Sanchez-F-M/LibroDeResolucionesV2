@@ -1,0 +1,38 @@
+{
+  "timestamp": "2025-06-20T01:33:57.749Z",
+  "urls": {
+    "backend": "https://libroderesoluciones-api.onrender.com",
+    "frontend": "https://libro-de-resoluciones-v2-9izd-fe0i5ihfg.vercel.app"
+  },
+  "securityResults": {
+    "summary": {
+      "passed": 3,
+      "warnings": 2,
+      "failed": 1,
+      "score": 50
+    },
+    "vulnerabilities": [
+      {
+        "name": "Autenticación Débil",
+        "severity": "HIGH",
+        "description": "Sistema acepta contraseñas débiles",
+        "evidence": "Contraseña aceptada: 123",
+        "recommendation": "Implementar política de contraseñas fuertes"
+      },
+      {
+        "name": "Enumeración de Usuarios",
+        "severity": "MEDIUM",
+        "description": "Posible enumeración de usuarios",
+        "evidence": "Respuestas diferentes: 2",
+        "recommendation": "Usar respuestas consistentes para usuarios válidos e inválidos"
+      },
+      {
+        "name": "Headers de Seguridad",
+        "severity": "LOW",
+        "description": "Headers de seguridad faltantes",
+        "evidence": "Headers faltantes: x-content-type-options, x-frame-options, x-xss-protection",
+        "recommendation": "Agregar headers de seguridad recomendados"
+      }
+    ]
+  }
+}

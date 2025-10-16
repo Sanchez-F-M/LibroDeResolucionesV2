@@ -1,43 +1,104 @@
 .container-footer {
   display: flex;
-  /* justify-content: space-between; */
+  flex-direction: column;
   background: #34495e;
   align-items: center;
-  height: 150px;
+  justify-content: center;
+  min-height: 120px;
+  padding: 20px;
   font-family: Arial, Helvetica, sans-serif;
+  text-align: center;
 }
+
+@media (min-width: 768px) {
+  .container-footer {
+    flex-direction: row;
+    justify-content: space-between;
+    min-height: 150px;
+    text-align: left;
+  }
+}
+
 .titulos {
   color: white;
-  margin-left: 20px;
-  justify-items: space-between;
+  margin: 10px 0;
 }
-img {
-  width: 110px;
+
+@media (min-width: 768px) {
+  .titulos {
+    margin-left: 20px;
+    margin: 0;
+  }
 }
-h1 {
+
+.footer-logo {
+  width: 80px;
+  margin-bottom: 10px;
+}
+
+@media (min-width: 768px) {
+  .footer-logo {
+    width: 110px;
+    margin-bottom: 0;
+  }
+}
+
+.footer-title-main {
   color: white;
-  margin-left: 20px;
-  font-size: 200%;
+  font-size: 1.5rem;
+  margin: 10px 0;
 }
-h2 {
-  justify-items: center;
+
+@media (min-width: 768px) {
+  .footer-title-main {
+    font-size: 2rem;
+    margin-left: 20px;
+  }
+}
+
+.footer-title-secondary {
   color: white;
-  margin-left: 350px;
-  font-size: 200%;
+  font-size: 1.2rem;
+  margin: 10px 0;
 }
-h3 {
+
+@media (min-width: 768px) {
+  .footer-title-secondary {
+    font-size: 2rem;
+    margin-left: 350px;
+  }
+}
+
+.footer-subtitle {
   color: #215e9a;
-  margin-left: 20px;
-  justify-items: space-between;
-  font-size: 150%;
-  margin-top: 10px;
+  font-size: 1.1rem;
+  margin: 10px 0;
+}
+
+@media (min-width: 768px) {
+  .footer-subtitle {
+    font-size: 1.5rem;
+    margin-left: 20px;
+    margin-top: 10px;
+  }
 }
 
 .container-footer-dark {
   display: flex;
-  /* justify-content: space-between; */
+  flex-direction: column;
   background: #215e9a;
   align-items: center;
-  height: 150px;
-  /* font-family: Arial, Helvetica, sans-serif; */
+  justify-content: center;
+  min-height: 120px;
+  padding: 20px;
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .container-footer-dark {
+    flex-direction: row;
+    justify-content: space-between;
+    min-height: 150px;
+    text-align: left;
+  }
 }

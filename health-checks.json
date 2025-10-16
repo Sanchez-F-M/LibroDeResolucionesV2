@@ -1,0 +1,335 @@
+[
+  {
+    "timestamp": "2025-06-20T01:17:18.443Z",
+    "overall": "healthy",
+    "backend": {
+      "status": "healthy",
+      "responseTime": 460,
+      "uptime": 3269.304249915,
+      "version": "2.1.0"
+    },
+    "frontend": {
+      "status": "available",
+      "responseTime": 306,
+      "contentLength": 530
+    },
+    "security": {
+      "status": "partial",
+      "missingHeaders": [
+        "x-content-type-options",
+        "x-frame-options",
+        "x-xss-protection"
+      ]
+    },
+    "endpoints": [
+      {
+        "name": "Books API",
+        "status": "error",
+        "error": "Request failed with status code 401",
+        "httpStatus": 401
+      },
+      {
+        "name": "Login API",
+        "status": "error",
+        "error": "Request failed with status code 400",
+        "httpStatus": 400
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-06-20T01:17:36.184Z",
+    "overall": "healthy",
+    "backend": {
+      "status": "healthy",
+      "responseTime": 407,
+      "uptime": 3287.006351526,
+      "version": "2.1.0"
+    },
+    "frontend": {
+      "status": "available",
+      "responseTime": 304,
+      "contentLength": 530
+    },
+    "security": {
+      "status": "partial",
+      "missingHeaders": [
+        "x-content-type-options",
+        "x-frame-options",
+        "x-xss-protection"
+      ]
+    },
+    "endpoints": [
+      {
+        "name": "Books API",
+        "status": "error",
+        "error": "Request failed with status code 401",
+        "httpStatus": 401
+      },
+      {
+        "name": "Login API",
+        "status": "error",
+        "error": "Request failed with status code 400",
+        "httpStatus": 400
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-06-20T01:22:18.522Z",
+    "overall": "healthy",
+    "backend": {
+      "status": "healthy",
+      "responseTime": 407,
+      "uptime": 3569.343167359,
+      "version": "2.1.0"
+    },
+    "frontend": {
+      "status": "available",
+      "responseTime": 362,
+      "contentLength": 530
+    },
+    "security": {
+      "status": "partial",
+      "missingHeaders": [
+        "x-content-type-options",
+        "x-frame-options",
+        "x-xss-protection"
+      ]
+    },
+    "endpoints": [
+      {
+        "name": "Books API",
+        "status": "error",
+        "error": "Request failed with status code 401",
+        "httpStatus": 401
+      },
+      {
+        "name": "Login API",
+        "status": "error",
+        "error": "Request failed with status code 400",
+        "httpStatus": 400
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-06-20T01:27:18.525Z",
+    "overall": "healthy",
+    "backend": {
+      "status": "healthy",
+      "responseTime": 697,
+      "uptime": 3869.631270107,
+      "version": "2.1.0"
+    },
+    "frontend": {
+      "status": "available",
+      "responseTime": 420,
+      "contentLength": 530
+    },
+    "security": {
+      "status": "partial",
+      "missingHeaders": [
+        "x-content-type-options",
+        "x-frame-options",
+        "x-xss-protection"
+      ]
+    },
+    "endpoints": [
+      {
+        "name": "Books API",
+        "status": "error",
+        "error": "Request failed with status code 401",
+        "httpStatus": 401
+      },
+      {
+        "name": "Login API",
+        "status": "error",
+        "error": "Request failed with status code 400",
+        "httpStatus": 400
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-06-20T01:32:18.525Z",
+    "overall": "healthy",
+    "backend": {
+      "status": "healthy",
+      "responseTime": 430,
+      "uptime": 4169.375002326,
+      "version": "2.1.0"
+    },
+    "frontend": {
+      "status": "available",
+      "responseTime": 295,
+      "contentLength": 530
+    },
+    "security": {
+      "status": "partial",
+      "missingHeaders": [
+        "x-content-type-options",
+        "x-frame-options",
+        "x-xss-protection"
+      ]
+    },
+    "endpoints": [
+      {
+        "name": "Books API",
+        "status": "error",
+        "error": "Request failed with status code 401",
+        "httpStatus": 401
+      },
+      {
+        "name": "Login API",
+        "status": "error",
+        "error": "Request failed with status code 400",
+        "httpStatus": 400
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-06-20T01:37:18.537Z",
+    "overall": "healthy",
+    "backend": {
+      "status": "healthy",
+      "responseTime": 433,
+      "uptime": 4469.382701072,
+      "version": "2.1.0"
+    },
+    "frontend": {
+      "status": "available",
+      "responseTime": 402,
+      "contentLength": 530
+    },
+    "security": {
+      "status": "partial",
+      "missingHeaders": [
+        "x-content-type-options",
+        "x-frame-options",
+        "x-xss-protection"
+      ]
+    },
+    "endpoints": [
+      {
+        "name": "Books API",
+        "status": "error",
+        "error": "Request failed with status code 401",
+        "httpStatus": 401
+      },
+      {
+        "name": "Login API",
+        "status": "error",
+        "error": "Request failed with status code 400",
+        "httpStatus": 400
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-06-20T01:42:18.540Z",
+    "overall": "healthy",
+    "backend": {
+      "status": "healthy",
+      "responseTime": 384,
+      "uptime": 4769.342080009,
+      "version": "2.1.0"
+    },
+    "frontend": {
+      "status": "available",
+      "responseTime": 334,
+      "contentLength": 530
+    },
+    "security": {
+      "status": "partial",
+      "missingHeaders": [
+        "x-content-type-options",
+        "x-frame-options",
+        "x-xss-protection"
+      ]
+    },
+    "endpoints": [
+      {
+        "name": "Books API",
+        "status": "error",
+        "error": "Request failed with status code 401",
+        "httpStatus": 401
+      },
+      {
+        "name": "Login API",
+        "status": "error",
+        "error": "Request failed with status code 400",
+        "httpStatus": 400
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-06-20T01:47:18.556Z",
+    "overall": "healthy",
+    "backend": {
+      "status": "healthy",
+      "responseTime": 456,
+      "uptime": 5069.426148978,
+      "version": "2.1.0"
+    },
+    "frontend": {
+      "status": "available",
+      "responseTime": 381,
+      "contentLength": 530
+    },
+    "security": {
+      "status": "partial",
+      "missingHeaders": [
+        "x-content-type-options",
+        "x-frame-options",
+        "x-xss-protection"
+      ]
+    },
+    "endpoints": [
+      {
+        "name": "Books API",
+        "status": "error",
+        "error": "Request failed with status code 401",
+        "httpStatus": 401
+      },
+      {
+        "name": "Login API",
+        "status": "error",
+        "error": "Request failed with status code 400",
+        "httpStatus": 400
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-06-20T01:52:18.575Z",
+    "overall": "healthy",
+    "backend": {
+      "status": "healthy",
+      "responseTime": 380,
+      "uptime": 5369.36829518,
+      "version": "2.1.0"
+    },
+    "frontend": {
+      "status": "available",
+      "responseTime": 712,
+      "contentLength": 530
+    },
+    "security": {
+      "status": "partial",
+      "missingHeaders": [
+        "x-content-type-options",
+        "x-frame-options",
+        "x-xss-protection"
+      ]
+    },
+    "endpoints": [
+      {
+        "name": "Books API",
+        "status": "error",
+        "error": "Request failed with status code 401",
+        "httpStatus": 401
+      },
+      {
+        "name": "Login API",
+        "status": "error",
+        "error": "Request failed with status code 400",
+        "httpStatus": 400
+      }
+    ]
+  }
+]

@@ -1,0 +1,332 @@
+{
+  "timestamp": "2025-06-20T01:33:57.828Z",
+  "testingSummary": {
+    "executionDate": "19/6/2025",
+    "executionTime": "10:33:57",
+    "urls": {
+      "backend": "https://libroderesoluciones-api.onrender.com",
+      "frontend": "https://libro-de-resoluciones-v2-9izd-fe0i5ihfg.vercel.app"
+    }
+  },
+  "results": {
+    "production": {
+      "timestamp": "2025-06-20T01:30:02.052Z",
+      "urls": {
+        "backend": "https://libroderesoluciones-api.onrender.com",
+        "frontend": "https://libro-de-resoluciones-v2-9izd-fe0i5ihfg.vercel.app"
+      },
+      "config": {
+        "timeout": 30000,
+        "retries": 3,
+        "performanceThreshold": {
+          "fast": 1000,
+          "acceptable": 3000,
+          "slow": 5000
+        }
+      },
+      "results": {
+        "summary": {
+          "passed": 8,
+          "failed": 1,
+          "warnings": 0,
+          "total": 9,
+          "tests": [
+            {
+              "name": "Backend Health Check",
+              "category": "Infraestructura",
+              "status": "PASSED",
+              "duration": 684,
+              "result": {
+                "status": "healthy",
+                "uptime": 4027.127642096,
+                "version": "2.1.0"
+              },
+              "timestamp": "2025-06-20T01:29:56.727Z"
+            },
+            {
+              "name": "Backend Diagnose",
+              "category": "Infraestructura",
+              "status": "PASSED",
+              "duration": 256,
+              "result": {
+                "database": {
+                  "status": "connected",
+                  "tables": [
+                    "users",
+                    "books"
+                  ],
+                  "users": 1,
+                  "books": 0
+                },
+                "environment": {
+                  "NODE_ENV": "production",
+                  "PORT": "10000",
+                  "JWT_SECRET_KEY": "SET",
+                  "FRONTEND_URL": "https://libro-de-resoluciones-v2-9izd.vercel.app/",
+                  "ADMIN_USERNAME": "NOT SET",
+                  "ADMIN_PASSWORD": "NOT SET"
+                },
+                "tables": [
+                  "users",
+                  "books"
+                ]
+              },
+              "timestamp": "2025-06-20T01:29:56.985Z"
+            },
+            {
+              "name": "Frontend Availability",
+              "category": "Infraestructura",
+              "status": "PASSED",
+              "duration": 323,
+              "result": {
+                "status": 200,
+                "isReactApp": true,
+                "contentLength": 530,
+                "hasRoot": true,
+                "hasModule": true
+              },
+              "timestamp": "2025-06-20T01:29:57.308Z"
+            },
+            {
+              "name": "User Login",
+              "category": "Autenticación",
+              "status": "PASSED",
+              "duration": 583,
+              "result": {
+                "userId": 20,
+                "username": "admin",
+                "role": "admin",
+                "hasToken": true,
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJOb21icmUiOiJhZG1pbiIsIlJvbCI6ImFkbWluIiwiSUQiOjIwLCJpYXQiOjE3NTAzODI5OTgsImV4cCI6MTc1MDQ2OTM5OH0.A9w5yeZY4dPPWhXdk1MQdiBMTeE3wTbCdJo_gY6kMB0"
+              },
+              "timestamp": "2025-06-20T01:29:57.890Z"
+            },
+            {
+              "name": "User Registration",
+              "category": "Autenticación",
+              "status": "PASSED",
+              "duration": 581,
+              "result": {
+                "username": "TestUser_1750382997891",
+                "role": "usuario",
+                "message": "Usuario creado exitosamente"
+              },
+              "timestamp": "2025-06-20T01:29:58.472Z"
+            },
+            {
+              "name": "Invalid Login Rejection",
+              "category": "Autenticación",
+              "status": "FAILED",
+              "duration": 283,
+              "error": "Request failed with status code 400",
+              "timestamp": "2025-06-20T01:29:58.754Z"
+            },
+            {
+              "name": "Get Books API",
+              "category": "API",
+              "status": "PASSED",
+              "duration": 1316,
+              "result": {
+                "count": 2,
+                "hasBooks": true,
+                "sampleBook": {
+                  "NumdeResolucion": "2",
+                  "asunto": "violencia",
+                  "referencia": "de genero",
+                  "fetcha_creacion": "2025-06-16T00:00:00.000Z",
+                  "images": [
+                    "https://res.cloudinary.com/dzbmurddh/image/upload/v1750376309/libro-resoluciones/1750376309091-Captura%20de%20pantalla%202024-04-22%20200023.jpg"
+                  ]
+                }
+              },
+              "timestamp": "2025-06-20T01:30:00.070Z"
+            },
+            {
+              "name": "Search Functionality",
+              "category": "API",
+              "status": "PASSED",
+              "duration": 1661,
+              "result": {
+                "searchResults": [
+                  {
+                    "criterion": "NumdeResolucion",
+                    "value": "1",
+                    "status": 200,
+                    "results": 1,
+                    "hasDate": true
+                  },
+                  {
+                    "criterion": "Asunto",
+                    "value": "violencia",
+                    "status": 200,
+                    "results": 1,
+                    "hasDate": true
+                  },
+                  {
+                    "criterion": "Referencia",
+                    "value": "genero",
+                    "status": 200,
+                    "results": 1,
+                    "hasDate": true
+                  }
+                ]
+              },
+              "timestamp": "2025-06-20T01:30:01.731Z"
+            },
+            {
+              "name": "Cloudinary Status",
+              "category": "Cloudinary",
+              "status": "PASSED",
+              "duration": 321,
+              "result": {
+                "connected": true,
+                "cloudName": true
+              },
+              "timestamp": "2025-06-20T01:30:02.052Z"
+            }
+          ]
+        },
+        "successRate": 88.9,
+        "categories": {
+          "Infraestructura": {
+            "passed": 3,
+            "failed": 0,
+            "total": 3
+          },
+          "Autenticación": {
+            "passed": 2,
+            "failed": 1,
+            "total": 3
+          },
+          "API": {
+            "passed": 2,
+            "failed": 0,
+            "total": 2
+          },
+          "Cloudinary": {
+            "passed": 1,
+            "failed": 0,
+            "total": 1
+          }
+        }
+      }
+    },
+    "load": {
+      "timestamp": "2025-06-20T01:32:52.451Z",
+      "config": {
+        "concurrent_users": [
+          1,
+          3,
+          5
+        ],
+        "duration_seconds": 30,
+        "request_interval_ms": 2000,
+        "timeout": 15000
+      },
+      "urls": {
+        "backend": "https://libroderesoluciones-api.onrender.com",
+        "frontend": "https://libro-de-resoluciones-v2-9izd-fe0i5ihfg.vercel.app"
+      },
+      "loadTestResults": {
+        "results": [
+          {
+            "userCount": 1,
+            "duration": 31764,
+            "totalRequests": 14,
+            "successfulRequests": 14,
+            "failedRequests": 0,
+            "successRate": "100.00",
+            "avgResponseTime": 262,
+            "requestsPerSecond": "0.44"
+          },
+          {
+            "userCount": 3,
+            "duration": 31676,
+            "totalRequests": 41,
+            "successfulRequests": 41,
+            "failedRequests": 0,
+            "successRate": "100.00",
+            "avgResponseTime": 264,
+            "requestsPerSecond": "1.29"
+          },
+          {
+            "userCount": 5,
+            "duration": 31723,
+            "totalRequests": 70,
+            "successfulRequests": 70,
+            "failedRequests": 0,
+            "successRate": "100.00",
+            "avgResponseTime": 239,
+            "requestsPerSecond": "2.21"
+          }
+        ],
+        "summary": {
+          "avgSuccessRate": "100.00",
+          "bestRPS": "2.21",
+          "worstSuccessRate": "100.00"
+        }
+      }
+    },
+    "security": {
+      "timestamp": "2025-06-20T01:33:57.749Z",
+      "urls": {
+        "backend": "https://libroderesoluciones-api.onrender.com",
+        "frontend": "https://libro-de-resoluciones-v2-9izd-fe0i5ihfg.vercel.app"
+      },
+      "securityResults": {
+        "summary": {
+          "passed": 3,
+          "warnings": 2,
+          "failed": 1,
+          "score": 50
+        },
+        "vulnerabilities": [
+          {
+            "name": "Autenticación Débil",
+            "severity": "HIGH",
+            "description": "Sistema acepta contraseñas débiles",
+            "evidence": "Contraseña aceptada: 123",
+            "recommendation": "Implementar política de contraseñas fuertes"
+          },
+          {
+            "name": "Enumeración de Usuarios",
+            "severity": "MEDIUM",
+            "description": "Posible enumeración de usuarios",
+            "evidence": "Respuestas diferentes: 2",
+            "recommendation": "Usar respuestas consistentes para usuarios válidos e inválidos"
+          },
+          {
+            "name": "Headers de Seguridad",
+            "severity": "LOW",
+            "description": "Headers de seguridad faltantes",
+            "evidence": "Headers faltantes: x-content-type-options, x-frame-options, x-xss-protection",
+            "recommendation": "Agregar headers de seguridad recomendados"
+          }
+        ]
+      }
+    }
+  },
+  "overallMetrics": {
+    "totalTests": 9,
+    "passedTests": 8,
+    "failedTests": 1,
+    "successRate": "88.9",
+    "vulnerabilities": 3,
+    "performance": {
+      "avgResponseTime": 255,
+      "throughput": "2.21",
+      "stability": "Excelente"
+    }
+  },
+  "evaluation": {
+    "overallGrade": "C",
+    "functionalScore": 88.9,
+    "securityScore": 50,
+    "performanceRating": "Excelente",
+    "recommendations": [
+      "Investigar y corregir pruebas funcionales fallidas",
+      "Abordar vulnerabilidades de seguridad identificadas",
+      "Implementar correcciones de seguridad sugeridas"
+    ]
+  }
+}

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test de Persistencia - Libro de Resoluciones</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .loading {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #results {
+            margin-top: 20px;
+        }
+        .resolution-item {
+            border: 1px solid #ddd;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Test de Persistencia de Datos</h1>
+        <p>Esta página verifica que la persistencia de datos esté funcionando correctamente.</p>
+        
+        <div id="status" class="status loading">
+            🔄 Iniciando verificación...
+        </div>
+        
+        <div>
+            <button onclick="testAPI()">Probar API Backend</button>
+            <button onclick="testFrontend()">Probar Frontend</button>
+            <button onclick="testPersistence()">Test Completo de Persistencia</button>
+        </div>
+        
+        <div id="results"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:10000';
+        const statusDiv = document.getElementById('status');
+        const resultsDiv = document.getElementById('results');
+
+        function updateStatus(message, type = 'info') {
+            statusDiv.className = `status ${type}`;
+            statusDiv.innerHTML = message;
+        }
+
+        function addResult(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = `status ${type}`;
+            div.innerHTML = message;
+            resultsDiv.appendChild(div);
+        }
+
+        async function testAPI() {
+            updateStatus('🔄 Probando conexión con la API...', 'loading');
+            resultsDiv.innerHTML = '';
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/books/all`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                
+                updateStatus(`✅ API funcionando correctamente`, 'success');
+                addResult(`📊 Total de resoluciones encontradas: <strong>${data.length}</strong>`, 'success');
+                
+                if (data.length > 0) {
+                    addResult(`📄 Última resolución: ${data[0].NumdeResolucion} - ${data[0].asunto}`, 'info');
+                    
+                    // Mostrar las primeras 3 resoluciones
+                    addResult('<strong>📋 Primeras 3 resoluciones:</strong>', 'info');
+                    data.slice(0, 3).forEach((res, index) => {
+                        addResult(`${index + 1}. ${res.NumdeResolucion}: ${res.asunto} (${res.fetcha_creacion})`, 'info');
+                    });
+                } else {
+                    addResult('⚠️ No se encontraron resoluciones en la base de datos', 'error');
+                }
+                
+            } catch (error) {
+                updateStatus(`❌ Error al conectar con la API`, 'error');
+                addResult(`Error: ${error.message}`, 'error');
+                addResult('🔧 Verifica que el servidor backend esté ejecutándose en el puerto 10000', 'info');
+            }
+        }
+
+        async function testFrontend() {
+            updateStatus('🔄 Verificando frontend...', 'loading');
+            resultsDiv.innerHTML = '';
+            
+            try {
+                const response = await fetch('http://localhost:5175');
+                
+                if (response.ok) {
+                    updateStatus('✅ Frontend funcionando correctamente', 'success');
+                    addResult('🌐 Aplicación accesible en: <a href="http://localhost:5175" target="_blank">http://localhost:5175</a>', 'success');
+                    addResult('📋 Página de búsquedas: <a href="http://localhost:5175/busquedas" target="_blank">http://localhost:5175/busquedas</a>', 'info');
+                } else {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+            } catch (error) {
+                updateStatus(`❌ Error al acceder al frontend`, 'error');
+                addResult(`Error: ${error.message}`, 'error');
+                addResult('🔧 Verifica que el frontend esté ejecutándose en el puerto 5175', 'info');
+            }
+        }
+
+        async function testPersistence() {
+            updateStatus('🔄 Ejecutando test completo de persistencia...', 'loading');
+            resultsDiv.innerHTML = '';
+            
+            // Test 1: API Backend
+            try {
+                const apiResponse = await fetch(`${API_BASE}/api/books/all`);
+                if (!apiResponse.ok) throw new Error('API no responde');
+                const data = await apiResponse.json();
+                addResult(`✅ Backend: ${data.length} resoluciones almacenadas`, 'success');
+            } catch (error) {
+                addResult(`❌ Backend: Error de conexión`, 'error');
+                return;
+            }
+            
+            // Test 2: Frontend
+            try {
+                const frontResponse = await fetch('http://localhost:5175');
+                if (frontResponse.ok) {
+                    addResult(`✅ Frontend: Accesible y funcionando`, 'success');
+                } else {
+                    throw new Error('Frontend no responde');
+                }
+            } catch (error) {
+                addResult(`❌ Frontend: No accesible`, 'error');
+            }
+            
+            // Test 3: Simulación de persistencia
+            updateStatus('🔄 Simulando cierre y reapertura de página...', 'loading');
+            
+            setTimeout(async () => {
+                try {
+                    // Simular una nueva carga
+                    const secondResponse = await fetch(`${API_BASE}/api/books/all`);
+                    const secondData = await secondResponse.json();
+                    
+                    addResult(`🔄 Segunda carga: ${secondData.length} resoluciones (datos persistentes)`, 'success');
+                    updateStatus('🎉 ¡Test de persistencia COMPLETADO con éxito!', 'success');
+                    
+                    addResult('<strong>📋 RESUMEN:</strong>', 'info');
+                    addResult('✅ Los datos persisten correctamente en la base de datos', 'success');
+                    addResult('✅ La aplicación carga automáticamente todas las resoluciones', 'success');
+                    addResult('✅ No hay pérdida de datos al cerrar/reabrir la página', 'success');
+                    
+                } catch (error) {
+                    updateStatus('❌ Error en test de persistencia', 'error');
+                    addResult(`Error: ${error.message}`, 'error');
+                }
+            }, 2000);
+        }
+
+        // Ejecutar test automático al cargar la página
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                testPersistence();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba de Fechas - Frontend</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .resolution {
+            background: #f9f9f9;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid #2196F3;
+        }
+        .date-info {
+            background: #e3f2fd;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 3px;
+        }
+        .success { color: #4caf50; }
+        .error { color: #f44336; }
+        .warning { color: #ff9800; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Prueba de Fechas - Sistema de Resoluciones</h1>
+        <p>Esta página prueba si las utilidades de fecha corrigen el problema de fechas con formato incorrecto.</p>
+        
+        <div id="resultados"></div>
+        
+        <div style="margin-top: 20px; padding: 10px; background: #fff3cd; border-radius: 5px;">
+            <h3>📋 Instrucciones para verificar en la aplicación:</h3>
+            <ol>
+                <li>Abre <a href="http://localhost:5174" target="_blank">http://localhost:5174</a></li>
+                <li>Ve a la sección "Búsquedas"</li>
+                <li>Haz clic en "Cargar todas las resoluciones"</li>
+                <li>Verifica que las fechas aparecen como "01/06/2025" en lugar de "fecha no disponible"</li>
+                <li>Haz clic en una resolución para abrir el modal y verificar el formato largo</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        // Copiar exactamente las utilidades del frontend
+        function limpiarFecha(fechaString) {
+            if (!fechaString) return null;
+            
+            // Corregir dobles guiones que pueden venir del backend
+            let fechaLimpia = fechaString.toString().replace(/--+/g, '-');
+            
+            // Asegurar que no termine o empiece con guión
+            fechaLimpia = fechaLimpia.replace(/^-+|-+$/g, '');
+            
+            return fechaLimpia;
+        }
+
+        function esFechaValida(fechaString) {
+            if (!fechaString) return false;
+            
+            try {
+                const fechaLimpia = limpiarFecha(fechaString);
+                const fecha = new Date(fechaLimpia);
+                return !isNaN(fecha.getTime()) && fecha.getFullYear() > 1900;
+            } catch (error) {
+                return false;
+            }
+        }
+
+        function formatearFechaCorta(fechaString) {
+            if (!fechaString) return 'Fecha no disponible';
+            
+            try {
+                const fechaLimpia = limpiarFecha(fechaString);
+                
+                if (!esFechaValida(fechaLimpia)) {
+                    console.warn('⚠️ Fecha inválida recibida:', fechaString);
+                    return 'Fecha inválida';
+                }
+                
+                const fecha = new Date(fechaLimpia);
+                return fecha.toLocaleDateString('es-ES', {
+                    day: '2-digit',
+                    month: '2-digit', 
+                    year: 'numeric'
+                });
+            } catch (error) {
+                console.error('❌ Error al formatear fecha:', error, 'Fecha original:', fechaString);
+                return 'Error en fecha';
+            }
+        }
+
+        function formatearFechaLarga(fechaString) {
+            if (!fechaString) return 'Fecha no disponible';
+            
+            try {
+                const fechaLimpia = limpiarFecha(fechaString);
+                
+                if (!esFechaValida(fechaLimpia)) {
+                    console.warn('⚠️ Fecha inválida recibida:', fechaString);
+                    return 'Fecha inválida';
+                }
+                
+                const fecha = new Date(fechaLimpia);
+                return fecha.toLocaleDateString('es-ES', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                });
+            } catch (error) {
+                console.error('❌ Error al formatear fecha:', error, 'Fecha original:', fechaString);
+                return 'Error en fecha';
+            }
+        }
+
+        // Datos de prueba reales del backend
+        const datosReales = [
+            {
+                "NumdeResolucion": "PROD-005-2025",
+                "asunto": "Puesta en Marcha del Sistema en Producción",
+                "referencia": "Acta de Entrega N° 005/2025 - Proyecto Finalizado",
+                "fetcha_creacion": "2025-06--01",
+                "images": []
+            },
+            {
+                "NumdeResolucion": "PROD-004-2025",
+                "asunto": "Verificación de Persistencia de Datos",
+                "referencia": "Test de Funcionalidad N° 004/2025 - Control de Calidad",
+                "fetcha_creacion": "2025-06-01",
+                "images": []
+            },
+            {
+                "NumdeResolucion": "PROD-003-2025",
+                "asunto": "Configuración de Entorno de Producción", 
+                "referencia": "Nota Técnica N° 003/2025 - Departamento de Sistemas",
+                "fetcha_creacion": "2025-06-01",
+                "images": []
+            }
+        ];
+
+        // Ejecutar pruebas
+        const resultadosDiv = document.getElementById('resultados');
+        let html = '<h2>📊 Resultados de la Prueba</h2>';
+        
+        datosReales.forEach((resolucion, index) => {
+            const fechaOriginal = resolucion.fetcha_creacion;
+            const fechaLimpia = limpiarFecha(fechaOriginal);
+            const esValida = esFechaValida(fechaOriginal);
+            
+            html += `
+                <div class="resolution">
+                    <h3>📄 ${resolucion.NumdeResolucion}</h3>
+                    <div class="date-info">
+                        <strong>Fecha original del backend:</strong> "${fechaOriginal}"<br>
+                        <strong>Fecha después de limpiar:</strong> "${fechaLimpia}"<br>
+                        <strong>¿Es válida?:</strong> <span class="${esValida ? 'success' : 'error'}">${esValida}</span>
+            `;
+            
+            if (esValida) {
+                const fechaCorta = formatearFechaCorta(fechaOriginal);
+                const fechaLarga = formatearFechaLarga(fechaOriginal);
+                
+                html += `
+                    <br><strong>En tarjetas/tabla:</strong> <span class="success">"${fechaCorta}"</span>
+                    <br><strong>En modal:</strong> <span class="success">"${fechaLarga}"</span>
+                    <br><br><span class="success">✅ ÉXITO: Esta fecha se mostrará correctamente</span>
+                `;
+            } else {
+                html += `<br><br><span class="error">❌ PROBLEMA: Esta fecha no se mostrará correctamente</span>`;
+            }
+            
+            html += '</div></div>';
+        });
+        
+        // Conclusión
+        const fechasValidas = datosReales.filter(res => esFechaValida(res.fetcha_creacion)).length;
+        const total = datosReales.length;
+        
+        html += `
+            <div style="background: #e8f5e8; padding: 15px; border-radius: 5px; margin-top: 20px;">
+                <h3>🏁 Conclusión Final</h3>
+                <p><strong>Total de resoluciones:</strong> ${total}</p>
+                <p><strong>Fechas que funcionarán:</strong> ${fechasValidas}</p>
+                <p><strong>Fechas problemáticas:</strong> ${total - fechasValidas}</p>
+                
+                ${fechasValidas === total ? 
+                    '<p class="success"><strong>🎉 ¡ÉXITO TOTAL!</strong> Todas las fechas se mostrarán correctamente en el frontend.</p>' :
+                    '<p class="warning"><strong>⚠️ ÉXITO PARCIAL:</strong> La mayoría de las fechas funcionarán, algunas mostrarán "Fecha inválida".</p>'
+                }
+            </div>
+        `;
+        
+        resultadosDiv.innerHTML = html;
+        
+        // También mostrar en consola para debug
+        console.log('🧪 Resultados de prueba de fechas:');
+        datosReales.forEach(res => {
+            console.log(`${res.NumdeResolucion}: "${res.fetcha_creacion}" → "${formatearFechaCorta(res.fetcha_creacion)}"`);
+        });
+    </script>
+</body>
+</html>

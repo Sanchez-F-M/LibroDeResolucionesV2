@@ -1,34 +1,35 @@
 import express from 'express'
-import multer from 'multer'
 import {
   createBook,
+  getAllBooks,
   getByIdBook,
   updateBook,
   deleteBook,
-  getLastResolutionNumber
+  getLastResolutionNumber,
+  insertTestResolution
 } from '../controllers/book.controller.js'
-import { verifyToken } from '../../config/verifyToken.js'
+import { requireAnyUser, requireSecretariaOrAdmin, requireAdmin } from '../middleware/auth.js'
+import { getUploadConfig } from '../../config/cloudinary.js'
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/')
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + '-' + file.originalname)
-  }
-})
-
-const upload = multer({ storage })
+// Obtener la configuración de upload (Cloudinary o local según el entorno)
+const upload = getUploadConfig()
 
 const bookRouter = express.Router()
 
-// Esta ruta debe ir primero para evitar conflictos con el parámetro :id
-bookRouter.get('/last-number', getLastResolutionNumber)
+// Ruta principal que apunta a getAllBooks (para compatibilidad con el frontend que espera GET /api/books)
+bookRouter.get('/', requireAnyUser, getAllBooks)                          // Cualquier usuario logueado
 
-// Resto de las rutas
-bookRouter.get('/:id', getByIdBook)
-bookRouter.post('/', upload.array('files'), createBook)
-bookRouter.put('/:id', verifyToken, updateBook)
-bookRouter.delete('/:id', deleteBook)
+// Estas rutas deben ir después para evitar conflictos con la ruta raíz
+bookRouter.get('/last-number', requireAnyUser, getLastResolutionNumber)   // Cualquier usuario logueado
+bookRouter.get('/all', requireAnyUser, getAllBooks)                       // Cualquier usuario logueado (duplicada para compatibilidad)
+
+// Ruta especial para insertar resoluciones de prueba (solo administradores)
+bookRouter.post('/insert-test', requireAdmin, insertTestResolution)
+
+// Resto de las rutas - /:id debe ir AL FINAL para no capturar las rutas específicas
+bookRouter.get('/:id', requireAnyUser, getByIdBook)                       // Cualquier usuario logueado
+bookRouter.post('/', requireSecretariaOrAdmin, upload.array('files'), createBook)  // Secretaria o Admin
+bookRouter.put('/:id', requireSecretariaOrAdmin, updateBook)              // Secretaria o Admin
+bookRouter.delete('/:id', requireAdmin, deleteBook)                      // Solo administradores
 
 export default bookRouter
