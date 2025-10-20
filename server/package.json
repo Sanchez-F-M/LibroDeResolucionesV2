@@ -12,6 +12,10 @@
     "dev": "nodemon index.js",
     "prestart": "node scripts/free-port.js 3000",
     "start": "node index.js",
+    "test": "vitest --run",
+    "test:watch": "vitest",
+    "test:e2e": "npm run test:login && npm run test:mobile-links",
+    "test:login": "node test-login-simple.js",
     "test:mobile-links": "node test-mobile-links.js",
     "create-admin": "node scripts/create-admin.js"
   },
@@ -32,11 +36,12 @@
     "multer-storage-cloudinary": "^4.0.0",
     "mysql2": "^3.14.0",
     "node-cron": "^4.2.1",
-    "pg": "^8.16.0",
-    "node-fetch": "^3.3.2"
+    "node-fetch": "^3.3.2",
+    "pg": "^8.16.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.9",
-    "standard": "^17.1.2"
+    "standard": "^17.1.2",
+    "vitest": "^3.2.4"
   }
 }

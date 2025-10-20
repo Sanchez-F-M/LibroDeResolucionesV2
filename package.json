@@ -18,5 +18,8 @@
   "main": "diagnosticar-fechas.js",
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "vitest": "^3.2.4"
+  }
 }
