@@ -39,6 +39,7 @@ import {
   OpenInNew,
   SmartphoneOutlined,
 } from '@mui/icons-material';
+import { QRCodeSVG } from 'qrcode.react';
 import api from '../../api/api';
 
 const AdminEnlaces = () => {
@@ -586,24 +587,34 @@ const AdminEnlaces = () => {
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
               Escanea este código con tu móvil
             </Typography>
-            {/* Aquí iría el QR code - requiere librería como 'qrcode.react' */}
+            {/* Código QR generado con qrcode.react */}
             <Box
               sx={{
-                width: 200,
-                height: 200,
-                bgcolor: 'grey.200',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 mx: 'auto',
                 mb: 2,
+                p: 2,
+                bgcolor: 'white',
+                borderRadius: 1,
+                boxShadow: 1,
               }}
             >
-              <Typography variant="caption" color="text.secondary">
-                QR Code
-                <br />
-                (Instalar librería)
-              </Typography>
+              {selectedLink ? (
+                <QRCodeSVG
+                  value={selectedLink}
+                  size={256}
+                  level="H"
+                  includeMargin={true}
+                  bgColor="#FFFFFF"
+                  fgColor="#000000"
+                />
+              ) : (
+                <Typography variant="caption" color="text.secondary">
+                  Selecciona un enlace
+                </Typography>
+              )}
             </Box>
             <TextField
               fullWidth

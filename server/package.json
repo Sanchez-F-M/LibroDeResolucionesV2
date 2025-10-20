@@ -10,7 +10,9 @@
   },
   "scripts": {
     "dev": "nodemon index.js",
+    "prestart": "node scripts/free-port.js 3000",
     "start": "node index.js",
+    "test:mobile-links": "node test-mobile-links.js",
     "create-admin": "node scripts/create-admin.js"
   },
   "keywords": [],
@@ -30,7 +32,8 @@
     "multer-storage-cloudinary": "^4.0.0",
     "mysql2": "^3.14.0",
     "node-cron": "^4.2.1",
-    "pg": "^8.16.0"
+    "pg": "^8.16.0",
+    "node-fetch": "^3.3.2"
   },
   "devDependencies": {
     "nodemon": "^3.1.9",
